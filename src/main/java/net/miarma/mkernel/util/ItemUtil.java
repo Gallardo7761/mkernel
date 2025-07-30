@@ -107,4 +107,8 @@ public class ItemUtil {
         }
         return res;
     }
+    
+    public static boolean isAxe(ItemStack item) {
+    	return item.getType().toString().contains("AXE");
+    }
 }

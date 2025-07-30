@@ -12,7 +12,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 public class CropsListener implements Listener {
     
     @EventHandler
-    public void onHarvest(PlayerInteractEvent event) {
+    public void onHarvest(PlayerInteractEvent event) {    	
         if (!ConfigProvider.Modules.isHarvestOnRightClickEnabled()) return;
 
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK) return;

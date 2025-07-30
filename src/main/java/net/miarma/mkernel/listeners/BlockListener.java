@@ -5,6 +5,8 @@ import net.miarma.mkernel.common.annotation.Version;
 import net.miarma.mkernel.common.minecraft.MinepackAccessor;
 import net.miarma.mkernel.config.providers.ConfigProvider;
 import net.miarma.mkernel.util.InventoryUtil;
+import net.miarma.mkernel.util.ItemUtil;
+
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
@@ -28,13 +30,14 @@ import static net.miarma.mkernel.common.Constants.SPECIAL_ITEM_TAG;
 public class BlockListener implements Listener {
     
     @EventHandler
-    public void onBlockPlace(BlockPlaceEvent event) {
+    public void onBlockPlace(BlockPlaceEvent event) {    	
         if (!ConfigProvider.Modules.isAutoItemRefillEnabled()) return;
 
         Player player = event.getPlayer();
         Material placedType = event.getBlockPlaced().getType();
         ItemStack itemInHand = event.getItemInHand();
 
+        if (ItemUtil.isAxe(itemInHand)) return;
         if (itemInHand.getAmount() > 1) return;
 
         Inventory inv = player.getInventory();

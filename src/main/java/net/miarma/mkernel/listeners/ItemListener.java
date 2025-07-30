@@ -25,7 +25,7 @@ import static net.miarma.mkernel.common.Constants.SPECIAL_ITEM_TAG;
 public class ItemListener implements Listener {
     
     @EventHandler
-    public void onItemBreak(PlayerItemBreakEvent event) {
+    public void onItemBreak(PlayerItemBreakEvent event) {    	
         if (!ConfigProvider.Modules.isAutoItemRefillEnabled()) return;
 
         Player player = event.getPlayer();
