@@ -1,186 +1,187 @@
-name: Toorbo
+name: MKernel
 version: '1.4.2'
-main: net.miarma.toorbo.Toorbo
+main: net.miarma.mkernel.MKernel
 api-version: '1.21'
 authors: [Gallardo7761, elpapuu1333 (Contributor & tester)]
 permissions:
-    toorbo.command:
-        description: Permite al usuario ejecutar comandos de Toorbo
+    mkernel.command:
+        description: Permite al usuario ejecutar comandos de MKernel
         default: true
-    toorbo.command.reload:
-        description: Permite al usuario recargar la configuración de Toorbo
+    mkernel.command.reload:
+        description: Permite al usuario recargar la configuración de MKernel
         default: op
-    toorbo.command.config:
-        description: Permite al usuario configurar los módulos de Toorbo
+    mkernel.command.config:
+        description: Permite al usuario configurar los módulos de MKernel
         default: op
-    toorbo.command.tpa:
+    mkernel.command.tpa:
         description: Permite al usuario enviar una petición de teletransporte
         default: true
-    toorbo.command.tpahere:
+    mkernel.command.tpahere:
         description: Permite al usuario enviar una petición de teletransporte a otro jugador
         default: true
-    toorbo.command.tpaccept:
+    mkernel.command.tpaccept:
         description: Permite al usuario aceptar una petición de teletransporte
         default: true
-    toorbo.command.tpdeny:
+    mkernel.command.tpdeny:
         description: Permite al usuario rechazar una petición de teletransporte
         default: true
-    toorbo.globalchest:
+    mkernel.globalchest:
         description: Permite al usuario abrir el cofre global
         default: true
-    toorbo.globalchest.others:
+    mkernel.globalchest.others:
         description: Permite al usuario abrir el cofre global de otro jugador
         default: op
-    toorbo.disposal:
+    mkernel.disposal:
         description: Permite al usuario abrir el contenedor de basura
         default: true
-    toorbo.disposal.others:
+    mkernel.disposal.others:
         description: Permite al usuario abrir el contenedor de basura de otro jugador
         default: op
-    toorbo.command.sendcoords:
+    mkernel.command.sendcoords:
         description: Permite al usuario enviar sus coordenadas a otro jugador
         default: true
-    toorbo.command.spawn:
+    mkernel.command.spawn:
         description: Permite al usuario teletransportarse al punto de spawn
         default: true
-    toorbo.command.spawn.others:
+    mkernel.command.spawn.others:
         description: Permite al usuario teletransportar a otro jugador al punto de spawn
         default: op
-    toorbo.command.lobby:
+    mkernel.command.lobby:
         description: Permite al usuario teletransportarse al lobby
         default: true
-    toorbo.command.lobby.others:
+    mkernel.command.lobby.others:
         description: Permite al usuario teletransportar a otro jugador al lobby
         default: op
-    toorbo.command.opme:
+    mkernel.command.opme:
         description: Permite al usuario hacerse op
         default: op
-    toorbo.command.deopme:
+    mkernel.command.deopme:
         description: Permite al usuario quitarse el op
         default: op
-    toorbo.command.specialitem:
+    mkernel.command.specialitem:
         description: Permite al usuario obtener un item especial
         default: op
-    toorbo.command.blockworld:
+    mkernel.command.blockworld:
         description: Permite al usuario bloquear un mundo
         default: op
-    toorbo.command.home:
+    mkernel.command.home:
         description: Permite al usuario teletransportarse a su casa
         default: true
-    toorbo.command.sethome:
+    mkernel.command.sethome:
         description: Permite al usuario establecer su casa
         default: true
-    toorbo.command.recinv:
+    mkernel.command.recinv:
         description: Permite recuperar tu inventario
         default: true
-    toorbo.command.gmc:
+    mkernel.command.gmc:
         description: Permite al usuario cambiar su modo de juego a creativo
         default: op
-    toorbo.command.gms:
+    mkernel.command.gms:
         description: Permite al usuario cambiar su modo de juego a supervivencia
         default: op
-    toorbo.command.gma:
+    mkernel.command.gma:
         description: Permite al usuario cambiar su modo de juego a aventura
         default: op
-    toorbo.command.gmsp:
+    mkernel.command.gmsp:
         description: Permite al usuario cambiar su modo de juego a espectador
         default: op
-    toorbo.command.vanish:
+    mkernel.command.vanish:
         description: Permite al usuario volverse invisible
         default: op
-    toorbo.command.warp:
+    mkernel.command.warp:
         description: Permite al usuario teletransportarse a un warp
         default: true
-    toorbo.command.warp.add:
+    mkernel.command.warp.add:
         description: Permite al usuario añadir un warp
         default: true
-    toorbo.command.warp.remove:
+    mkernel.command.warp.remove:
         description: Permite al usuario eliminar un warp
         default: true
-    toorbo.command.spy:
+    mkernel.command.spy:
         description: Permite al usuario espiar a otro jugador
         default: op
-    toorbo.command.freeze:
+    mkernel.command.freeze:
         description: Permite al usuario congelar a otro jugador
         default: op
-    toorbo.command.heal:
+    mkernel.command.heal:
         description: Permite al usuario curarse
         default: true
-    toorbo.command.heal.others:
+    mkernel.command.heal.others:
         description: Permite al usuario curar a otro jugador
         default: op
-    toorbo.command.launch:
+    mkernel.command.launch:
         description: Permite al usuario lanzar a otro jugador
         default: op
-    toorbo.command.invsee:
+    mkernel.command.invsee:
         description: Abre el inventario de otro jugador
         default: op
 
-    toorbo.events.chatformat:
+    mkernel.events.chatformat:
         description: Permite al usuario usar formatos y colores en los mensajes de chat
         default: true
-    toorbo.events.adminchat:
+    mkernel.events.adminchat:
         description: Permite al usuario usar el chat de administración
         default: op
-    toorbo.events.mentions:
+    mkernel.events.mentions:
         description: Permite al usuario usar menciones
         default: true
 
-    toorbo.admin:
+    mkernel.admin:
         description: Permite al usuario ejecutar comandos de administrador
         default: op
         children:
-            toorbo.command.reload: true
-            toorbo.command.config: true
-            toorbo.command.opme: true
-            toorbo.command.deopme: true
-            toorbo.command.globalchest.others: true
-            toorbo.command.disposal.others: true
-            toorbo.command.spawn.others: true
-            toorbo.command.lobby.others: true
-            toorbo.command.specialitem: true
-            toorbo.command.blockworld: true
-            toorbo.command.gmc: true
-            toorbo.command.gms: true
-            toorbo.command.gma: true
-            toorbo.command.gmsp: true
-            toorbo.command.vanish: true
-            toorbo.command.spy: true
-            toorbo.command.freeze: true
-            toorbo.command.heal: true
-            toorbo.command.heal.others: true
-            toorbo.command.launch: true
-            toorbo.command.invsee: true
-            toorbo.events.adminchat: true
-            toorbo.player: true
+            mkernel.command.reload: true
+            mkernel.command.config: true
+            mkernel.command.opme: true
+            mkernel.command.deopme: true
+            mkernel.command.globalchest.others: true
+            mkernel.command.disposal.others: true
+            mkernel.command.spawn.others: true
+            mkernel.command.lobby.others: true
+            mkernel.command.specialitem: true
+            mkernel.command.blockworld: true
+            mkernel.command.gmc: true
+            mkernel.command.gms: true
+            mkernel.command.gma: true
+            mkernel.command.gmsp: true
+            mkernel.command.vanish: true
+            mkernel.command.spy: true
+            mkernel.command.freeze: true
+            mkernel.command.heal: true
+            mkernel.command.heal.others: true
+            mkernel.command.launch: true
+            mkernel.command.invsee: true
+            mkernel.events.adminchat: true
+            mkernel.player: true
 
-    toorbo.player:
+    mkernel.player:
         description: Permite al usuario ejecutar comandos de jugador
         default: true
         children:
-            toorbo.command.tpa: true
-            toorbo.command.tpahere: true
-            toorbo.command.tpaccept: true
-            toorbo.command.tpdeny: true
-            toorbo.command.globalchest: true
-            toorbo.command.disposal: true
-            toorbo.command.sendcoords: true
-            toorbo.command.spawn: true
-            toorbo.command.lobby: true
-            toorbo.command.home: true
-            toorbo.command.sethome: true
-            toorbo.events.chatformat: true
-            toorbo.events.mentions: true
-            toorbo.command.recinv: true
-            toorbo.command.warp: true
-            toorbo.command.warp.add: true
-            toorbo.command.warp.remove: true
-            toorbo.command.me: true
-            toorbo.command.do: true
+            mkernel.command.tpa: true
+            mkernel.command.tpahere: true
+            mkernel.command.tpaccept: true
+            mkernel.command.tpdeny: true
+            mkernel.command.globalchest: true
+            mkernel.command.disposal: true
+            mkernel.command.sendcoords: true
+            mkernel.command.spawn: true
+            mkernel.command.lobby: true
+            mkernel.command.home: true
+            mkernel.command.sethome: true
+            mkernel.events.chatformat: true
+            mkernel.events.mentions: true
+            mkernel.command.recinv: true
+            mkernel.command.warp: true
+            mkernel.command.warp.add: true
+            mkernel.command.warp.remove: true
+            mkernel.command.me: true
+            mkernel.command.do: true
+            mkernel.command.payxp: true
 
-    toorbo.*:
-        description: Permite al usuario ejecutar todos los comandos de Toorbo
+    mkernel.*:
+        description: Permite al usuario ejecutar todos los comandos de MKernel
         default: op
         children:
-            toorbo.admin: true
-            toorbo.player: true
+            mkernel.admin: true
+            mkernel.player: true
