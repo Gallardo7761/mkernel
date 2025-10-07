@@ -1,5 +1,11 @@
 package net.miarma.mkernel.commands.tp;
 
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import dev.jorel.commandapi.CommandAPICommand;
 import net.miarma.mkernel.MKernel;
 import net.miarma.mkernel.common.minecraft.teleport.TpaRequests;
 import net.miarma.mkernel.common.minecraft.teleport.TpaType;
@@ -7,19 +13,12 @@ import net.miarma.mkernel.config.CommandWrapper;
 import net.miarma.mkernel.config.providers.CommandProvider;
 import net.miarma.mkernel.config.providers.MessageProvider;
 import net.miarma.mkernel.util.MessageUtil;
-import dev.jorel.commandapi.CommandAPICommand;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.List;
-
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.PLAYER_ARG;
 
 public class TpaHereCommand {
     public static void register() {
         CommandWrapper tpaHereCmd = CommandProvider.getTpaHereCommand();
         new CommandAPICommand(tpaHereCmd.getName())
-                .withArguments(PLAYER_ARG)
+                .withArguments(CommandProvider.Arguments.playerArg())
                 .withPermission(tpaHereCmd.getPermission().base())
                 .withFullDescription(tpaHereCmd.getDescription())
                 .withShortDescription(tpaHereCmd.getDescription())

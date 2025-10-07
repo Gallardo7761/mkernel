@@ -1,22 +1,21 @@
 package net.miarma.mkernel.commands.misc;
 
-import net.miarma.mkernel.config.CommandWrapper;
-import net.miarma.mkernel.config.providers.CommandProvider;
-import net.miarma.mkernel.util.MessageUtil;
-import dev.jorel.commandapi.CommandAPICommand;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.PLAYERS_OPT_ARG;
+import dev.jorel.commandapi.CommandAPICommand;
+import net.miarma.mkernel.config.CommandWrapper;
+import net.miarma.mkernel.config.providers.CommandProvider;
+import net.miarma.mkernel.util.MessageUtil;
 
 public class SpawnCommand {
     public static void register() {
         CommandWrapper spawnCmd = CommandProvider.getSpawnCommand();
         new CommandAPICommand(spawnCmd.getName())
-            .withOptionalArguments(PLAYERS_OPT_ARG.withPermission(
+            .withOptionalArguments(CommandProvider.Arguments.playersOptArg().withPermission(
                     spawnCmd.getPermission().others()
             ))
             .withFullDescription(spawnCmd.getDescription())

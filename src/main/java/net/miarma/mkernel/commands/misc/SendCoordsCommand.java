@@ -1,23 +1,22 @@
 package net.miarma.mkernel.commands.misc;
 
-import net.miarma.mkernel.config.CommandWrapper;
-import net.miarma.mkernel.config.providers.CommandProvider;
-import net.miarma.mkernel.config.providers.MessageProvider;
-import net.miarma.mkernel.util.MessageUtil;
-import dev.jorel.commandapi.CommandAPICommand;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.PLAYER_ARG;
+import dev.jorel.commandapi.CommandAPICommand;
+import net.miarma.mkernel.config.CommandWrapper;
+import net.miarma.mkernel.config.providers.CommandProvider;
+import net.miarma.mkernel.config.providers.MessageProvider;
+import net.miarma.mkernel.util.MessageUtil;
 
 public class SendCoordsCommand {
     public static void register() {
         CommandWrapper sendCoordsCmd = CommandProvider.getSendCoordsCommand();
         new CommandAPICommand(sendCoordsCmd.getName())
-            .withArguments(PLAYER_ARG)
+            .withArguments(CommandProvider.Arguments.playerArg())
             .withFullDescription(sendCoordsCmd.getDescription())
             .withPermission(sendCoordsCmd.getPermission().base())
             .withShortDescription(sendCoordsCmd.getDescription())

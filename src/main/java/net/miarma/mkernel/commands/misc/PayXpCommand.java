@@ -1,23 +1,22 @@
 package net.miarma.mkernel.commands.misc;
 
-import net.miarma.mkernel.config.CommandWrapper;
-import net.miarma.mkernel.config.providers.CommandProvider;
-import net.miarma.mkernel.config.providers.MessageProvider;
-import net.miarma.mkernel.util.MessageUtil;
-import dev.jorel.commandapi.CommandAPICommand;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import java.util.List;
-
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.*;
+import dev.jorel.commandapi.CommandAPICommand;
+import net.miarma.mkernel.config.CommandWrapper;
+import net.miarma.mkernel.config.providers.CommandProvider;
+import net.miarma.mkernel.config.providers.MessageProvider;
+import net.miarma.mkernel.util.MessageUtil;
 
 public class PayXpCommand {
     public static void register() {
         CommandWrapper payXpCmd = CommandProvider.getPayXpCommand();
         new CommandAPICommand(payXpCmd.getName())
-            .withArguments(PLAYER_ARG, LEVELS)
+            .withArguments(CommandProvider.Arguments.playerArg(), CommandProvider.Arguments.levels())
             .withFullDescription(payXpCmd.getDescription())
             .withPermission(payXpCmd.getPermission().base())
             .withShortDescription(payXpCmd.getDescription())

@@ -1,5 +1,17 @@
 package net.miarma.mkernel.commands.misc;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+
+import dev.jorel.commandapi.CommandAPICommand;
 import net.miarma.mkernel.MKernel;
 import net.miarma.mkernel.common.minecraft.Warp;
 import net.miarma.mkernel.config.CommandWrapper;
@@ -7,20 +19,6 @@ import net.miarma.mkernel.config.providers.CommandProvider;
 import net.miarma.mkernel.config.providers.ConfigProvider;
 import net.miarma.mkernel.config.providers.MessageProvider;
 import net.miarma.mkernel.util.MessageUtil;
-import dev.jorel.commandapi.CommandAPICommand;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.WARPS;
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.WARP_NAME;
 
 public class WarpCommand {
     public static void register() {
@@ -59,7 +57,7 @@ public class WarpCommand {
                     .withPermission(addSubCmd.getPermission().base())
                     .withFullDescription(addSubCmd.getDescription())
                     .withShortDescription(addSubCmd.getDescription())
-                    .withArguments(WARP_NAME)
+                    .withArguments(CommandProvider.Arguments.warpName())
                     .withUsage(addSubCmd.getUsage())
                     .executesPlayer((sender, args) -> {
                         File f = new File(MKernel.PLUGIN.getDataFolder().getAbsolutePath(), "warps/"
@@ -104,7 +102,7 @@ public class WarpCommand {
                     .withPermission(removeSubCmd.getPermission().base())
                     .withFullDescription(removeSubCmd.getDescription())
                     .withShortDescription(removeSubCmd.getDescription())
-                    .withArguments(WARPS)
+                    .withArguments(CommandProvider.Arguments.warps())
                     .withUsage(removeSubCmd.getUsage())
                     .executes((sender, args) -> {
                         File f = new File(MKernel.PLUGIN.getDataFolder().getAbsolutePath(), "warps/"

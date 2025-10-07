@@ -15,40 +15,73 @@ import java.util.List;
 import static net.miarma.mkernel.util.Constants.RECIPES;
 
 public class CommandProvider {
-    public static class Arguments {
-        public static final Argument<?> PASSWORD_ARG = new GreedyStringArgument(MKernel.CONFIG.getString("arguments.password"));
+	public static class Arguments {
 
-        public static Argument<?> PLAYER_ARG = new PlayerArgument(MKernel.CONFIG.getString("arguments.player"))
-                .replaceSuggestions(ArgumentSuggestions.strings(info -> Bukkit.getOnlinePlayers().stream()
-                        .map(Player::getName).toList().toArray(new String[Bukkit.getOnlinePlayers().size()])));
+	    public static Argument<?> passwordArg() {
+	        return new GreedyStringArgument(MKernel.CONFIG.getString("arguments.password"));
+	    }
 
-        public static Argument<?> PLAYERS_OPT_ARG = new PlayerArgument(MKernel.CONFIG.getString("arguments.player"))
-                .replaceSuggestions(ArgumentSuggestions.strings(info -> Bukkit.getOnlinePlayers().stream()
-                        .map(x -> x.getName()).toList().toArray(new String[Bukkit.getOnlinePlayers().size()])));
+	    public static Argument<?> playerArg() {
+	        return new PlayerProfileArgument(MKernel.CONFIG.getString("arguments.player"))
+	                .replaceSuggestions(ArgumentSuggestions.strings(info ->
+	                        Bukkit.getOnlinePlayers().stream()
+	                                .map(Player::getName)
+	                                .toList()
+	                                .toArray(new String[0])
+	                ));
+	    }
 
-        public static Argument<?> LEVELS = new IntegerArgument(MKernel.CONFIG.getString("arguments.levels"));
+	    public static Argument<?> playersOptArg() {
+	        return new PlayerProfileArgument(MKernel.CONFIG.getString("arguments.player"))
+	                .replaceSuggestions(ArgumentSuggestions.strings(info ->
+	                        Bukkit.getOnlinePlayers().stream()
+	                                .map(Player::getName)
+	                                .toList()
+	                                .toArray(new String[0])
+	                ));
+	    }
 
-        public static Argument<?> WORLDS = new StringArgument(MKernel.CONFIG.getString("arguments.world"))
-                .replaceSuggestions(ArgumentSuggestions.strings(info -> Bukkit.getWorlds().stream().map(x -> x.getName())
-                        .toList().toArray(new String[Bukkit.getWorlds().size()])));
+	    public static Argument<?> levels() {
+	        return new IntegerArgument(MKernel.CONFIG.getString("arguments.levels"));
+	    }
 
-        public static Argument<?> MESSAGE = new GreedyStringArgument(MKernel.CONFIG.getString("arguments.message"));
+	    public static Argument<?> worlds() {
+	        return new StringArgument(MKernel.CONFIG.getString("arguments.world"))
+	                .replaceSuggestions(ArgumentSuggestions.strings(info ->
+	                        Bukkit.getWorlds().stream()
+	                                .map(x -> x.getName())
+	                                .toList()
+	                                .toArray(new String[0])
+	                ));
+	    }
 
-        public static Argument<?> WARP_NAME = new GreedyStringArgument(MKernel.CONFIG.getString("arguments.warpName"));
+	    public static Argument<?> message() {
+	        return new GreedyStringArgument(MKernel.CONFIG.getString("arguments.message"));
+	    }
 
-        public static Argument<?> WARPS = new StringArgument(MKernel.CONFIG.getString("arguments.warp"))
-                .replaceSuggestions(ArgumentSuggestions.strings(info -> {
-                    Player p = (Player) info.sender();
-                    List<Warp> warps = PlayerUtil.getWarps(p);
-                    return warps.stream().map(Warp::getAlias).toList().toArray(new String[warps.size()]);
-                }));
+	    public static Argument<?> warpName() {
+	        return new GreedyStringArgument(MKernel.CONFIG.getString("arguments.warpName"));
+	    }
 
-        public static Argument<?> ITEMS = new StringArgument(MKernel.CONFIG.getString("arguments.item"))
-                .replaceSuggestions(ArgumentSuggestions.strings(info -> RECIPES.stream()
-                        .map(ItemUtil::getKey)
-                        .toList().toArray(new String[RECIPES.size()])));
+	    public static Argument<?> warps() {
+	        return new StringArgument(MKernel.CONFIG.getString("arguments.warp"))
+	                .replaceSuggestions(ArgumentSuggestions.strings(info -> {
+	                    Player p = (Player) info.sender();
+	                    List<Warp> warps = PlayerUtil.getWarps(p);
+	                    return warps.stream().map(Warp::getAlias).toList().toArray(new String[0]);
+	                }));
+	    }
 
-    }
+	    public static Argument<?> items() {
+	        return new StringArgument(MKernel.CONFIG.getString("arguments.item"))
+	                .replaceSuggestions(ArgumentSuggestions.strings(info ->
+	                        RECIPES.stream()
+	                                .map(ItemUtil::getKey)
+	                                .toList()
+	                                .toArray(new String[0])
+	                ));
+	    }
+	}
 
     public static CommandWrapper getBaseCommand() {
         return CommandWrapper.command("mkernel")

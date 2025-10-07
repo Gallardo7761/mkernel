@@ -1,21 +1,20 @@
 package net.miarma.mkernel.commands.misc;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import dev.jorel.commandapi.CommandAPICommand;
 import net.miarma.mkernel.common.minecraft.inventories.DisposalInventory;
 import net.miarma.mkernel.config.CommandWrapper;
 import net.miarma.mkernel.config.providers.CommandProvider;
 import net.miarma.mkernel.config.providers.MessageProvider;
 import net.miarma.mkernel.util.MessageUtil;
-import dev.jorel.commandapi.CommandAPICommand;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.PLAYERS_OPT_ARG;
 
 public class DisposalCommand {
     public static void register() {
         CommandWrapper disposalCmd = CommandProvider.getDisposalCommand();
         new CommandAPICommand(disposalCmd.getName())
-            .withOptionalArguments(PLAYERS_OPT_ARG.withPermission(
+            .withOptionalArguments(CommandProvider.Arguments.playersOptArg().withPermission(
                 disposalCmd.getPermission().others()
             ))
             .withFullDescription(disposalCmd.getDescription())

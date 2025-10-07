@@ -1,7 +1,8 @@
 name: MKernel
 version: '1.4.2'
 main: net.miarma.mkernel.MKernel
-api-version: '1.21'
+api-version: '1.21.9'
+website: https://github.com/Gallardo7761/mkernel
 authors: [Gallardo7761, elpapuu1333 (Contributor & tester)]
 permissions:
     mkernel.command:

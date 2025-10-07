@@ -1,23 +1,22 @@
 package net.miarma.mkernel.commands.admin;
 
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import dev.jorel.commandapi.CommandAPICommand;
 import net.miarma.mkernel.config.CommandWrapper;
 import net.miarma.mkernel.config.providers.CommandProvider;
 import net.miarma.mkernel.config.providers.MessageProvider;
 import net.miarma.mkernel.util.MessageUtil;
-import dev.jorel.commandapi.CommandAPICommand;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.List;
-
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.PLAYERS_OPT_ARG;
 
 public class HealCommand {
     public static void register() {
         CommandWrapper healCmd = CommandProvider.getHealCommand();
         new CommandAPICommand(healCmd.getName())
                 .withOptionalArguments(
-                    PLAYERS_OPT_ARG.withPermission(healCmd.getPermission().others())
+                	CommandProvider.Arguments.playersOptArg().withPermission(healCmd.getPermission().others())
                 )
                 .withPermission(healCmd.getPermission().base())
                 .withFullDescription(healCmd.getDescription())

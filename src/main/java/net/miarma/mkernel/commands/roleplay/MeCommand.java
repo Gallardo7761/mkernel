@@ -1,21 +1,20 @@
 package net.miarma.mkernel.commands.roleplay;
 
-import net.miarma.mkernel.config.CommandWrapper;
-import net.miarma.mkernel.config.providers.CommandProvider;
-import net.miarma.mkernel.util.PlayerUtil;
-import dev.jorel.commandapi.CommandAPICommand;
-import org.bukkit.Bukkit;
-
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.MESSAGE;
+import org.bukkit.Bukkit;
+
+import dev.jorel.commandapi.CommandAPICommand;
+import net.miarma.mkernel.config.CommandWrapper;
+import net.miarma.mkernel.config.providers.CommandProvider;
+import net.miarma.mkernel.util.PlayerUtil;
 
 public class MeCommand {
     public static void register() {
         CommandWrapper meCmd = CommandProvider.getMeCommand();
         new CommandAPICommand(meCmd.getName())
-            .withArguments(MESSAGE)
+            .withArguments(CommandProvider.Arguments.message())
             .withFullDescription(meCmd.getDescription())
             .withPermission(meCmd.getPermission().base())
             .withShortDescription(meCmd.getDescription())

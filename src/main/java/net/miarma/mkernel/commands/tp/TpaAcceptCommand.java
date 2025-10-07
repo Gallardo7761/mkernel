@@ -1,27 +1,25 @@
 package net.miarma.mkernel.commands.tp;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import dev.jorel.commandapi.CommandAPICommand;
 import net.miarma.mkernel.common.minecraft.teleport.TpaRequest;
 import net.miarma.mkernel.common.minecraft.teleport.TpaRequests;
 import net.miarma.mkernel.common.minecraft.teleport.TpaType;
 import net.miarma.mkernel.config.CommandWrapper;
 import net.miarma.mkernel.config.providers.CommandProvider;
 import net.miarma.mkernel.config.providers.MessageProvider;
-
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.PLAYERS_OPT_ARG;
-
 import net.miarma.mkernel.util.MessageUtil;
-import dev.jorel.commandapi.CommandAPICommand;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import java.util.List;
-import java.util.Optional;
 
 public class TpaAcceptCommand {
     public static void register() {
         CommandWrapper tpaAcceptCmd = CommandProvider.getTpaAcceptCommand();
         new CommandAPICommand(tpaAcceptCmd.getName())
-            .withOptionalArguments(PLAYERS_OPT_ARG)
+            .withOptionalArguments(CommandProvider.Arguments.playersOptArg())
             .withPermission(tpaAcceptCmd.getPermission().base())
             .withFullDescription(tpaAcceptCmd.getDescription())
             .withShortDescription(tpaAcceptCmd.getDescription())

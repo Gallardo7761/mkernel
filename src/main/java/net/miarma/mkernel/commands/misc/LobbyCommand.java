@@ -1,20 +1,19 @@
 package net.miarma.mkernel.commands.misc;
 
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+
+import dev.jorel.commandapi.CommandAPICommand;
+import net.miarma.mkernel.MKernel;
 import net.miarma.mkernel.config.CommandWrapper;
 import net.miarma.mkernel.config.providers.CommandProvider;
 import net.miarma.mkernel.config.providers.ConfigProvider;
 import net.miarma.mkernel.config.providers.MessageProvider;
 import net.miarma.mkernel.util.MessageUtil;
-import dev.jorel.commandapi.CommandAPICommand;
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.entity.Player;
-import net.miarma.mkernel.MKernel;
-
-import java.util.List;
-
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.PLAYERS_OPT_ARG;
 
 public class LobbyCommand {
     public static void register() {
@@ -24,7 +23,7 @@ public class LobbyCommand {
             .withShortDescription(lobbyCmd.getDescription())
             .withPermission(lobbyCmd.getPermission().base())
             .withOptionalArguments(
-                PLAYERS_OPT_ARG.withPermission(
+            		CommandProvider.Arguments.playersOptArg().withPermission(
                     lobbyCmd.getPermission().others()
                 )
             )

@@ -13,14 +13,12 @@ import static net.miarma.mkernel.MKernel.WORLD_BLOCKER_CONFIG;
 
 import java.util.List;
 
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.WORLDS;
-
 public class BlockWorldCommand {
     public static void register() {
         CommandWrapper blockWorldCmd = CommandProvider.getBlockWorldCommand();
         List<String> blockedWorlds = WORLD_BLOCKER_CONFIG.getConfig().getStringList("blockedWorlds");
         new CommandAPICommand(blockWorldCmd.getName())
-            .withArguments(WORLDS)
+            .withArguments(CommandProvider.Arguments.worlds())
             .withAliases(blockWorldCmd.getAliases())
             .withFullDescription(blockWorldCmd.getDescription())
             .withPermission(blockWorldCmd.getPermission().base())

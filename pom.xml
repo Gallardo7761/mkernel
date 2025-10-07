@@ -14,7 +14,7 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mc.version>1.21.6</mc.version>
+        <mc.version>1.21.9</mc.version>
     </properties>
 
     <build>
@@ -44,7 +44,7 @@
                             <finalName>MKernel-${project.version}-${mc.version}</finalName>
                             <artifactSet>
                                 <includes>
-                                    <include>dev.jorel:commandapi-bukkit-shade</include>
+                                    <include>dev.jorel:commandapi-paper-shade</include>
                                     <include>dev.dejvokep:boosted-yaml</include>
                                     <include>com.github.stefvanschie.inventoryframework:IF</include>
                                 </includes>
@@ -54,30 +54,28 @@
                                     <mainClass>net.miarma.mkernel.MKernel</mainClass>
                                 </transformer>
                             </transformers>
-                            <!--<outputDirectory>
+                            <outputDirectory>
                                 /home/jomaa/Escritorio
-                                </outputDirectory>-->
-                            <relocations>
-                                <relocation>
-                                    <pattern>dev.jorel.commandapi</pattern>
-                                    <shadedPattern>net.miarma.mkernel.commandapi</shadedPattern>
-                                </relocation>
-                                <!-- REMOVED because Spigot complains about it
-                                <relocation>
-                                    <pattern>dev.dejvokep.boostedyaml</pattern>
-                                    <shadedPattern>net.miarma.mkernel.boostedyaml</shadedPattern>
-                                </relocation>
-                                -->
-                                <relocation>
-                                    <pattern>com.github.stefvanschie.inventoryframework</pattern>
-                                    <shadedPattern>net.miarma.mkernel.inventoryframework</shadedPattern>
-                                </relocation>
-                            </relocations>
+                            </outputDirectory>
+                             <relocations>
+				                <relocation>
+				                    <pattern>dev.jorel.commandapi</pattern>
+				                    <shadedPattern>net.miarma.mkernel.commandapi</shadedPattern>
+				                </relocation>
+				                <relocation>
+				                    <pattern>dev.dejvokep.boostedyaml</pattern>
+				                    <shadedPattern>net.miarma.mkernel.boostedyaml</shadedPattern>
+				                </relocation>
+				                <relocation>
+				                    <pattern>com.github.stefvanschie.inventoryframework</pattern>
+				                    <shadedPattern>net.miarma.mkernel.inventoryframework</shadedPattern>
+				                </relocation>
+				            </relocations>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <version>3.0.0</version>
@@ -95,7 +93,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>-->
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -115,9 +113,9 @@
 
     <repositories>
         <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
+	      <id>papermc</id>
+	      <url>https://repo.papermc.io/repository/maven-public/</url>
+	    </repository>
         <repository>
             <id>sonatype</id>
             <url>https://oss.sonatype.org/content/groups/public/</url>
@@ -144,16 +142,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.21-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
+	      <groupId>io.papermc.paper</groupId>
+	      <artifactId>paper-api</artifactId>
+	      <version>1.21.8-R0.1-SNAPSHOT</version>
+	      <scope>provided</scope>
+	    </dependency>
 
         <dependency>
             <groupId>dev.jorel</groupId>
-            <artifactId>commandapi-bukkit-shade</artifactId>
-            <version>10.1.0</version>
+            <artifactId>commandapi-paper-shade</artifactId>
+            <version>11.0.0</version>
         </dependency>
 
         <dependency>
@@ -172,7 +170,7 @@
         <dependency>
             <groupId>de.tr7zw</groupId>
             <artifactId>item-nbt-api-plugin</artifactId>
-            <version>2.15.0</version>
+            <version>2.15.2</version>
             <scope>provided</scope>
         </dependency>
 

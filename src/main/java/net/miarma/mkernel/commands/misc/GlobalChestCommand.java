@@ -1,21 +1,20 @@
 package net.miarma.mkernel.commands.misc;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import dev.jorel.commandapi.CommandAPICommand;
 import net.miarma.mkernel.common.minecraft.inventories.GlobalChest;
 import net.miarma.mkernel.config.CommandWrapper;
 import net.miarma.mkernel.config.providers.CommandProvider;
 import net.miarma.mkernel.config.providers.MessageProvider;
 import net.miarma.mkernel.util.MessageUtil;
-import dev.jorel.commandapi.CommandAPICommand;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
-
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.PLAYERS_OPT_ARG;
 
 public class GlobalChestCommand {
     public static void register() {
         CommandWrapper globalChestCmd = CommandProvider.getGlobalChestCommand();
         new CommandAPICommand(globalChestCmd.getName())
-            .withOptionalArguments(PLAYERS_OPT_ARG.withPermission(
+            .withOptionalArguments(CommandProvider.Arguments.playersOptArg().withPermission(
                     globalChestCmd.getPermission().others()
             ))
             .withFullDescription(globalChestCmd.getDescription())

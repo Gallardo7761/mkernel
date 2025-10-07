@@ -1,23 +1,24 @@
 package net.miarma.mkernel.commands.admin;
 
-import dev.jorel.commandapi.CommandAPICommand;
-import net.miarma.mkernel.common.minecraft.inventories.InvseeInventory;
-import net.miarma.mkernel.config.CommandWrapper;
-import net.miarma.mkernel.config.providers.CommandProvider;
-import net.miarma.mkernel.util.MessageUtil;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
 
-import java.util.List;
+import dev.jorel.commandapi.CommandAPICommand;
+import net.miarma.mkernel.common.minecraft.inventories.InvseeInventory;
+import net.miarma.mkernel.config.CommandWrapper;
+import net.miarma.mkernel.config.providers.CommandProvider;
+import net.miarma.mkernel.util.MessageUtil;
 
 public class InvseeCommand {
 
     public static void register() {
         CommandWrapper invseeCommand = CommandProvider.getInvseeCommand();
         new CommandAPICommand(invseeCommand.getName())
-                .withArguments(CommandProvider.Arguments.PLAYER_ARG)
+                .withArguments(CommandProvider.Arguments.playerArg())
                 .withShortDescription(invseeCommand.getDescription())
                 .withFullDescription(invseeCommand.getDescription())
                 .withPermission(invseeCommand.getPermission().base())

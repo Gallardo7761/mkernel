@@ -12,14 +12,13 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.List;
 
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.PLAYER_ARG;
 import static net.miarma.mkernel.util.Constants.FROZEN_KEY;
 
 public class FreezeCommand {
     public static void register() {
         CommandWrapper freezeCmd = CommandProvider.getFreezeCommand();
         new CommandAPICommand(freezeCmd.getName())
-            .withArguments(PLAYER_ARG)
+            .withArguments(CommandProvider.Arguments.playerArg())
             .withFullDescription(freezeCmd.getDescription())
             .withShortDescription(freezeCmd.getDescription())
             .withUsage(freezeCmd.getUsage())

@@ -1,24 +1,23 @@
 package net.miarma.mkernel.commands.admin;
 
+import java.util.List;
+
+import org.bukkit.Bukkit;
+import org.bukkit.NamespacedKey;
+import org.bukkit.inventory.Recipe;
+
+import dev.jorel.commandapi.CommandAPICommand;
 import net.miarma.mkernel.MKernel;
 import net.miarma.mkernel.config.CommandWrapper;
 import net.miarma.mkernel.config.providers.CommandProvider;
 import net.miarma.mkernel.config.providers.MessageProvider;
 import net.miarma.mkernel.util.MessageUtil;
-import dev.jorel.commandapi.CommandAPICommand;
-import org.bukkit.Bukkit;
-import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.Recipe;
-
-import java.util.List;
-
-import static net.miarma.mkernel.config.providers.CommandProvider.Arguments.ITEMS;
 
 public class SpecialItemCommand {
     public static void register() {
         CommandWrapper specialItemCmd = CommandProvider.getSpecialItemCommand();
         new CommandAPICommand(specialItemCmd.getName())
-            .withArguments(ITEMS)
+            .withArguments(CommandProvider.Arguments.items())
             .withFullDescription(specialItemCmd.getDescription())
             .withPermission(specialItemCmd.getPermission().base())
             .withShortDescription(specialItemCmd.getDescription())
