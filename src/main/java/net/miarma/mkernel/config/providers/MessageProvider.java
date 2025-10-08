@@ -89,12 +89,6 @@ public class MessageProvider {
         public static String getZombificationPotionLore() {
             return MKernel.CONFIG.getString("language.items.zombificationPotion.lore");
         }
-        public static String getBolsitaName() {
-            return MKernel.CONFIG.getString("language.items.bolsita.name");
-        }
-        public static String getBolsitaLore() {
-            return MKernel.CONFIG.getString("language.items.bolsita.lore");
-        }
     }
 
     public static class Errors {

@@ -4,6 +4,12 @@ main: net.miarma.mkernel.MKernel
 api-version: '1.21.9'
 website: https://github.com/Gallardo7761/mkernel
 authors: [Gallardo7761, elpapuu1333 (Contributor & tester)]
+dependencies:
+  server:
+    NBTAPI:
+      load: BEFORE
+      required: true
+      join-classpath: true
 permissions:
     mkernel.command:
         description: Permite al usuario ejecutar comandos de MKernel

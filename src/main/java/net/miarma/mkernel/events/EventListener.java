@@ -1,30 +1,59 @@
 package net.miarma.mkernel.events;
 
-import de.tr7zw.nbtapi.NBTItem;
-import net.miarma.mkernel.MKernel;
-import net.miarma.mkernel.common.minecraft.inventories.InvseeInventory;
-import net.miarma.mkernel.config.CustomConfigManager;
-import net.miarma.mkernel.common.minecraft.inventories.DisposalInventory;
-import net.miarma.mkernel.common.minecraft.inventories.GlobalChest;
-import net.miarma.mkernel.common.minecraft.MinepacksAccessor;
-import net.miarma.mkernel.config.providers.ConfigProvider;
-import net.miarma.mkernel.config.providers.MessageProvider;
-import net.miarma.mkernel.tasks.LocationTrackerTask;
-import net.md_5.bungee.api.ChatColor;
-import net.miarma.mkernel.util.*;
-import org.bukkit.*;
+import static net.miarma.mkernel.util.Constants.ADMIN_STICK_KEY;
+import static net.miarma.mkernel.util.Constants.FROZEN_KEY;
+import static net.miarma.mkernel.util.Constants.SCISSORS_KEY;
+import static net.miarma.mkernel.util.Constants.SPAWNER_BREAKER_KEY;
+import static net.miarma.mkernel.util.Constants.SPECIAL_ITEM_TAG;
+import static net.miarma.mkernel.util.Constants.SPY_KEY;
+import static net.miarma.mkernel.util.Constants.VANISH_KEY;
+import static net.miarma.mkernel.util.Constants.ZOMBIFICATION_POTION_KEY;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
-import org.bukkit.event.entity.*;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockCookEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.CampfireStartEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
-import org.bukkit.event.player.*;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerEditBookEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerItemBreakEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -34,14 +63,24 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-import static net.miarma.mkernel.util.Constants.*;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.logging.Level;
+import de.tr7zw.nbtapi.NBT;
+import de.tr7zw.nbtapi.NBTItem;
+import net.md_5.bungee.api.ChatColor;
+import net.miarma.mkernel.MKernel;
+import net.miarma.mkernel.common.minecraft.MinepacksAccessor;
+import net.miarma.mkernel.common.minecraft.inventories.DisposalInventory;
+import net.miarma.mkernel.common.minecraft.inventories.GlobalChest;
+import net.miarma.mkernel.common.minecraft.inventories.InvseeInventory;
+import net.miarma.mkernel.config.CustomConfigManager;
+import net.miarma.mkernel.config.providers.ConfigProvider;
+import net.miarma.mkernel.config.providers.MessageProvider;
+import net.miarma.mkernel.tasks.LocationTrackerTask;
+import net.miarma.mkernel.util.FileUtil;
+import net.miarma.mkernel.util.InventoryUtil;
+import net.miarma.mkernel.util.ItemUtil;
+import net.miarma.mkernel.util.MessageUtil;
+import net.miarma.mkernel.util.PlayerUtil;
 
 public class EventListener {
 	public static void onEnable() {
@@ -235,38 +274,41 @@ public class EventListener {
 				if(item == null || item.getType().equals(Material.AIR) || item.getAmount() == 0) {
 					return;
 				}
-				NBTItem nbtItemInHand = new NBTItem(item);
-				String specialType = nbtItemInHand.getString(SPECIAL_ITEM_TAG);
+				
+				AtomicReference<String> specialType = new AtomicReference<>();
+				NBT.get(item, nbt -> {
+					specialType.set(nbt.getString(SPECIAL_ITEM_TAG));
+				});
 				
 				if(h.equals(EquipmentSlot.HAND)) {
 					switch(e.getType()) {
 						case PIG: 
-							if(SCISSORS_KEY.equals(specialType)) {
+							if(SCISSORS_KEY.equals(specialType.get())) {
 								helper.handleScissorsOnPig();
 							}
 							break;
 						case COW: 
-							if(SCISSORS_KEY.equals(specialType)) {
+							if(SCISSORS_KEY.equals(specialType.get())) {
 								helper.handleScissorsOnCow();
 							}
 							break;
 						case RABBIT:
-							if(SCISSORS_KEY.equals(specialType)) {
+							if(SCISSORS_KEY.equals(specialType.get())) {
 								helper.handleScissorsOnRabbit();
 							}
 							break;
 						case CHICKEN:
-							if(SCISSORS_KEY.equals(specialType)) {
+							if(SCISSORS_KEY.equals(specialType.get())) {
 								helper.handleScissorsOnChicken();
 							}
 							break;
 						case CREEPER:
-							if(SCISSORS_KEY.equals(specialType)) {
+							if(SCISSORS_KEY.equals(specialType.get())) {
 								helper.handleScissorsOnCreeper();
 							}
 							break;
 						case ZOMBIE: 
-							if(SCISSORS_KEY.equals(specialType)) {
+							if(SCISSORS_KEY.equals(specialType.get())) {
 								helper.handleScissorsOnZombie();
 							}
 							break;
@@ -290,9 +332,15 @@ public class EventListener {
 				if (event.getDamager() instanceof Player player) {
                     ItemStack itemStack = player.getItemInHand();
 					Material material = itemStack.getType();
+					
+					AtomicReference<String> specialType = new AtomicReference<>();
+					NBT.get(itemStack, nbt -> {
+						specialType.set(nbt.getString(SPECIAL_ITEM_TAG));
+					});
+					
 					if (material.equals(Material.STICK) && 
-							new NBTItem(itemStack).getString(SPECIAL_ITEM_TAG).equals(ADMIN_STICK_KEY) &&
-						event.getEntity() instanceof LivingEntity) {
+							ADMIN_STICK_KEY.equals(specialType.get()) &&
+							event.getEntity() instanceof LivingEntity) {
 						((LivingEntity) event.getEntity()).setHealth(0);
 					}
 				}
@@ -449,20 +497,27 @@ public class EventListener {
 				if(item.getAmount() == 0)
 					return;
 				
-				NBTItem nbtItemInHand = new NBTItem(item);
 				PlayerInventory inv = p.getInventory();
 				Block block = event.getBlock();
-				String specialType = nbtItemInHand.getString(SPECIAL_ITEM_TAG);
+				AtomicReference<String> specialType = new AtomicReference<>();
+				NBT.get(item, nbt -> {
+					specialType.set(nbt.getString(SPECIAL_ITEM_TAG));
+				});
 				
-				if(specialType != null && specialType.equals(SPAWNER_BREAKER_KEY)) {
+				if(specialType != null && SPAWNER_BREAKER_KEY.equals(specialType.get())) {
 					int prob = (int) (Math.random() * 100);
 					if(prob > ConfigProvider.Values.getSpawnerBreakerProbability()) {
 						event.setCancelled(true);
 						for(int i = 0; i < inv.getSize(); i++) {
 							ItemStack invItem = inv.getItem(i);
-			                if (invItem != null && invItem.getType() != Material.AIR && invItem.getAmount() != 0) {
-			                    NBTItem nbtItem = new NBTItem(invItem);
-			                    if (specialType.equals(nbtItem.getString(SPECIAL_ITEM_TAG))) {
+			                if (invItem != null && 
+			                		invItem.getType() != Material.AIR && 
+			                		invItem.getAmount() != 0) {
+			                    AtomicReference<String> specialTypeInv = new AtomicReference<>();
+			    				NBT.get(invItem, nbt -> {
+			    					specialTypeInv.set(nbt.getString(SPECIAL_ITEM_TAG));
+			    				});
+			                    if (specialType.get().equals(specialTypeInv.get())) {
 			                        p.playSound(p, Sound.ENTITY_ITEM_BREAK, 1, 1);
 			                        inv.clear(p.getInventory().getHeldItemSlot());
 			                    }
@@ -565,9 +620,12 @@ public class EventListener {
 			
 			@EventHandler
 			public void onPotionSplash(PotionSplashEvent event) {
-				NBTItem nbtItem = new NBTItem(event.getPotion().getItem());
-				String specialItem = nbtItem.getString(SPECIAL_ITEM_TAG);
-				if(ZOMBIFICATION_POTION_KEY.equals(specialItem)) {
+				ItemStack potion = event.getPotion().getItem();
+				AtomicReference<String> specialType = new AtomicReference<>();
+				NBT.get(potion, nbt -> {
+					specialType.set(nbt.getString(SPECIAL_ITEM_TAG));
+				});
+				if(ZOMBIFICATION_POTION_KEY.equals(specialType.get())) {
 					Collection<LivingEntity> entities = event.getAffectedEntities();
 					int r = (int) (Math.random() * 100.);
 					for(LivingEntity le : entities) {

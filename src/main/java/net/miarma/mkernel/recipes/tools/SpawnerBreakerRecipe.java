@@ -1,37 +1,45 @@
 package net.miarma.mkernel.recipes.tools;
 
-import de.tr7zw.nbtapi.NBTItem;
-import net.miarma.mkernel.MKernel;
-import net.miarma.mkernel.util.MessageUtil;
+import static net.miarma.mkernel.util.Constants.RECIPES;
+import static net.miarma.mkernel.util.Constants.SPAWNER_BREAKER_KEY;
+import static net.miarma.mkernel.util.Constants.SPECIAL_ITEM_TAG;
+
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
 
-import java.util.Collections;
-
-import static net.miarma.mkernel.util.Constants.*;
+import de.tr7zw.nbtapi.NBT;
+import net.kyori.adventure.text.Component;
+import net.miarma.mkernel.MKernel;
+import net.miarma.mkernel.config.providers.MessageProvider;
+import net.miarma.mkernel.util.MessageUtil;
 
 public class SpawnerBreakerRecipe {
 	private static ItemStack crear() {
         ItemStack spawnerBreaker = new ItemStack(Material.GOLDEN_PICKAXE);
+        Component name = Component.text(MessageUtil.parseColors(
+                MessageProvider.Items.getSpawnerBreakerName()));
+        List<Component> lore = List.of(
+    		Component.text(MessageUtil.parseColors(
+                MessageProvider.Items.getSpawnerBreakerLore())
+			)		
+		);
         
-        ItemMeta meta = spawnerBreaker.getItemMeta();  
-        meta.setDisplayName(MessageUtil.parseColors(MKernel.CONFIG
-        		.getString("language.items.spawnerBreaker.name")));
-        meta.setLore(Collections.singletonList(MessageUtil.parseColors(MKernel.CONFIG
-        		.getString("language.items.spawnerBreaker.lore"))));
-        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
-               
-        spawnerBreaker.setItemMeta(meta);
+        NBT.modify(spawnerBreaker, nbt -> {
+        	nbt.setString(SPECIAL_ITEM_TAG, SPAWNER_BREAKER_KEY);
+        	nbt.modifyMeta((readOnlyNbt, meta) ->{
+        		meta.displayName(name);
+        		meta.lore(lore);
+        		meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
+        	});
+        });
         
-        NBTItem nbtItem = new NBTItem(spawnerBreaker);
-        nbtItem.setString(SPECIAL_ITEM_TAG, SPAWNER_BREAKER_KEY);
-        
-        RECIPES.add(nbtItem.getItem());
-        return nbtItem.getItem();
+        RECIPES.add(spawnerBreaker);
+        return spawnerBreaker;
     }
     
     public static ShapedRecipe get() {

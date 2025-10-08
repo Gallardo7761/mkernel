@@ -36,10 +36,13 @@ public class MKernel extends JavaPlugin {
     
     @Override    
     public void onEnable() {
-        super.onEnable();
+        // main plugin stuff
+    	super.onEnable();
         PLUGIN = this;
         LOGGER = PLUGIN.getLogger();
         CONFIG.onEnable();
+                
+        // files handling
         HOME_CONFIG = new CustomConfigManager(PLUGIN, "homes.yml");
         WORLD_BLOCKER_CONFIG = new CustomConfigManager(PLUGIN, "blockedWorlds.yml");
 
@@ -55,11 +58,13 @@ public class MKernel extends JavaPlugin {
 
         FileUtil.createLangs("lang.yml");
         
+        // onEnable methods
         CommandAPI.onEnable();
         CommandHandler.onEnable();
         RecipeManager.onEnable();
         EventListener.onEnable();
         
+        // final stage: location tracker and GC
         LocationTrackerTask.start();
         
         GlobalChest.loadConfig();

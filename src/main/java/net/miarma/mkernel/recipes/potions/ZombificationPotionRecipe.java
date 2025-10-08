@@ -1,40 +1,47 @@
 package net.miarma.mkernel.recipes.potions;
 
-import de.tr7zw.nbtapi.NBTItem;
-import net.miarma.mkernel.MKernel;
-import net.miarma.mkernel.config.providers.MessageProvider;
-import net.miarma.mkernel.util.MessageUtil;
+import static net.miarma.mkernel.util.Constants.RECIPES;
+import static net.miarma.mkernel.util.Constants.SPECIAL_ITEM_TAG;
+import static net.miarma.mkernel.util.Constants.ZOMBIFICATION_POTION_KEY;
+
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
-import org.bukkit.inventory.meta.ItemMeta;
-import static net.miarma.mkernel.util.Constants.*;
 
-import java.util.Collections;
+import de.tr7zw.nbtapi.NBT;
+import net.kyori.adventure.text.Component;
+import net.miarma.mkernel.MKernel;
+import net.miarma.mkernel.config.providers.MessageProvider;
+import net.miarma.mkernel.util.MessageUtil;
 
 public class ZombificationPotionRecipe {
 	private static ItemStack crear() {
 		ItemStack potion = new ItemStack(Material.SPLASH_POTION);
-        
-        ItemMeta meta = potion.getItemMeta();
-        meta.setDisplayName(MessageUtil.parseColors(
+		Component name = Component.text(MessageUtil.parseColors(
                 MessageProvider.Items.getZombificationPotionName()));
-        meta.setLore(Collections.singletonList(MessageUtil.parseColors(
-                MessageProvider.Items.getZombificationPotionLore())));
-        meta.addEnchant(Enchantment.MENDING, 1, false);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        meta.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP);
-        
-        potion.setItemMeta(meta);
-        
-        NBTItem nbtItem = new NBTItem(potion);
-        nbtItem.setString(SPECIAL_ITEM_TAG, ZOMBIFICATION_POTION_KEY);
+        List<Component> lore = List.of(
+    		Component.text(MessageUtil.parseColors(
+                MessageProvider.Items.getZombificationPotionLore())
+			)		
+		);
 
-        RECIPES.add(nbtItem.getItem());
-        return nbtItem.getItem();
+        NBT.modify(potion, nbt -> {
+        	nbt.setString(SPECIAL_ITEM_TAG, ZOMBIFICATION_POTION_KEY);
+        	nbt.modifyMeta((readOnlyNbt, meta) ->{
+        		meta.displayName(name);
+        		meta.lore(lore);
+        		meta.addEnchant(Enchantment.MENDING, 1, false);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        	});
+        });
+        
+        RECIPES.add(potion);
+        return potion;
     }
     
     public static ShapedRecipe get() {
