@@ -10,6 +10,10 @@ dependencies:
       load: BEFORE
       required: true
       join-classpath: true
+    LuckPerms:
+      load: BEFORE
+      required: true
+      join-classpath: true
 permissions:
     mkernel.command:
         description: Permite al usuario ejecutar comandos de MKernel
@@ -122,6 +126,9 @@ permissions:
     mkernel.command.invsee:
         description: Abre el inventario de otro jugador
         default: op
+    mkernel.command.titulacion:
+      description: Elige titulacion
+      default: op
 
     mkernel.events.chatformat:
         description: Permite al usuario usar formatos y colores en los mensajes de chat
@@ -185,6 +192,7 @@ permissions:
             mkernel.command.me: true
             mkernel.command.do: true
             mkernel.command.payxp: true
+            mkernel.command.titulacion: true
 
     mkernel.*:
         description: Permite al usuario ejecutar todos los comandos de MKernel

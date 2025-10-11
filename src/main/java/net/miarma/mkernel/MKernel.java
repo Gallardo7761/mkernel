@@ -64,7 +64,7 @@ public class MKernel extends JavaPlugin {
         RecipeManager.onEnable();
         EventListener.onEnable();
         
-        // final stage: location tracker and GC
+        // final stage: location tracker and Global Chest
         LocationTrackerTask.start();
         
         GlobalChest.loadConfig();

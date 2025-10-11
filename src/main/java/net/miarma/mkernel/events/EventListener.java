@@ -82,7 +82,7 @@ import net.miarma.mkernel.util.ItemUtil;
 import net.miarma.mkernel.util.MessageUtil;
 import net.miarma.mkernel.util.PlayerUtil;
 
-public class EventListener {
+public class EventListener {	
 	public static void onEnable() {
 		Bukkit.getPluginManager().registerEvents(new Listener() {
 			@EventHandler
@@ -198,8 +198,8 @@ public class EventListener {
 										MessageProvider.Errors.lobbyDoesNotExist(), true));
 					}
 				}
+				
 				if (ConfigProvider.Modules.isJoinTitleEnabled()) {
-
 					Collection<? extends Player> players = Bukkit.getServer().getOnlinePlayers();
 					for (Player p : players) {
 						p.sendTitle(

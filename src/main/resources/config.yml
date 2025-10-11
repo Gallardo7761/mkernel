@@ -6,7 +6,7 @@
 #   \ \ \_/\ \ \ \\`\ /\  __/\ \ \/ /\ \/\ \/\  __/ \_\ \_  #
 #    \ \_\\ \_\ \_\ \_\ \____\\ \_\ \ \_\ \_\ \____\/\____\ #
 #     \/_/ \/_/\/_/\/_/\/____/ \/_/  \/_/\/_/\/____/\/____/ #
-#      by Gallardo7761                              v1.4.1  #
+#      by Gallardo7761                              v1.4.2  #
 #############################################################
 #             [ R ] = full restart for applying             #
 #############################################################
@@ -57,7 +57,7 @@ config:
         pitch: 0
 
 # -----------------------------------------------------------
-#  Command Configuration [ R ]                              
+#  Command Configuration [ R ]
 # -----------------------------------------------------------
 
 arguments:
@@ -72,6 +72,7 @@ arguments:
   inventoryIndex: "índice de inventario"
   warpName: "nombre warp"
   warp: "warp"
+  titulacion: "titulación"
 
 commands:
   mkernel:
@@ -414,13 +415,24 @@ commands:
     messages:
       opened: "[P] &7Has abierto el inventario de &a%player%"
 
+  titulacion:
+    name: "titulacion"
+    description: "Especifica tu titulación"
+    permission: "mkernel.command.titulacion"
+    usage: "/titulacion <titulacion>"
+    messages:
+      success: "[P] &7Tu titulación se ha establecido a &a%titulacion% &7correctamente"
+      getCurrent: "[P] &7Perteneces a &a%titulacion%"
+      fail: "[P] &cHubo un error estableciendo tu titulación. Contacta con un administrador."
+      invalid: "[P] &cEsta titulación no existe."
+
 # -----------------------------------------------------------
 #  Message Configuration
 # -----------------------------------------------------------
 
 language:
   prefix: "&#2ca268&lMKernel &8»&r"
-  adminPrefix: '&#2ca268&lAdminChat &e&l»&r'      
+  adminPrefix: '&#2ca268&lAdminChat &e&l»&r'
 
   inventories:
     globalChest:
@@ -487,7 +499,6 @@ language:
     notEnoughLevels: "[P] &cNo tienes suficientes niveles para esto"
     cooldownHasNotExpired: "[P] &cDebes esperar %time% segundos para volver a usar este comando"
     maxWarpsReached: "[P] &cHas alcanzado el límite de warps almacenados"
-
 
 # ⚠️ Do not modify this line ⚠️
 file-version: 3

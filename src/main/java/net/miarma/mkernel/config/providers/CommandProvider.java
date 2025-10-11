@@ -11,11 +11,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Set;
 
 import static net.miarma.mkernel.util.Constants.RECIPES;
 
 public class CommandProvider {
 	public static class Arguments {
+	    public static final Set<String> TITULACIONES = Set.of("IC", "IS", "TI", "SA", "IA");
 
 	    public static Argument<?> passwordArg() {
 	        return new GreedyStringArgument(MKernel.CONFIG.getString("arguments.password"));
@@ -80,6 +82,11 @@ public class CommandProvider {
 	                                .toList()
 	                                .toArray(new String[0])
 	                ));
+	    }
+	    
+	    public static Argument<?> titulaciones() {
+	    	return new StringArgument(MKernel.CONFIG.getString("arguments.titulacion"))
+	    			.replaceSuggestions(ArgumentSuggestions.strings(TITULACIONES));
 	    }
 	}
 
@@ -578,5 +585,20 @@ public class CommandProvider {
                 MKernel.CONFIG.getString("commands.invsee.messages.opened")
             )
             .build();
+    }
+    
+    public static CommandWrapper getDegreeCommand() {
+    	return CommandWrapper.command(MKernel.CONFIG.getString("commands.titulacion.name"))
+			.withDescription(MKernel.CONFIG.getString("commands.titulacion.description"))
+			.withPermission(PermissionWrapper.of(
+                MKernel.CONFIG.getString("commands.titulacion.permission")
+            ))
+			.withMessages(
+				MKernel.CONFIG.getString("commands.titulacion.messages.success"),
+				MKernel.CONFIG.getString("commands.titulacion.messages.getCurrent"),
+				MKernel.CONFIG.getString("commands.titulacion.messages.fail"),
+				MKernel.CONFIG.getString("commands.titulacion.messages.invalid")
+			)
+			.build();
     }
 }

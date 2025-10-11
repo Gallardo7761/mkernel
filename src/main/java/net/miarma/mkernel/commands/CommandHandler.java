@@ -51,6 +51,7 @@ public class CommandHandler {
         SunCommand.register();
         RainCommand.register();
         InvseeCommand.register();
+        DegreeCommand.register();
     }
 
     public static void onEnable() {
