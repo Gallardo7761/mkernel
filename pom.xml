@@ -14,7 +14,7 @@
     <properties>
         <java.version>21</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <mc.version>1.21.9</mc.version>
+        <mc.version>1.21.10</mc.version>
         <bukkit.fork>paper</bukkit.fork>
     </properties>
 
@@ -139,13 +139,17 @@
             <id>pcgf-repo</id>
             <url>https://repo.pcgamingfreaks.at/repository/maven-everything</url>
         </repository>
+        <repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
     </repositories>
 
     <dependencies>
         <dependency>
 	      <groupId>io.papermc.paper</groupId>
 	      <artifactId>paper-api</artifactId>
-	      <version>1.21.8-R0.1-SNAPSHOT</version>
+	      <version>1.21.10-R0.1-SNAPSHOT</version>
 	      <scope>provided</scope>
 	    </dependency>
 
@@ -193,6 +197,13 @@
 	        <version>5.5</version>
 	        <scope>provided</scope>
 	    </dependency>
+	    
+	    <dependency>
+		    <groupId>com.github.GriefPrevention</groupId>
+		    <artifactId>GriefPrevention</artifactId>
+		    <version>16.18.2</version>
+            <scope>provided</scope>
+		</dependency>
 
     </dependencies>
 </project>

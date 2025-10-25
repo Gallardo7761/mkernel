@@ -66,6 +66,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
+import me.ryanhamshire.GriefPrevention.GriefPrevention;
 import net.md_5.bungee.api.ChatColor;
 import net.miarma.mkernel.MKernel;
 import net.miarma.mkernel.common.minecraft.MinepacksAccessor;
