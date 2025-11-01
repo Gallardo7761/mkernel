@@ -1,0 +1,504 @@
+#############################################################
+#           __  __                                ___       #
+#   /'\_/`\/\ \/\ \                              /\_ \      #
+#  /\      \ \ \/'/'     __   _ __    ___      __\//\ \     #
+#  \ \ \__\ \ \ , <    /'__`\/\`'__\/' _ `\  /'__`\\ \ \    #
+#   \ \ \_/\ \ \ \\`\ /\  __/\ \ \/ /\ \/\ \/\  __/ \_\ \_  #
+#    \ \_\\ \_\ \_\ \_\ \____\\ \_\ \ \_\ \_\ \____\/\____\ #
+#     \/_/ \/_/\/_/\/_/\/____/ \/_/  \/_/\/_/\/____/\/____/ #
+#      by Gallardo7761                              v1.4.2  #
+#############################################################
+#             [ R ] = full restart for applying             #
+#############################################################
+
+# -----------------------------------------------------------
+#  Plugin Configuration [ R ]
+# -----------------------------------------------------------
+API_BASE: "https://api.miarma.net/miarmacraft"
+
+config:
+  permissions:
+    chatFormat: "mkernel.events.chatFormat"
+    adminChat: "mkernel.events.adminchat"
+    mentions: "mkernel.events.mentions"
+
+  values:
+    rottenFleshCookTime: 60
+    zombificationPotionTime: 180
+    spawnerBreakerProbability: 30
+    recInvRequiredLevel: 10
+    xpLossOnDeath: 0.7
+    tpCooldown: "5m"
+    maxWarps: 3
+    recInvPlayerRadius: 10
+    recInvSpawnDistance: 150
+
+  modules:
+    joinTitle: true
+    leaveTitle: true
+    deathTitle: true
+    harvestOnRightClick: true
+    autoItemRefill: true
+    adminChat: true
+    chatFormat: true
+    mentions: true
+    bookColors: true
+    spawnAtLobby: true
+    recoverInventory: true
+
+  worlds:
+    lobby:
+      name: "lobby"
+      coords:
+        x: 0.5
+        y: 65
+        z: 0.5
+        yaw: 180
+        pitch: 0
+
+# -----------------------------------------------------------
+#  Command Configuration [ R ]
+# -----------------------------------------------------------
+
+arguments:
+  reload: "recargar"
+  password: "contraseña"
+  player: "jugador"
+  levels: "niveles"
+  times: "veces"
+  world: "mundo"
+  message: "mensaje"
+  item: "item"
+  inventoryIndex: "índice de inventario"
+  warpName: "nombre warp"
+  warp: "warp"
+  titulacion: "titulación"
+
+commands:
+  mkernel:
+    description: "Muestra la información de mkernel"
+    permission: "mkernel.command"
+    usage: "/mkernel [subcomando]"
+    subcommands:
+      reload:
+        name: "reload"
+        description: "Recarga mkernel"
+        permission: "mkernel.command.reload"
+        usage: "/mkernel reload"
+        messages:
+          success: "[P] mkernel ha sido recargado correctamente"
+          error: "[P] Ha ocurrido un error al recargar mkernel"
+      config:
+        name: "config"
+        description: "Abre el menú de configuración"
+        permission: "mkernel.command.config"
+        usage: "/mkernel config"
+
+  tpa:
+    name: "tpa"
+    description: "Envía una petición de teletransporte"
+    permission: "mkernel.command.tpa"
+    usage: "/tpa <jugador>"
+    messages:
+      tpaFromPlayer: "[P] &7El jugador &a%sender% &7te ha enviado una petición de teletransporte &c[%sender% -> Tú]"
+      tpaToPlayer: "[P] &7Has enviado una petición de teletransporte a &a%target% &c[Tú -> %target%]"
+
+  tpahere:
+    name: "tpahere"
+    description: "Envía una petición de teletransporte a un jugador"
+    permission: "mkernel.command.tpahere"
+    usage: "/tpahere <jugador>"
+    messages:
+      tpaFromPlayer: "[P] &7El jugador &a%sender% &7te ha enviado una petición de teletransporte &c[Tú -> %sender%]"
+      tpaToPlayer: "[P] &7Has enviado una petición de teletransporte a &a%target% &c[%target% -> Tú]"
+
+  tpaccept:
+    name: "tpaccept"
+    description: "Acepta una petición de teletransporte"
+    permission: "mkernel.command.tpaccept"
+    usage: "/tpaccept <jugador>"
+    messages:
+      accepted: "[P] &7Has aceptado la petición de teletransporte"
+      acceptedToTarget: "[P] &7El jugador &a%sender% &7ha aceptado tu petición de teletransporte"
+
+  tpdeny:
+    name: "tpdeny"
+    description: "Rechaza una petición de teletransporte"
+    permission: "mkernel.command.tpdeny"
+    usage: "/tpdeny <jugador>"
+    messages:
+      denied: "[P] &7Has rechazado la petición de teletransporte"
+      deniedToTarget: "[P] &7El jugador &a%sender% &7ha rechazado tu petición de teletransporte"
+
+  spawn:
+    name: "spawn"
+    description: "Teletransportate a ti o a otro jugador al spawn"
+    permissions:
+        base: "mkernel.command.spawn"
+        others: "mkernel.command.spawn.others"
+    messages:
+      teleported: "[P] &7Has sido teletransportado al spawn"
+      spawnYouOthers: "[P] &7Has teletransportado a &a%victim% &7al spawn"
+      spawnOthersYou: "[P] &7Has sido teletransportado al spawn por &a%sender%"
+
+  lobby:
+    name: "lobby"
+    description: "Teletransportate al lobby"
+    permissions:
+        base: "mkernel.command.lobby"
+        others: "mkernel.command.lobby.others"
+    messages:
+      teleported: "[P] &7Has sido teletransportado al lobby"
+      lobbyYouOthers: "[P] &7Has teletransportado a &a%victim% &7al lobby"
+      lobbyOthersYou: "[P] &7Has sido teletransportado al lobby por &a%sender%"
+
+  sendcoords:
+    name: "sendcoords"
+    description: "Envía tus coordenadas a otro jugador"
+    permission: "mkernel.command.sendcoords"
+    usage: "/sendcoords <jugador>"
+    messages:
+      sent: "[P] &7Tus coordenadas han sido enviadas a &a%target%"
+      coordsMsg: "&8[&c%sender%&8 -> &cTú&8] &7Mis coordenadas son:\n&aX: &7%x%\n&aY: &7%y%\n&aZ: &7%z%"
+
+  blockworld:
+    name: "blockworld"
+    aliases: ["bworld", "bw"]
+    description: "Bloquea un mundo"
+    permission: "mkernel.command.blockworld"
+    usage: "/blockworld | /bworld | /bw <mundo>"
+    messages:
+      worldHasBeenBlocked: "[P] &7El mundo &a%world% &7ha sido bloqueado"
+      worldHasBeenUnblocked: "[P] &7El mundo &a%world% &7ha sido desbloqueado"
+
+  payxp:
+    name: "payxp"
+    description: "Paga niveles de XP a otro jugador"
+    permission: "mkernel.command.payxp"
+    usage: "/payxp <jugador> <niveles>"
+    messages:
+      payYouOthers: "[P] &7Has pagado &a%amount% &7niveles de XP a &a%target%"
+      payOthersYou: "[P] &7El jugador &a%sender% &7te ha dado &a%amount% &7niveles de XP"
+
+  specialitem:
+    name: "specialitem"
+    description: "Obtiene un item especial de mkernel"
+    permission: "mkernel.command.specialitem"
+    usage: "/specialitem <item>"
+    messages:
+      itemReceived: "[P] &7Has obtenido &a%item%"
+
+  opme:
+    name: "opme"
+    description: "Te da el op"
+    permission: "mkernel.command.opme"
+    messages:
+      opped: "[P] &7Ahora eres &a&nop"
+      alreadyOp: "[P] &cYa eres op"
+
+  deopme:
+    name: "deopme"
+    description: "Te quita el op"
+    permission: "mkernel.command.deopme"
+    messages:
+      deOpped: "[P] &7Ya no eres &a&nop"
+      youAreNotOp: "[P] &cNo eres op"
+
+  disposal:
+    name: "disposal"
+    description: "Abre el disposal"
+    permissions:
+        base: "mkernel.command.disposal"
+        others: "mkernel.command.disposal.others"
+
+  globalchest:
+    name: "globalchest"
+    description: "Abre el cofre global"
+    aliases: ["gc"]
+    permissions:
+      base: "mkernel.command.globalchest"
+      others: "mkernel.command.globalchest.others"
+
+  do:
+    name: "do"
+    description: "Acciones de entorno"
+    permission: "mkernel.command.do"
+
+  me:
+    name: "me"
+    description: "Acciones de personaje"
+    permission: "mkernel.command.me"
+
+  sethome:
+    name: "sethome"
+    description: "Establece tu home"
+    permission: "mkernel.command.sethome"
+    messages:
+      homeSet: "[P] &7Hogar establecido en &a%x% %y% %z%&r"
+
+  home:
+    name: "home"
+    description: "Teletransportate a tu hogar"
+    permission: "mkernel.command.home"
+    messages:
+      teleported: "[P] &7Has sido teletransportado a tu hogar"
+      homeDoesNotExist: "[P] &cNo tienes ningún hogar establecido"
+
+  recinv:
+    name: "recinv"
+    description: "Recupera tu inventario"
+    permission: "mkernel.command.recinv"
+    messages:
+      inventoryRecovered: "[P] &7Has recuperado &a%items% &7items"
+      notEnoughLevels: "[P] &cNo tienes suficientes niveles. Necesitas &a%required%"
+      noItemsToRecover: "[P] &cNo hay items que recuperar"
+
+  gmc:
+    name: "gmc"
+    description: "Cambia tu modo de juego a creativo"
+    permissions:
+      base: "mkernel.command.gmc"
+      others: "mkernel.command.gmc.others"
+    usage: "/gmc [jugador]"
+    messages:
+      self: "[P] &7Tu modo de juego ha sido cambiado a &aCreativo"
+      others: "[P] &7El modo de juego de &a%player% &7ha sido cambiado a &aCreativo"
+
+  gms:
+    name: "gms"
+    description: "Cambia tu modo de juego a supervivencia"
+    permissions:
+      base: "mkernel.command.gms"
+      others: "mkernel.command.gms.others"
+    usage: "/gms [jugador]"
+    messages:
+      self: "[P] &7Tu modo de juego ha sido cambiado a &aSupervivencia"
+      others: "[P] &7El modo de juego de &a%player% &7ha sido cambiado a &aSupervivencia"
+
+  gmsp:
+    name: "gmsp"
+    description: "Cambia tu modo de juego a espectador"
+    permissions:
+      base: "mkernel.command.gmsp"
+      others: "mkernel.command.gmsp.others"
+    usage: "/gmsp [jugador]"
+    messages:
+      self: "[P] &7Tu modo de juego ha sido cambiado a &aEspectador"
+      others: "[P] &7El modo de juego de &a%player% &7ha sido cambiado a &aEspectador"
+
+  gma:
+    name: "gma"
+    description: "Cambia tu modo de juego a aventura"
+    permissions:
+      base: "mkernel.command.gma"
+      others: "mkernel.command.gma.others"
+    usage: "/gma [jugador]"
+    messages:
+      self: "[P] &7Tu modo de juego ha sido cambiado a &aAventura"
+      others: "[P] &7El modo de juego de &a%player% &7ha sido cambiado a &aAventura"
+
+  vanish:
+    name: "vanish"
+    description: "Desaparece"
+    permission: "mkernel.command.vanish"
+    messages:
+      vanished: "[P] &7Te has hecho invisible"
+      unvanished: "[P] &7Ahora eres visible de nuevo"
+
+  warp:
+    name: "warp"
+    description: "Muestra un warp de la lista"
+    permission: "mkernel.command.warp"
+    usage: "/warp {add/remove} <nombre warp>"
+    messages:
+      noWarpsStored: "[P] &cNo tienes warps almacenados"
+      warpList: |
+        [P] &7Warps almacenados:&r
+        %warps%
+    subcommands:
+      add:
+        name: "add"
+        description: "Añade un warp"
+        permission: "mkernel.command.warp.add"
+        usage: "/warp add <nombre>"
+        messages:
+          warpAdded: "[P] &7Warp &a%warp% &7añadido correctamente"
+          warpAlreadyExists: "[P] &cEl warp &a%warp% &cya existe"
+      remove:
+        name: "remove"
+        description: "Elimina un warp"
+        permission: "mkernel.command.warp.remove"
+        usage: "/warp remove <nombre>"
+        messages:
+          warpRemoved: "[P] &7Warp &a%warp% &7eliminado correctamente"
+          warpNotFound: "[P] &cEl warp &a%warp% &cno existe"
+
+  spy:
+    name: "spy"
+    description: "Espía los mensajes de chat"
+    permission: "mkernel.command.spy"
+    messages:
+      enabled: "[P] &7Modo espía &aactivado"
+      disabled: "[P] &7Modo espía &adesactivado"
+
+  freeze:
+    name: "freeze"
+    description: "Congela a un jugador"
+    permission: "mkernel.command.freeze"
+    usage: "/freeze <jugador>"
+    messages:
+      frozen: "[P] &7El jugador &a%player% &7ha sido &bcongelado"
+      unfrozen: "[P] &7El jugador &a%player% &7ha sido &bdescongelado"
+      beenFrozen: "[P] &7Has sido &bcongelado por &a%sender%"
+      beenUnfrozen: "[P] &7Has sido &bdescongelado por &a%sender%"
+
+  heal:
+    name: "heal"
+    description: "Cura a un jugador"
+    permissions:
+      base: "mkernel.command.heal"
+      others: "mkernel.command.heal.others"
+    usage: "/heal <jugador>"
+    messages:
+      healedSelf: "[P] &7Te has curado"
+      healedPlayer: "[P] &7Has curado a &a%player%"
+      beenHealed: "[P] &7Has sido curado por &a%sender%"
+
+  launch:
+    name: "launch"
+    description: "Lanza a un jugador"
+    permission: "mkernel.command.launch"
+    usage: "/launch <jugador>"
+    messages:
+      launched: "[P] &7Has lanzado a &a%player%"
+
+  sun:
+    name: "sun"
+    description: "Cambia el clima a soleado"
+    permission: "mkernel.command.sun"
+    messages:
+      sunSet: "[P] &7Se ha cambiado el clima a &asoleado"
+
+  rain:
+    name: "rain"
+    description: "Cambia el clima a lluvioso"
+    permission: "mkernel.command.rain"
+    messages:
+      rainSet: "[P] &7Se ha cambiado el clima a &alluvioso"
+
+  thunder:
+    name: "thunder"
+    description: "Cambia el clima a tormentoso"
+    permission: "mkernel.command.thunder"
+    messages:
+      thunderSet: "[P] &7Se ha cambiado el clima a &atormentoso"
+
+  day:
+    name: "day"
+    description: "Pone el tiempo a día"
+    permission: "mkernel.command.day"
+    messages:
+      daySet: "[P] &7Ahora es de &adía"
+
+  night:
+    name: "night"
+    description: "Pone el tiempo a noche"
+    permission: "mkernel.command.night"
+    messages:
+      nightSet: "[P] &7Ahora es de &anoche"
+
+  invsee:
+    name: "invsee"
+    description: "Mira el inventario de un jugador"
+    permission: "mkernel.command.invsee"
+    usage: "/invsee <jugador>"
+    messages:
+      opened: "[P] &7Has abierto el inventario de &a%player%"
+
+  titulacion:
+    name: "titulacion"
+    description: "Especifica tu titulación"
+    permission: "mkernel.command.titulacion"
+    usage: "/titulacion <titulacion>"
+    messages:
+      success: "[P] &7Tu titulación se ha establecido a &a%titulacion% &7correctamente"
+      getCurrent: "[P] &7Perteneces a &a%titulacion%"
+      fail: "[P] &cHubo un error estableciendo tu titulación. Contacta con un administrador."
+      invalid: "[P] &cEsta titulación no existe."
+
+# -----------------------------------------------------------
+#  Message Configuration
+# -----------------------------------------------------------
+
+language:
+  prefix: "&#2ca268&lMKernel &8»&r"
+  adminPrefix: '&#2ca268&lAdminChat &e&l»&r'
+
+  inventories:
+    globalChest:
+      title: "&#2ca268Cofre global"
+    disposal:
+      title: "&#2ca268Basura"
+    invsee:
+      title: "&8Inventario de %player%"
+    configMenu:
+      title: "&#2ca268Configuración"
+      valueName: "&#2ca268&l"
+      valueLore: "&7Valor: &#2ca268"
+
+  titles:
+    titleFormat: "&a&l"
+    subtitles:
+      join: "&aHa entrado al servidor!"
+      leave: "&cSe ha ido del servidor!"
+      death: "&c%player% ha muerto"
+
+  events:
+    onMention:
+      format: "&a&l@"
+      youWereMentioned: "[P] &e%player% &7te ha mencionado!"
+    onDeath:
+      lostLevelsItems: "[P] &7Has perdido &atus items &7y &a%levels% niveles de XP &7al morir. Puedes recuperar tus items con &a/recinv"
+      itemsNotRecovered: "[P] &7Tus items no se han recuperado porque has muerto muy cerca del spawn/point o había jugadores cerca tuya. Los puedes recuperar en: &a%x% %y% %z%"
+    onCommand:
+      spyMessage: "&7&o[Spy] %player%: %message%"
+
+  items:
+    scissors:
+      name: "&e&lTijeras"
+      lore: "&7Vacas, cerdos, zombies"
+    adminStick:
+      name: "&c&lADMIN STICK"
+      lore: "&dUn palo para dominarlos a todos!"
+    spawnerBreaker:
+      name: "&6&lRompe-Spawners"
+      lore: "&d50% de romper el spawner o romperse"
+    zombificationPotion:
+      name: "&#5f7d48&lPoción de Zombificación"
+      lore: "&bConvierte a un aldeano en zombie"
+    bolsita:
+      name: "&eBolsita"
+      lore: "&7Mete tus items aquí"
+
+  errors:
+    langs: "[P] &cError creando los archivos de lenguaje"
+    notConsoleCommand: "[P] &cEste comando no se puede ejecutar desde la consola"
+    onlyPlayerCommand: "[P] &cEste comando sólo lo puede ejecutar un jugador"
+    playerNotFound: "[P] &cEl jugador no se ha encontrado o no está conectado"
+    cantTeleportToYourself: "[P] &cNo puedes teletransportarte a ti mismo"
+    requestAlreadySent: "[P] &cYa has enviado una petición de teletransporte a este jugador"
+    noRequestFound: "[P] &cNo tienes ninguna petición de teletransporte"
+    noPermission: "[P] &cNo tienes permisos para eso"
+    tooManyArguments: "[P] &cDemasiados argumentos"
+    playerRequired: "[P] &cDebes especificar un jugador"
+    invalidArgument: "[P] &cArgumento no válido"
+    temporarilyDisabled: "[P] &cEste comando está temporalmente desactivado"
+    itemNotFound: "[P] &cNo se ha encontrado el item"
+    lobbyDoesNotExist: "[P] ERROR: El lobby definido en el config no existe"
+    worldIsBlocked: "[P] &7El mundo &a%world% &7está bloqueado"
+    notEnoughLevels: "[P] &cNo tienes suficientes niveles para esto"
+    cooldownHasNotExpired: "[P] &cDebes esperar %time% segundos para volver a usar este comando"
+    maxWarpsReached: "[P] &cHas alcanzado el límite de warps almacenados"
+
+# ⚠️ Do not modify this line ⚠️
+file-version: 3
