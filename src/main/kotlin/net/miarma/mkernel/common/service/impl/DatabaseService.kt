@@ -452,7 +452,7 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
                         if (rs.next()) {
                             val senderUUID = UUID.fromString(rs.getString("sender_uuid"))
                             val type = if (rs.getInt("is_tpa") == 1) TpaType.TPA else TpaType.TPA_HERE
-                            Pair(senderUUID, type) // Devolvemos un par con la info
+                            Pair(senderUUID, type)
                         } else {
                             null
                         }

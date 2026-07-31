@@ -47,7 +47,7 @@ class ConfigInventory @Inject constructor(
         val structure = Array(rows) { "x x x x x x x x x" }
 
         val gui = PagedGui.itemsBuilder()
-            .setStructure(*structure) // El asterisco desempaqueta el array
+            .setStructure(*structure)
             .addIngredient('x', Markers.CONTENT_LIST_SLOT_HORIZONTAL)
             .setContent(configItems)
             .build()
