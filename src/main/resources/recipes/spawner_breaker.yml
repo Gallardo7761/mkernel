@@ -1,0 +1,23 @@
+id: "spawner_breaker"
+type: "SHAPED"
+
+result:
+  material: "GOLDEN_PICKAXE"
+  name: "<italic:false><gold>Extractor de spawners</gold>"
+  lore:
+    - "<italic:false><light_purple>30% de romper el spawner o romperse</light_purple>"
+  flags:
+    - "HIDE_UNBREAKABLE"
+
+recipe:
+  shape:
+    - " N "
+    - " P "
+    - " D "
+  ingredients:
+    N: "NETHERITE_INGOT"
+    P: "GOLDEN_PICKAXE"
+    D: "DIAMOND"
+
+properties:
+  break_probability: 30

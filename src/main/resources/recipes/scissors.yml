@@ -1,0 +1,29 @@
+id: "scissors"
+type: "SHAPED"
+
+result:
+  material: "SHEARS"
+  name: "<italic:false><aqua>Tijeras</aqua>"
+  lore:
+    - "<italic:false><gray>Cortan algo más que lana...</gray>"
+  enchants:
+    - "unbreaking:1"
+  flags:
+    - "HIDE_ENCHANTS"
+
+recipe:
+  shape:
+    - " D "
+    - "DSD"
+    - " D "
+  ingredients:
+    D: "DIAMOND"
+    S: "SHEARS"
+
+properties:
+  creeper_chance: 10
+  creeper_head_chance: 5
+  animal_chance: 100
+  zombie_chance: 50
+  damage_on_success: 2
+  damage_on_fail: 1

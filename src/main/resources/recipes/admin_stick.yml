@@ -1,0 +1,17 @@
+id: "admin_stick"
+type: "SHAPED"
+
+result:
+  material: "STICK"
+  name: "<italic:false><red><bold>ADMIN STICK</bold></red>"
+  lore:
+    - "<italic:false><light_purple>Un palo para dominarlos a todos!</light_purple>"
+
+recipe:
+  shape:
+    - "DDD"
+    - "DSD"
+    - "DDD"
+  ingredients:
+    D: "BEDROCK"
+    S: "STICK"

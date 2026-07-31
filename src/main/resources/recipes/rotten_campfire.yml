@@ -1,0 +1,11 @@
+id: "rotten_campfire"
+type: "CAMPFIRE"
+category: "FOOD"
+
+result:
+  material: "BEEF"
+
+cooking:
+  ingredient: "ROTTEN_FLESH"
+  experience: 0.0
+  cook_time_seconds: 30

@@ -1,0 +1,24 @@
+id: "zombification_potion"
+type: "SHAPED"
+
+result:
+  material: "SPLASH_POTION"
+  name: "<italic:false><#5f7d48><bold>Poción de Zombificación</bold></#5f7d48>"
+  lore:
+    - "<italic:false><red>Convierte a un aldeano en zombie</red>"
+  enchants:
+    - "mending:1"
+  flags:
+    - "HIDE_ENCHANTS"
+
+recipe:
+  shape:
+    - " Z "
+    - " P "
+    - "   "
+  ingredients:
+    Z: "ZOMBIE_HEAD"
+    P: "SPLASH_POTION"
+
+properties:
+  potion_time: 180
