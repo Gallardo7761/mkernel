@@ -16,6 +16,7 @@ import net.miarma.mkernel.common.service.IService
 import net.miarma.mkernel.common.service.impl.*
 import net.miarma.mkernel.event.*
 import net.miarma.mkernel.task.LocationTrackerTask
+import net.miarma.mkernel.util.BukkitDispatcher
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Logger
@@ -35,6 +36,9 @@ class MKernel : JavaPlugin(), CoroutineScope {
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Default
 
+    lateinit var syncDispatcher: BukkitDispatcher
+        private set
+
     private lateinit var injector: Injector
     private val services = mutableListOf<IService>()
     private lateinit var recipeLoader: RecipeLoader
@@ -52,7 +56,7 @@ class MKernel : JavaPlugin(), CoroutineScope {
         LOGGER = logger
 
         job = Job()
-
+        syncDispatcher = BukkitDispatcher(this)
         injector = Guice.createInjector(MKernelModule(this))
 
         services.apply {
@@ -107,6 +111,10 @@ class MKernel : JavaPlugin(), CoroutineScope {
     }
 
     fun launchAsync(block: suspend CoroutineScope.() -> Unit) {
-        (this as? CoroutineScope)?.launch(block = block)
+        launch(Dispatchers.Default, block = block)
+    }
+
+    fun launchSync(block: suspend CoroutineScope.() -> Unit) {
+        launch(syncDispatcher, block = block)
     }
 }

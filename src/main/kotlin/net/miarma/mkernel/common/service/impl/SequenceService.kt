@@ -5,6 +5,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.miarma.mkernel.common.model.Sequence
 import net.miarma.mkernel.common.service.IService
+import net.miarma.mkernel.util.delayTicks
 import org.bukkit.Bukkit
 import java.util.*
 
@@ -48,15 +49,16 @@ class SequenceService @Inject constructor(
             return false
         }
 
-        var delay = 0L
-        for (step in sequence.steps) {
-            delay += step.delayTicks
-            Bukkit.getScheduler().runTaskLater(
-                plugin,
-                Runnable { Bukkit.dispatchCommand(Bukkit.getConsoleSender(), step.command) },
-                delay
-            )
+        plugin.launchSync {
+            for (step in sequence.steps) {
+                if (step.delayTicks > 0) {
+                    delayTicks(plugin, step.delayTicks)
+                }
+
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), step.command)
+            }
         }
+
         return true
     }
 

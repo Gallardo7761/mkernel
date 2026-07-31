@@ -6,7 +6,6 @@ import net.miarma.mkernel.common.service.IService
 import net.miarma.mkernel.common.teleport.TpaRequest
 import net.miarma.mkernel.common.teleport.TpaType
 import org.bukkit.entity.Player
-import java.util.function.Consumer
 
 @Singleton
 class TeleportService @Inject constructor(private val databaseService: DatabaseService) : IService {
@@ -19,12 +18,12 @@ class TeleportService @Inject constructor(private val databaseService: DatabaseS
         )
     }
 
-    fun getTpaRequest(from: Player, to: Player, callback: Consumer<TpaRequest?>) {
-        databaseService.getTpaRequest(from, to, callback)
+    suspend fun getTpaRequest(from: Player, to: Player): TpaRequest? {
+        return databaseService.getTpaRequest(from, to)
     }
 
-    fun getIncomingTpaRequest(to: Player, callback: Consumer<TpaRequest?>) {
-        databaseService.getIncomingTpaRequest(to, callback)
+    suspend fun getIncomingTpaRequest(to: Player): TpaRequest? {
+        return databaseService.getIncomingTpaRequest(to)
     }
 
     fun removeRequest(request: TpaRequest) {

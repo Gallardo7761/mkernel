@@ -24,6 +24,8 @@ class PlayerConnectionListener @Inject constructor(
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
 
+        databaseService.loadPlayerData(player)
+
         if (configService.isModuleEnabled("spawnAtLobby")) {
             val lobby = configService.getLobbyWorld()
             lobby.toLocation().world?.let { player.teleportAsync(lobby.toLocation()) }
@@ -48,6 +50,8 @@ class PlayerConnectionListener @Inject constructor(
     @EventHandler
     fun onPlayerLeave(event: PlayerQuitEvent) {
         val player = event.player
+
+        databaseService.unloadPlayerData(player)
 
         if (configService.isModuleEnabled("leaveTitle")) {
             val rawTitleTemplate = configService.getString("language.titles.titleFormat")

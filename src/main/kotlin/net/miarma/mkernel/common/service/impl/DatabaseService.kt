@@ -20,8 +20,8 @@ import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
 import java.util.*
+import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
-import java.util.function.Consumer
 
 @Singleton
 class DatabaseService @Inject constructor(private val plugin: MKernel) : IService {
@@ -29,6 +29,9 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
     private val dbFile = File(plugin.dataFolder, "database.db")
     private var connection: Connection? = null
     private val dbDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+
+    private val homeCache = ConcurrentHashMap<UUID, Location>()
+    private val warpCache = ConcurrentHashMap<UUID, MutableSet<Warp>>()
 
     override fun onEnable() {
         runBlocking {
@@ -172,7 +175,26 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
         }
     }
 
-    suspend fun getHome(player: Player): Location? = withContext(dbDispatcher) {
+    fun loadPlayerData(player: Player) {
+        plugin.launchAsync {
+            val uuid = player.uniqueId
+
+            val home = fetchHomeFromDb(player)
+            if (home != null)
+                homeCache[uuid] = home
+
+            val warps = fetchWarpsFromDb(player)
+            warpCache[uuid] = ConcurrentHashMap.newKeySet<Warp>().apply { addAll(warps) }
+        }
+    }
+
+    fun unloadPlayerData(player: Player) {
+        val uuid = player.uniqueId
+        homeCache.remove(uuid)
+        warpCache.remove(uuid)
+    }
+
+    private suspend fun fetchHomeFromDb(player: Player): Location? = withContext(dbDispatcher) {
         getConnection().prepareStatement(
             "SELECT w.name, h.x, h.y, h.z, h.yaw, h.pitch " +
                     "FROM Home h JOIN World w ON h.world_id = w.world_id " +
@@ -187,16 +209,42 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
                     val z = rs.getDouble("z")
                     val yaw = rs.getFloat("yaw")
                     val pitch = rs.getFloat("pitch")
-
                     Bukkit.getWorld(worldName)?.let { Location(it, x, y, z, yaw, pitch) }
-                } else {
-                    null
-                }
+                } else null
             }
         }
     }
 
+    private suspend fun fetchWarpsFromDb(player: Player): Set<Warp> = withContext(dbDispatcher) {
+        getConnection().prepareStatement(
+            "SELECT wa.warp_name, wa.x, wa.y, wa.z, w.name " +
+                    "FROM Warp wa JOIN World w ON wa.world_id = w.world_id " +
+                    "WHERE wa.owner_uuid = ?"
+        ).use { ps ->
+            ps.setString(1, player.uniqueId.toString())
+            ps.executeQuery().use { rs ->
+                generateSequence {
+                    if (rs.next()) {
+                        Warp(
+                            rs.getString("warp_name"),
+                            rs.getDouble("x"),
+                            rs.getDouble("y"),
+                            rs.getDouble("z"),
+                            rs.getString("name")
+                        )
+                    } else null
+                }.toSet()
+            }
+        }
+    }
+
+    fun getHome(player: Player): Location? {
+        return homeCache[player.uniqueId]
+    }
+
     fun setHome(player: Player, location: Location) {
+        homeCache[player.uniqueId] = location
+
         plugin.launchAsync {
             withContext(dbDispatcher) {
                 val conn = getConnection()
@@ -218,7 +266,23 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
         }
     }
 
+    fun getWarpCount(player: Player): Int {
+        return warpCache[player.uniqueId]?.size ?: 0
+    }
+
+    fun warpExists(player: Player, warpName: String): Boolean {
+        return warpCache[player.uniqueId]?.any { it.alias.equals(warpName, ignoreCase = true) } ?: false
+    }
+
+    fun getWarpObjects(player: Player): Set<Warp> {
+        return warpCache[player.uniqueId] ?: emptySet()
+    }
+
     fun createWarp(player: Player, warpName: String, location: Location) {
+        val newWarp = Warp(warpName, location.x, location.y, location.z, location.world.name)
+
+        warpCache.computeIfAbsent(player.uniqueId) { ConcurrentHashMap.newKeySet() }.add(newWarp)
+
         plugin.launchAsync {
             withContext(dbDispatcher) {
                 val conn = getConnection()
@@ -242,6 +306,8 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
     }
 
     fun deleteWarp(player: Player, warpName: String) {
+        warpCache[player.uniqueId]?.removeIf { it.alias.equals(warpName, ignoreCase = true) }
+
         plugin.launchAsync {
             withContext(dbDispatcher) {
                 getConnection().prepareStatement("DELETE FROM Warp WHERE owner_uuid = ? AND warp_name = ?").use { ps ->
@@ -267,21 +333,16 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
         }
     }
 
-    fun loadInventory(inventoryId: String, callback: Consumer<Array<ItemStack?>>) {
-        plugin.launchAsync {
-            val items = withContext(dbDispatcher) {
-                getConnection().prepareStatement("SELECT data FROM Inventory WHERE inventory_id = ?").use { ps ->
-                    ps.setString(1, inventoryId)
-                    ps.executeQuery().use { rs ->
-                        if (rs.next()) {
-                            InventoryService.fromBase64(rs.getBytes("data"))
-                        } else {
-                            emptyArray()
-                        }
-                    }
+    suspend fun loadInventory(inventoryId: String): Array<ItemStack?> = withContext(dbDispatcher) {
+        getConnection().prepareStatement("SELECT data FROM Inventory WHERE inventory_id = ?").use { ps ->
+            ps.setString(1, inventoryId)
+            ps.executeQuery().use { rs ->
+                if (rs.next()) {
+                    InventoryService.fromBase64(rs.getBytes("data"))
+                } else {
+                    emptyArray()
                 }
             }
-            callback.accept(items)
         }
     }
 
@@ -296,86 +357,18 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
         }
     }
 
-    fun getBlockedWorlds(callback: Consumer<List<String>>) {
-        plugin.launchAsync {
-            val worlds = withContext(dbDispatcher) {
-                getConnection().prepareStatement("SELECT name FROM World WHERE is_blocked = 1").use { ps ->
-                    ps.executeQuery().use { rs ->
-                        generateSequence { if (rs.next()) rs.getString("name") else null }.toList()
-                    }
-                }
+    suspend fun getBlockedWorlds(): List<String> = withContext(dbDispatcher) {
+        getConnection().prepareStatement("SELECT name FROM World WHERE is_blocked = 1").use { ps ->
+            ps.executeQuery().use { rs ->
+                generateSequence { if (rs.next()) rs.getString("name") else null }.toList()
             }
-            callback.accept(worlds)
         }
     }
 
-    fun getWarpCount(player: Player, callback: Consumer<Int>) {
-        plugin.launchAsync {
-            val count = withContext(dbDispatcher) {
-                getConnection().prepareStatement("SELECT COUNT(*) FROM Warp WHERE owner_uuid = ?").use { ps ->
-                    ps.setString(1, player.uniqueId.toString())
-                    ps.executeQuery().use { rs -> if (rs.next()) rs.getInt(1) else 0 }
-                }
-            }
-            callback.accept(count)
-        }
-    }
-
-    fun warpExists(player: Player, warpName: String, callback: Consumer<Boolean>) {
-        plugin.launchAsync {
-            val exists = withContext(dbDispatcher) {
-                getConnection().prepareStatement("SELECT 1 FROM Warp WHERE owner_uuid = ? AND warp_name = ?").use { ps ->
-                    ps.setString(1, player.uniqueId.toString())
-                    ps.setString(2, warpName)
-                    ps.executeQuery().use { it.next() }
-                }
-            }
-            callback.accept(exists)
-        }
-    }
-
-    fun getWarpObjects(player: Player, callback: Consumer<Set<Warp>>) {
-        plugin.launchAsync {
-            val warps = withContext(dbDispatcher) {
-                getConnection().prepareStatement(
-                    "SELECT wa.warp_name, wa.x, wa.y, wa.z, w.name " +
-                            "FROM Warp wa JOIN World w ON wa.world_id = w.world_id " +
-                            "WHERE wa.owner_uuid = ?"
-                ).use { ps ->
-                    ps.setString(1, player.uniqueId.toString())
-                    ps.executeQuery().use { rs ->
-                        generateSequence {
-                            if (rs.next()) {
-                                Warp(
-                                    rs.getString("warp_name"),
-                                    rs.getDouble("x"),
-                                    rs.getDouble("y"),
-                                    rs.getDouble("z"),
-                                    rs.getString("name")
-                                )
-                            } else {
-                                null
-                            }
-                        }.toSet()
-                    }
-                }
-            }
-
-            Bukkit.getScheduler().runTask(plugin, Runnable {
-                callback.accept(warps)
-            })
-        }
-    }
-
-    fun isWorldBlocked(worldName: String, callback: Consumer<Boolean>) {
-        plugin.launchAsync {
-            val blocked = withContext(dbDispatcher) {
-                getConnection().prepareStatement("SELECT is_blocked FROM World WHERE name = ?").use { ps ->
-                    ps.setString(1, worldName)
-                    ps.executeQuery().use { rs -> if (rs.next()) rs.getInt("is_blocked") == 1 else false }
-                }
-            }
-            callback.accept(blocked)
+    suspend fun isWorldBlocked(worldName: String): Boolean = withContext(dbDispatcher) {
+        getConnection().prepareStatement("SELECT is_blocked FROM World WHERE name = ?").use { ps ->
+            ps.setString(1, worldName)
+            ps.executeQuery().use { rs -> if (rs.next()) rs.getInt("is_blocked") == 1 else false }
         }
     }
 
@@ -423,59 +416,47 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
         }
     }
 
-    fun getTpaRequest(from: Player, to: Player, callback: Consumer<TpaRequest?>) {
-        plugin.launchAsync {
-            val request = withContext(dbDispatcher) {
-                getConnection().prepareStatement("SELECT is_tpa FROM Teleport WHERE sender_uuid = ? AND receiver_uuid = ?").use { ps ->
-                    ps.setString(1, from.uniqueId.toString())
-                    ps.setString(2, to.uniqueId.toString())
-                    ps.executeQuery().use { rs ->
-                        if (rs.next()) {
-                            val type = if (rs.getInt("is_tpa") == 1) TpaType.TPA else TpaType.TPA_HERE
-                            TpaRequest(from, to, type)
-                        } else {
-                            null
-                        }
-                    }
+    suspend fun getTpaRequest(from: Player, to: Player): TpaRequest? = withContext(dbDispatcher) {
+        getConnection().prepareStatement("SELECT is_tpa FROM Teleport WHERE sender_uuid = ? AND receiver_uuid = ?").use { ps ->
+            ps.setString(1, from.uniqueId.toString())
+            ps.setString(2, to.uniqueId.toString())
+            ps.executeQuery().use { rs ->
+                if (rs.next()) {
+                    val type = if (rs.getInt("is_tpa") == 1) TpaType.TPA else TpaType.TPA_HERE
+                    TpaRequest(from, to, type)
+                } else {
+                    null
                 }
             }
-            callback.accept(request)
         }
     }
 
-    fun getIncomingTpaRequest(receiver: Player, callback: Consumer<TpaRequest?>) {
-        plugin.launchAsync {
-            val data = withContext(dbDispatcher) {
-                getConnection().prepareStatement("SELECT sender_uuid, is_tpa FROM Teleport WHERE receiver_uuid = ? LIMIT 1").use { ps ->
-                    ps.setString(1, receiver.uniqueId.toString())
-                    ps.executeQuery().use { rs ->
-                        if (rs.next()) {
-                            val senderUUID = UUID.fromString(rs.getString("sender_uuid"))
-                            val type = if (rs.getInt("is_tpa") == 1) TpaType.TPA else TpaType.TPA_HERE
-                            Pair(senderUUID, type)
-                        } else {
-                            null
-                        }
-                    }
+    suspend fun getIncomingTpaRequest(receiver: Player): TpaRequest? {
+        val data = withContext(dbDispatcher) {
+            getConnection().prepareStatement("SELECT sender_uuid, is_tpa FROM Teleport WHERE receiver_uuid = ? LIMIT 1").use { ps ->
+                ps.setString(1, receiver.uniqueId.toString())
+                ps.executeQuery().use { rs ->
+                    if (rs.next()) {
+                        val senderUUID = UUID.fromString(rs.getString("sender_uuid"))
+                        val type = if (rs.getInt("is_tpa") == 1) TpaType.TPA else TpaType.TPA_HERE
+                        Pair(senderUUID, type)
+                    } else null
                 }
             }
+        }
 
-            Bukkit.getScheduler().runTask(plugin, Runnable {
-                if (data != null) {
-                    val senderUUID = data.first
-                    val type = data.second
-                    val sender = Bukkit.getPlayer(senderUUID)
+        if (data == null) return null
 
-                    if (sender?.isOnline == true) {
-                        callback.accept(TpaRequest(sender, receiver, type))
-                    } else {
-                        deleteTeleportRequest(senderUUID.toString(), receiver.uniqueId.toString())
-                        callback.accept(null)
-                    }
-                } else {
-                    callback.accept(null)
-                }
-            })
+        return withContext(plugin.syncDispatcher) {
+            val (senderUUID, type) = data
+            val sender = Bukkit.getPlayer(senderUUID)
+
+            if (sender?.isOnline == true) {
+                TpaRequest(sender, receiver, type)
+            } else {
+                deleteTeleportRequest(senderUUID.toString(), receiver.uniqueId.toString())
+                null
+            }
         }
     }
 
@@ -491,17 +472,12 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
         }
     }
 
-    fun loadInventoryBytes(inventoryId: String, callback: Consumer<ByteArray?>) {
-        plugin.launchAsync {
-            val data = withContext(dbDispatcher) {
-                getConnection().prepareStatement("SELECT data FROM Inventory WHERE inventory_id = ?").use { ps ->
-                    ps.setString(1, inventoryId)
-                    ps.executeQuery().use { rs ->
-                        if (rs.next()) rs.getBytes("data") else null
-                    }
-                }
+    suspend fun loadInventoryBytes(inventoryId: String): ByteArray? = withContext(dbDispatcher) {
+        getConnection().prepareStatement("SELECT data FROM Inventory WHERE inventory_id = ?").use { ps ->
+            ps.setString(1, inventoryId)
+            ps.executeQuery().use { rs ->
+                if (rs.next()) rs.getBytes("data") else null
             }
-            callback.accept(data)
         }
     }
 }

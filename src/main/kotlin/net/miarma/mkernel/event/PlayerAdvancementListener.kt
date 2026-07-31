@@ -4,7 +4,6 @@ import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.miarma.mkernel.common.service.impl.DatabaseService
-import org.bukkit.Bukkit
 import org.bukkit.World
 import org.bukkit.advancement.Advancement
 import org.bukkit.entity.Player
@@ -25,24 +24,16 @@ class PlayerAdvancementListener @Inject constructor(
         val key = advancement.key.key
         val world = player.world
 
-        when {
-            key.equals("story/enter_the_nether", true) || key.equals("nether/root", true) -> {
-                if (world.environment == World.Environment.NETHER) {
-                    databaseService.isWorldBlocked(world.name) { isBlocked ->
-                        if (isBlocked) {
-                            Bukkit.getScheduler().runTask(plugin, Runnable { revokeAdvancement(player, advancement) })
-                        }
-                    }
-                }
-            }
-            key.equals("story/enter_the_end", true) || key.equals("end/root", true) -> {
-                if (world.environment == World.Environment.THE_END) {
-                    databaseService.isWorldBlocked(world.name) { isBlocked ->
-                        if (isBlocked) {
-                            Bukkit.getScheduler().runTask(plugin, Runnable { revokeAdvancement(player, advancement) })
-                        }
-                    }
-                }
+        val isNether = (key.equals("story/enter_the_nether", true) || key.equals("nether/root", true)) && world.environment == World.Environment.NETHER
+        val isEnd = (key.equals("story/enter_the_end", true) || key.equals("end/root", true)) && world.environment == World.Environment.THE_END
+
+        if (!isNether && !isEnd) return
+
+        plugin.launchSync {
+            val isBlocked = databaseService.isWorldBlocked(world.name)
+
+            if (isBlocked) {
+                revokeAdvancement(player, advancement)
             }
         }
     }

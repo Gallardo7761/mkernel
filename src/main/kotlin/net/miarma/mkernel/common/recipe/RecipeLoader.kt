@@ -80,60 +80,78 @@ class RecipeLoader @Inject constructor(
 
     private fun parseRecipe(config: YamlConfiguration): Recipe? {
         val id = config.getString("id") ?: return null
-        val key = NamespacedKey(plugin, id)
 
-        config.getConfigurationSection("properties")?.let { itemProperties[id] = it }
-        val resultSection = config.getConfigurationSection("result") ?: return null
-        val mat = Material.valueOf(resultSection.getString("material")!!)
-        val item = ItemStack(mat)
+        return runCatching {
+            val key = NamespacedKey(plugin, id)
 
-        NBT.modify(item) { nbt ->
-            nbt.setString(SPECIAL_ITEM_TAG, id)
-            resultSection.getConfigurationSection("nbt")?.getKeys(false)?.forEach { nbtKey ->
-                nbt.setString(nbtKey, resultSection.getString("nbt.$nbtKey"))
-            }
+            config.getConfigurationSection("properties")?.let { itemProperties[id] = it }
+            val resultSection = config.getConfigurationSection("result") ?: throw IllegalArgumentException("Missing 'result' section")
+            val matStr = resultSection.getString("material") ?: throw IllegalArgumentException("Missing 'material' in result")
+            val mat = Material.matchMaterial(matStr) ?: throw IllegalArgumentException("Invalid material: $matStr")
+            val item = ItemStack(mat)
 
-            nbt.modifyMeta { _, meta ->
-                resultSection.getString("name")?.let { meta.displayName(messageService.builder(it).build()) }
-                resultSection.getStringList("lore").takeIf { it.isNotEmpty() }?.let {
-                    meta.lore(it.map { line -> messageService.builder(line).build() })
+            NBT.modify(item) { nbt ->
+                nbt.setString(SPECIAL_ITEM_TAG, id)
+                resultSection.getConfigurationSection("nbt")?.getKeys(false)?.forEach { nbtKey ->
+                    nbt.setString(nbtKey, resultSection.getString("nbt.$nbtKey"))
                 }
-                resultSection.getStringList("enchants").forEach { enchStr ->
-                    val (ench, level) = enchStr.split(":")
-                    val enchantment = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT)[NamespacedKey.minecraft(ench.lowercase())]
-                    enchantment?.let { meta.addEnchant(it, level.toInt(), true) }
-                }
-                resultSection.getStringList("flags").forEach { flagStr ->
-                    meta.addItemFlags(ItemFlag.valueOf(flagStr))
-                }
-            }
-        }
 
-        return when (config.getString("type", "SHAPED")?.uppercase()) {
-            "SHAPED" -> {
-                ShapedRecipe(key, item).apply {
-                    shape(*config.getStringList("recipe.shape").toTypedArray())
-                    config.getConfigurationSection("recipe.ingredients")?.getKeys(false)?.forEach { keyChar ->
-                        setIngredient(keyChar[0], Material.valueOf(config.getString("recipe.ingredients.$keyChar")!!))
+                nbt.modifyMeta { _, meta ->
+                    resultSection.getString("name")?.let { meta.displayName(messageService.builder(it).build()) }
+                    resultSection.getStringList("lore").takeIf { it.isNotEmpty() }?.let {
+                        meta.lore(it.map { line -> messageService.builder(line).build() })
+                    }
+                    resultSection.getStringList("enchants").forEach { enchStr ->
+                        val parts = enchStr.split(":")
+                        if (parts.size == 2) {
+                            val enchKey = parts[0].lowercase()
+                            val level = parts[1].toIntOrNull() ?: 1
+                            val enchantment = RegistryAccess.registryAccess().getRegistry(RegistryKey.ENCHANTMENT)[NamespacedKey.minecraft(enchKey)]
+                            enchantment?.let { meta.addEnchant(it, level, true) }
+                        }
+                    }
+                    resultSection.getStringList("flags").forEach { flagStr ->
+                        runCatching { ItemFlag.valueOf(flagStr.uppercase()) }.onSuccess { meta.addItemFlags(it) }
                     }
                 }
             }
-            "CAMPFIRE" -> {
-                val cookingSection = config.getConfigurationSection("cooking") ?: return null
-                val ingredient = Material.valueOf(cookingSection.getString("ingredient")!!)
-                val experience = cookingSection.getDouble("experience", 0.0).toFloat()
-                val cookTimeTicks = cookingSection.getInt("cook_time_seconds", 10) * 20
-                org.bukkit.inventory.CampfireRecipe(key, item, ingredient, experience, cookTimeTicks).apply {
-                    config.getString("category")?.let {
-                        try {
-                            category = CookingBookCategory.valueOf(it.uppercase())
-                        } catch (e: IllegalArgumentException) {
-                            MKernel.LOGGER.warning("Invalid cooking category in $id")
+
+            when (config.getString("type", "SHAPED")?.uppercase()) {
+                "SHAPED" -> {
+                    ShapedRecipe(key, item).apply {
+                        val shapeList = config.getStringList("recipe.shape")
+                        if (shapeList.isNotEmpty()) {
+                            shape(*shapeList.toTypedArray())
+                        }
+
+                        config.getConfigurationSection("recipe.ingredients")?.getKeys(false)?.forEach { keyChar ->
+                            val ingMatStr = config.getString("recipe.ingredients.$keyChar") ?: return@forEach
+                            val ingMat = Material.matchMaterial(ingMatStr) ?: throw IllegalArgumentException("Invalid ingredient material: $ingMatStr")
+                            setIngredient(keyChar[0], ingMat)
                         }
                     }
                 }
+                "CAMPFIRE" -> {
+                    val cookingSection = config.getConfigurationSection("cooking") ?: throw IllegalArgumentException("Missing 'cooking' section")
+                    val ingMatStr = cookingSection.getString("ingredient") ?: throw IllegalArgumentException("Missing 'ingredient' in cooking")
+                    val ingredient = Material.matchMaterial(ingMatStr) ?: throw IllegalArgumentException("Invalid cooking ingredient: $ingMatStr")
+
+                    val experience = cookingSection.getDouble("experience", 0.0).toFloat()
+                    val cookTimeTicks = cookingSection.getInt("cook_time_seconds", 10) * 20
+                    org.bukkit.inventory.CampfireRecipe(key, item, ingredient, experience, cookTimeTicks).apply {
+                        config.getString("category")?.let { catStr ->
+                            runCatching {
+                                category = CookingBookCategory.valueOf(catStr.uppercase())
+                            }.onFailure {
+                                MKernel.LOGGER.warning("Invalid cooking category '$catStr' in recipe $id")
+                            }
+                        }
+                    }
+                }
+                else -> throw IllegalArgumentException("Unknown recipe type: ${config.getString("type")}")
             }
-            else -> null
-        }
+        }.onFailure { e ->
+            MKernel.LOGGER.warning("Error parsing recipe '$id': ${e.message}")
+        }.getOrNull()
     }
 }

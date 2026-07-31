@@ -9,7 +9,7 @@ import net.miarma.mkernel.common.integration.impl.MinepacksHook
 import net.miarma.mkernel.common.service.impl.*
 import net.miarma.mkernel.event.helper.BlockEventHelper
 import net.miarma.mkernel.task.LocationTrackerTask
-import org.bukkit.Bukkit
+import net.miarma.mkernel.util.delayTicks
 import org.bukkit.EntityEffect
 import org.bukkit.Material
 import org.bukkit.Sound
@@ -83,14 +83,21 @@ class WorldInteractionListener @Inject constructor(
         val toWorld = event.to.world ?: return
         val player = event.player
         val fromLoc = locationTrackerTask.getPlayerRealTimeLocation(player) ?: player.location
+
         event.isCancelled = true
 
-        databaseService.getBlockedWorlds { blockedWorlds ->
-            if (!player.isOnline) return@getBlockedWorlds
+        plugin.launchSync {
+            val blockedWorlds = databaseService.getBlockedWorlds()
+
+            if (!player.isOnline) return@launchSync
+
             if (blockedWorlds.contains(toWorld.name)) {
                 val pushBackLoc = fromLoc.clone().subtract(2.0, 0.0, 2.0)
                 player.teleportAsync(pushBackLoc)
-                messageService.builder(configService.getString("language.errors.worldIsBlocked")).withPrefix().tag("world", toWorld.name).send(player)
+                messageService.builder(configService.getString("language.errors.worldIsBlocked"))
+                    .withPrefix()
+                    .tag("world", toWorld.name)
+                    .send(player)
             } else {
                 lastPositionService.setLastPosition(player, fromLoc)
                 player.teleportAsync(event.to)
@@ -101,7 +108,10 @@ class WorldInteractionListener @Inject constructor(
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
         if (!configService.isModuleEnabled("autoItemRefill") || event.itemInHand.amount != 1) return
-        Bukkit.getScheduler().runTaskLater(plugin, Runnable { handleRefill(event.player, event.blockPlaced.type, event.hand) }, 1L)
+        plugin.launchSync {
+            delayTicks(plugin, 1L)
+            handleRefill(event.player, event.blockPlaced.type, event.hand)
+        }
     }
 
     @EventHandler

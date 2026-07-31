@@ -1,13 +1,16 @@
 package net.miarma.mkernel.common.service.impl
 
-import MKernel
+import MKernel // <-- Necesitamos importar el plugin pa' las corrutinas
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.miarma.mkernel.common.service.IService
 import xyz.xenondevs.invui.inventory.VirtualInventory
 
 @Singleton
-class GlobalChestService @Inject constructor(private val databaseService: DatabaseService) : IService {
+class GlobalChestService @Inject constructor(
+    private val plugin: MKernel,
+    private val databaseService: DatabaseService
+) : IService {
 
     lateinit var inventory: VirtualInventory
         private set
@@ -17,7 +20,9 @@ class GlobalChestService @Inject constructor(private val databaseService: Databa
     }
 
     override fun onEnable() {
-        databaseService.loadInventoryBytes(INVENTORY_ID) { bin ->
+        plugin.launchSync {
+            val bin = databaseService.loadInventoryBytes(INVENTORY_ID)
+
             inventory = if (bin != null && bin.isNotEmpty()) {
                 try {
                     VirtualInventory.deserialize(bin).also {
