@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm") version "2.4.10"
+    id("com.gradleup.shadow") version "9.6.1"
 }
 
 group = "net.miarma"
@@ -30,6 +31,7 @@ dependencies {
     compileOnly("net.kyori:adventure-text-serializer-legacy:5.2.0")
     compileOnly("org.jspecify:jspecify:1.0.0")
     compileOnly("org.xerial:sqlite-jdbc:3.53.2.0")
+
     implementation("net.miarma:mscript:26.7.1")
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.javassist:javassist:3.28.0-GA")
@@ -54,16 +56,14 @@ tasks {
         }
     }
 
-    named<Jar>("jar") {
+    named("shadowJar", com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
         archiveFileName.set("MKernel-${project.version}.jar")
         destinationDirectory.set(file("/home/jomaa/Escritorio/server/plugins"))
-
-        from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
-
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        mergeServiceFiles()
     }
 
     build {
-        dependsOn("jar")
+        dependsOn("shadowJar")
     }
 }
