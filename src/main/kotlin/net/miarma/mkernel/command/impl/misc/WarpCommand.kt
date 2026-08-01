@@ -1,4 +1,4 @@
-package net.miarma.mkernel.command.misc
+package net.miarma.mkernel.command.impl.misc
 
 import com.google.inject.Inject
 import com.google.inject.Singleton

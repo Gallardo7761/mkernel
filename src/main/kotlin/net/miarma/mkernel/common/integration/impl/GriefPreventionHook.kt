@@ -6,7 +6,6 @@ import org.bukkit.Location
 import org.bukkit.entity.Player
 
 class GriefPreventionHook : IHook {
-
     override val pluginName = "GriefPrevention"
     private var gpInstance: GriefPrevention? = null
 

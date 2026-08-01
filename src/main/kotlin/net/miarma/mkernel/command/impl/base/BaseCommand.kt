@@ -28,7 +28,7 @@ class BaseCommand @Inject constructor(
             withFullDescription(configService.getString("commands.mkernel.description"))
             withUsage(configService.getString("commands.mkernel.usage"))
             anyExecutor { sender, _ ->
-                messageService.builder("<yellow>MKernel v26.7.12 by Gallardo7761</yellow>").send(sender)
+                messageService.builder("<yellow>MKernel v26.8.1 by Gallardo7761</yellow>").send(sender)
             }
             withSubcommand(CommandAPICommand("reload").apply {
                 withPermission(configService.getString("commands.mkernel.subcommands.reload.permission"))

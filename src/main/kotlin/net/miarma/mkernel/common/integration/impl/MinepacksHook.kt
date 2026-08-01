@@ -7,7 +7,6 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.Inventory
 
 class MinepacksHook : IHook {
-
     override val pluginName = "Minepacks"
     private var minepacksPlugin: MinepacksPlugin? = null
 

@@ -3,6 +3,8 @@ package net.miarma.mkernel.event
 import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextComponent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.miarma.mkernel.common.integration.impl.GriefPreventionHook
 import net.miarma.mkernel.common.integration.impl.MinepacksHook
@@ -138,29 +140,6 @@ class WorldInteractionListener @Inject constructor(
         if (item.containsEnchantment(Enchantment.LOOTING) && (event.entityType == EntityType.ZOMBIE || event.entityType == EntityType.ZOMBIE_VILLAGER)) {
             if (Math.random() * 100 < 70) {
                 event.entity.world.dropItem(event.entity.location, ItemStack(Material.ZOMBIE_HEAD, 1))
-            }
-        }
-    }
-
-    @EventHandler
-    fun onBookWrite(event: PlayerEditBookEvent) {
-        if (configService.isModuleEnabled("bookColors")) {
-            val newMeta = event.newBookMeta
-            newMeta.pages(newMeta.pages().map { page -> messageService.parsePlayerMessage(PlainTextComponentSerializer.plainText().serialize(page), event.player) })
-            event.newBookMeta = newMeta
-        }
-    }
-
-    @EventHandler
-    fun onSignWrite(event: SignChangeEvent) {
-        if (configService.isModuleEnabled("signColors")) {
-            for (i in 0..3) {
-                event.line(i)?.let { line ->
-                    val plainText = PlainTextComponentSerializer.plainText().serialize(line)
-                    if (plainText.isNotEmpty()) {
-                        event.line(i, messageService.parsePlayerMessage(plainText, event.player))
-                    }
-                }
             }
         }
     }

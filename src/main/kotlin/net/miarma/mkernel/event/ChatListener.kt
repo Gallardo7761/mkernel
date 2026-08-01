@@ -22,6 +22,10 @@ class ChatListener @Inject constructor(
     private val messageService: MessageService
 ) : Listener {
 
+    companion object {
+        private val SLUR_REGEX = Regex("\\bnigg(a|er|as|ers)?\\b", RegexOption.IGNORE_CASE)
+    }
+
     @EventHandler
     fun onChatMessage(event: AsyncChatEvent) {
         val player = event.player
@@ -44,7 +48,9 @@ class ChatListener @Inject constructor(
             }
         }
 
-        if (configService.isModuleEnabled("endermanNWordAnger") && plainMessage.lowercase().contains("nigg") && PlayerUtil.isEntityNear(player, Enderman::class.java, 5)) {
+        if (configService.isModuleEnabled("endermanNWordAnger") &&
+                SLUR_REGEX.containsMatchIn(plainMessage) &&
+                PlayerUtil.isEntityNear(player, Enderman::class.java, 5)) {
             player.location.chunk.entities.filterIsInstance<Enderman>().forEach { enderman ->
                 enderman.target = player
                 enderman.isScreaming = true
