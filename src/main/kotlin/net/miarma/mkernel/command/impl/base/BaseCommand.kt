@@ -1,5 +1,6 @@
 package net.miarma.mkernel.command.impl.base
 
+import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.jorel.commandapi.CommandAPICommand
@@ -13,6 +14,7 @@ import net.miarma.mkernel.common.service.impl.*
 
 @Singleton
 class BaseCommand @Inject constructor(
+    private val plugin: MKernel,
     private val configService: ConfigService,
     private val messageService: MessageService,
     private val configInventory: ConfigInventory,
@@ -28,32 +30,33 @@ class BaseCommand @Inject constructor(
             withFullDescription(configService.getString("commands.mkernel.description"))
             withUsage(configService.getString("commands.mkernel.usage"))
             anyExecutor { sender, _ ->
-                messageService.builder("<yellow>MKernel v26.8.1 by Gallardo7761</yellow>").send(sender)
+                messageService.builder("<yellow>MKernel v26.8.2 by Gallardo7761</yellow>").send(sender)
             }
             withSubcommand(CommandAPICommand("reload").apply {
                 withPermission(configService.getString("commands.mkernel.subcommands.reload.permission"))
                 withFullDescription(configService.getString("commands.mkernel.subcommands.reload.description"))
                 withUsage(configService.getString("commands.mkernel.subcommands.reload.usage"))
                 playerExecutor { sender, _ ->
-                    try {
-                        configService.reloadAll()
-                        sequenceService.loadSequences()
-                        blacklistService.unregisterRecipes()
-                        blacklistService.unregisterCommands()
-
-                        recipeLoader.unloadAll()
-                        recipeLoader.loadAll()
-
-                        scriptService.reloadScripts()
-
-                        messageService.builder(configService.getString("commands.mkernel.subcommands.reload.messages.success"))
-                            .withPrefix()
-                            .send(sender)
-                    } catch (e: Exception) {
-                        messageService.builder(configService.getString("commands.mkernel.subcommands.reload.messages.error"))
-                            .withPrefix()
-                            .send(sender)
-                        e.printStackTrace()
+                    plugin.launchAsync {
+                        try {
+                            configService.reloadAll()
+                            sequenceService.loadSequences()
+                            scriptService.reloadScripts()
+                            plugin.launchSync {
+                                blacklistService.unregisterRecipes()
+                                recipeLoader.loadAll()
+                                messageService.builder(configService.getString("commands.mkernel.subcommands.reload.messages.success"))
+                                    .withPrefix()
+                                    .send(sender)
+                            }
+                        } catch (e: Exception) {
+                            plugin.launchSync {
+                                messageService.builder(configService.getString("commands.mkernel.subcommands.reload.messages.error"))
+                                    .withPrefix()
+                                    .send(sender)
+                            }
+                            e.printStackTrace()
+                        }
                     }
                 }
             })

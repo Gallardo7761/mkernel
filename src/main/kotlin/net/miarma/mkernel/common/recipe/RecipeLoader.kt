@@ -26,7 +26,8 @@ class RecipeLoader @Inject constructor(
     private val messageService: MessageService
 ) {
 
-    val loadedRecipes: MutableList<Recipe> = mutableListOf()
+    val loadedRecipes: MutableMap<String, Recipe> = mutableMapOf()
+    private val recipeHashes: MutableMap<String, Long> = mutableMapOf()
     private val itemProperties = mutableMapOf<String, ConfigurationSection>()
 
     companion object {
@@ -46,11 +47,22 @@ class RecipeLoader @Inject constructor(
         }
 
         folder.listFiles { _, name -> name.endsWith(".yml") }?.forEach { file ->
+            val id = file.nameWithoutExtension
+            val lastModified = file.lastModified()
+
+            if (recipeHashes[id] == lastModified && loadedRecipes.containsKey(id)) {
+                return@forEach
+            }
+
             try {
                 val config = YamlConfiguration.loadConfiguration(file)
-                parseRecipe(config)?.let {
-                    Bukkit.getServer().addRecipe(it)
-                    loadedRecipes.add(it)
+                val recipe = parseRecipe(config)
+
+                if (recipe != null) {
+                    (loadedRecipes[id] as? Keyed)?.let { Bukkit.getServer().removeRecipe(it.key) }
+                    Bukkit.getServer().addRecipe(recipe)
+                    loadedRecipes[id] = recipe
+                    recipeHashes[id] = lastModified
                     MKernel.LOGGER.info("Custom recipe loaded: ${config.getString("id")}")
                 }
             } catch (e: Exception) {
@@ -58,15 +70,6 @@ class RecipeLoader @Inject constructor(
                 e.printStackTrace()
             }
         }
-    }
-
-    fun unloadAll() {
-        MKernel.LOGGER.info("Unloading ${loadedRecipes.size} custom recipes...")
-        loadedRecipes.forEach { recipe ->
-            (recipe as? Keyed)?.let { Bukkit.getServer().removeRecipe(it.key) }
-        }
-        loadedRecipes.clear()
-        itemProperties.clear()
     }
 
     private fun saveDefaultRecipe(fileName: String) {
