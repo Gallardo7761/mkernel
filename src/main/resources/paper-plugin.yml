@@ -1,5 +1,5 @@
 name: MKernel
-version: '26.8.1'
+version: '26.8.2'
 main: MKernel
 api-version: '26.1.2'
 website: https://git.miarma.net/Gallardo7761/mkernel
@@ -138,6 +138,15 @@ permissions:
     mkernel.command.back:
         description: Vuelve a tu última posición
         default: true
+    mkernel.command.sequence:
+        description: Ejecuta una secuencia
+        default: op
+    mkernel.command.nick:
+        description: Cambia tu usuario
+        default: true
+    mkernel.command.nick.others:
+        description: Cambia el usuario a otro jugador
+        default: op
 
     mkernel.events.chatformat:
         description: Permite al usuario usar formatos y colores en los mensajes de chat
@@ -175,6 +184,8 @@ permissions:
             mkernel.command.launch: true
             mkernel.command.invsee: true
             mkernel.command.flyspeed: true
+            mkernel.command.sequence: true
+            mkernel.command.nick.others: true
             mkernel.events.adminchat: true
             mkernel.player: true
 
@@ -203,6 +214,7 @@ permissions:
             mkernel.command.do: true
             mkernel.command.payxp: true
             mkernel.command.back: true
+            mkernel.command.nick: true
 
     mkernel.*:
         description: Permite al usuario ejecutar todos los comandos de MKernel

@@ -8,6 +8,7 @@ import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.PlayerService
 import net.miarma.mkernel.util.PlayerUtil
+import net.miarma.mkernel.util.PlayerUtil.getNickName
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.entity.Enderman
@@ -60,11 +61,35 @@ class ChatListener @Inject constructor(
 
         if (configService.isModuleEnabled("mentions") && player.hasPermission(configService.getString("config.permissions.mentions"))) {
             Bukkit.getOnlinePlayers().forEach { target ->
-                if (plainMessage.contains("@${target.name}")) {
+                val targetNick = target.getNickName(playerService)
+                val mentionedByName = plainMessage.contains("@${target.name}")
+                val hasCustomNick = targetNick != target.name
+                val mentionedByNick = hasCustomNick && plainMessage.contains("@$targetNick")
+
+                if (mentionedByName || mentionedByNick) {
                     val mentionFormat = configService.getString("language.events.onMention.format")
-                    val mentionComponent = messageService.builder(mentionFormat).tag("player", target.name).build()
-                    event.message(event.message().replaceText { config -> config.matchLiteral("@${target.name}").replacement(mentionComponent) })
-                    messageService.builder(configService.getString("language.events.onMention.youWereMentioned")).withPrefix().forPlayer(target).tag("player", player.name).send(target)
+                    val mentionComponent = messageService.builder(mentionFormat).tag("player", targetNick).build()
+                    var newMessage = event.message()
+
+                    if (mentionedByName) {
+                        newMessage = newMessage.replaceText { config ->
+                            config.matchLiteral("@${target.name}").replacement(mentionComponent)
+                        }
+                    }
+
+                    if (mentionedByNick) {
+                        newMessage = newMessage.replaceText { config ->
+                            config.matchLiteral("@$targetNick").replacement(mentionComponent)
+                        }
+                    }
+
+                    event.message(newMessage)
+
+                    val senderNick = player.getNickName(playerService)
+
+                    messageService.builder(configService.getString("language.events.onMention.youWereMentioned"))
+                        .withPrefix().forPlayer(target).tag("player", senderNick).send(target)
+
                     target.playSound(target.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f)
                 }
             }
@@ -93,7 +118,7 @@ class ChatListener @Inject constructor(
         val commandMessage = event.message
         Bukkit.getOnlinePlayers().filter { p -> playerService.canSpy(p) && p != player }.forEach {
             messageService.builder(configService.getString("language.events.onCommand.spyMessage"))
-                .tag("player", player.name)
+                .tag("player", player.getNickName(playerService))
                 .tag("message", commandMessage)
                 .send(it)
         }

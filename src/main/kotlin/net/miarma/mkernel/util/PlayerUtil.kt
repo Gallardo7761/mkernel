@@ -1,6 +1,7 @@
 package net.miarma.mkernel.util
 
 import com.destroystokyo.paper.profile.PlayerProfile
+import net.miarma.mkernel.common.service.impl.PlayerService
 import org.bukkit.Bukkit
 import org.bukkit.entity.Entity
 import org.bukkit.entity.Player
@@ -30,5 +31,9 @@ object PlayerUtil {
             }
             else -> null
         }
+    }
+
+    fun Player.getNickName(playerService: PlayerService): String {
+        return playerService.getNick(this) ?: this.name
     }
 }

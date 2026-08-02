@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.kyori.adventure.title.Title
 import net.miarma.mkernel.common.service.impl.*
+import net.miarma.mkernel.util.PlayerUtil.getNickName
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -24,6 +25,13 @@ class PlayerConnectionListener @Inject constructor(
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
 
+        player.playerListName(messageService.builder(player.getNickName(playerService)).build())
+
+        val customJoinMessage = messageService.builder(configService.getString("language.events.onJoin.message"))
+            .tag("player", player.getNickName(playerService))
+            .build()
+        event.joinMessage(customJoinMessage)
+
         databaseService.loadPlayerData(player)
 
         if (configService.isModuleEnabled("spawnAtLobby")) {
@@ -37,7 +45,9 @@ class PlayerConnectionListener @Inject constructor(
             val times = Title.Times.times(Duration.ofMillis(1500), Duration.ofMillis(1500), Duration.ofMillis(1500))
 
             Bukkit.getOnlinePlayers().forEach { p ->
-                val mainTitle = messageService.builder(rawTitleTemplate).tag("player", player.name).build()
+                val mainTitle = messageService.builder(rawTitleTemplate)
+                    .tag("player", player.getNickName(playerService))
+                    .build()
                 val subTitle = messageService.builder(rawSubtitle).build()
                 p.showTitle(Title.title(mainTitle, subTitle, times))
             }
@@ -51,6 +61,11 @@ class PlayerConnectionListener @Inject constructor(
     fun onPlayerLeave(event: PlayerQuitEvent) {
         val player = event.player
 
+        val customLeaveMessage = messageService.builder(configService.getString("language.events.onLeave.message"))
+            .tag("player", player.getNickName(playerService))
+            .build()
+        event.quitMessage(customLeaveMessage)
+
         databaseService.unloadPlayerData(player)
 
         if (configService.isModuleEnabled("leaveTitle")) {
@@ -59,7 +74,9 @@ class PlayerConnectionListener @Inject constructor(
             val times = Title.Times.times(Duration.ofMillis(1500), Duration.ofMillis(1500), Duration.ofMillis(1500))
 
             Bukkit.getOnlinePlayers().forEach { p ->
-                val mainTitle = messageService.builder(rawTitleTemplate).tag("player", player.name).build()
+                val mainTitle = messageService.builder(rawTitleTemplate)
+                    .tag("player", player.getNickName(playerService))
+                    .build()
                 val subTitle = messageService.builder(rawSubtitle).build()
                 p.showTitle(Title.title(mainTitle, subTitle, times))
             }
