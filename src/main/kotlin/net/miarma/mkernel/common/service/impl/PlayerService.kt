@@ -10,7 +10,11 @@ import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 
 @Singleton
-class PlayerService @Inject constructor(plugin: MKernel) : IService {
+class PlayerService @Inject constructor(
+    plugin: MKernel,
+    private val messageService: MessageService,
+    private val configService: ConfigService
+) : IService {
 
     private val vanishKey = NamespacedKey(plugin, "vanish")
     private val spyKey = NamespacedKey(plugin, "spy")
@@ -45,12 +49,31 @@ class PlayerService @Inject constructor(plugin: MKernel) : IService {
         return player.persistentDataContainer.get(nickKey, PersistentDataType.STRING)
     }
 
-    fun setNick(player: Player, nick: String?) {
+    fun setNick(player: Player, nick: String?): Boolean {
         if (nick == null) {
             player.persistentDataContainer.remove(nickKey)
-            player.playerListName(Component.text(player.name))
-        } else {
-            player.persistentDataContainer.set(nickKey, PersistentDataType.STRING, nick)
+
+            val realName = Component.text(player.name)
+            player.playerListName(realName)
+            player.displayName(realName)
+            player.customName(null)
+            player.isCustomNameVisible = false
+            return true
         }
+
+        val blackListedUsernames = configService.getStringList("config.blacklist.usernames")
+        if (blackListedUsernames.any { it.equals(nick, ignoreCase = true) }) {
+            return false
+        }
+
+        player.persistentDataContainer.set(nickKey, PersistentDataType.STRING, nick)
+        val nickComponent = messageService.builder(nick).build()
+
+        player.playerListName(nickComponent)
+        player.displayName(nickComponent)
+        player.customName(nickComponent)
+        player.isCustomNameVisible = true
+
+        return true
     }
 }

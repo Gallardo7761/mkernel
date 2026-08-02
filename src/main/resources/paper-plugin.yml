@@ -1,9 +1,9 @@
 name: MKernel
-version: '26.8.2'
+version: '${version}'
 main: MKernel
 api-version: '26.1.2'
 website: https://git.miarma.net/Gallardo7761/mkernel
-authors: [Gallardo7761, elpapuu1333 (Contributor & tester)]
+authors: [Gallardo7761, elpapuu1333 (helper & tester)]
 dependencies:
   server:
     NBTAPI:

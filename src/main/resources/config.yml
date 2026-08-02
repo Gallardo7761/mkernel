@@ -6,7 +6,7 @@
 # ██ ██ ██  ██▀██▄    ██▀▀▀▀▀▀   ██       ██    ██  ██▀▀▀▀▀▀    ██    #
 # ██ ██ ██  ██  ▀█▄   ▀██▄▄▄▄█   ██       ██    ██  ▀██▄▄▄▄█    ██▄▄▄ #
 # ▀▀ ▀▀ ▀▀  ▀▀   ▀▀▀    ▀▀▀▀▀    ▀▀       ▀▀    ▀▀    ▀▀▀▀▀      ▀▀▀▀ #
-# by Gallardo7761                                             v26.8.2 #
+# by Gallardo7761                                             v${version} #
 #######################################################################
 #                  [ R ] = full restart for applying                  #
 #######################################################################
@@ -29,7 +29,7 @@ config:
     recInvSpawnDistance: 150
 
   chat:
-    prefix: "<color:#d30000><bold>MKernel</bold> <white>»</white></color>"
+    prefix: "<color:#d30000><bold>mkernel</bold> <white>»</white></color>"
     public:
       format: "%vault_prefix% <white>%mkernel_nick%</white> <aqua>»</aqua> <reset><message>"
     admin:

@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "net.miarma"
-version = "26.8.2"
+version = "26.8.3"
 
 repositories {
     mavenCentral()
@@ -61,6 +61,15 @@ tasks {
         destinationDirectory.set(file("/home/jomaa/Escritorio/server/plugins"))
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
         mergeServiceFiles()
+    }
+
+    processResources {
+        val props = mapOf("version" to project.version)
+        inputs.properties(props)
+        filteringCharset = "UTF-8"
+        filesMatching(listOf("paper-plugin.yml", "config.yml")) {
+            expand(props)
+        }
     }
 
     build {

@@ -23,6 +23,10 @@ class BaseCommand @Inject constructor(
     private val recipeLoader: RecipeLoader,
     private val scriptService: ScriptService
 ) : MCommand {
+    val name = plugin.pluginMeta.name
+    val version = plugin.pluginMeta.version
+    val authors = plugin.pluginMeta.authors
+
     override fun register() {
         commandAPICommand("mkernel") {
             withAliases("mk")
@@ -30,7 +34,9 @@ class BaseCommand @Inject constructor(
             withFullDescription(configService.getString("commands.mkernel.description"))
             withUsage(configService.getString("commands.mkernel.usage"))
             anyExecutor { sender, _ ->
-                messageService.builder("<yellow>MKernel v26.8.2 by Gallardo7761</yellow>").send(sender)
+                messageService.builder("<gray>$name <green>v$version <gray>by <yellow>$authors")
+                    .withPrefix()
+                    .send(sender)
             }
             withSubcommand(CommandAPICommand("reload").apply {
                 withPermission(configService.getString("commands.mkernel.subcommands.reload.permission"))
