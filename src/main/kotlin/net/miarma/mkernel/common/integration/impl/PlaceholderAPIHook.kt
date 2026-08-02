@@ -7,6 +7,7 @@ import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import net.miarma.mkernel.common.integration.IHook
 import net.miarma.mkernel.common.service.impl.LastPositionService
 import net.miarma.mkernel.common.service.impl.PlayerService
+import net.miarma.mkernel.util.PlayerUtil.getNickName
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
 
@@ -52,6 +53,7 @@ class PlaceholderAPIHook @Inject constructor(
                     val last = lastPositionService.getLastPosition(onlinePlayer)
                     last?.let { "${it.blockX}, ${it.blockY}, ${it.blockZ}" } ?: "N/A"
                 }
+                "nick" -> onlinePlayer.getNickName(playerService)
                 else -> null
             }
         }

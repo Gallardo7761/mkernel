@@ -6,16 +6,16 @@
 # ██ ██ ██  ██▀██▄    ██▀▀▀▀▀▀   ██       ██    ██  ██▀▀▀▀▀▀    ██    #
 # ██ ██ ██  ██  ▀█▄   ▀██▄▄▄▄█   ██       ██    ██  ▀██▄▄▄▄█    ██▄▄▄ #
 # ▀▀ ▀▀ ▀▀  ▀▀   ▀▀▀    ▀▀▀▀▀    ▀▀       ▀▀    ▀▀    ▀▀▀▀▀      ▀▀▀▀ #
-# by Gallardo7761                                             v26.8.1 #
+# by Gallardo7761                                             v26.8.2 #
 #######################################################################
 #                  [ R ] = full restart for applying                  #
 #######################################################################
 
 # -----------------------------------------------------------
-#  Plugin Configuration [ R ]
+#  Plugin Configuration
 # -----------------------------------------------------------
 config:
-  permissions:
+  permissions: # [ R ]
     chatFormat: "mkernel.events.chatformat"
     adminChat: "mkernel.events.adminchat"
     mentions: "mkernel.events.mentions"
@@ -31,13 +31,14 @@ config:
   chat:
     prefix: "<color:#d30000><bold>MKernel</bold> <white>»</white></color>"
     public:
-      format: "%vault_prefix% <white>%player_name%</white> <aqua>»</aqua> <reset><message>"
+      format: "%vault_prefix% <white>%mkernel_nick%</white> <aqua>»</aqua> <reset><message>"
     admin:
       trigger: "#"
-      format: "<color:#d30000><bold>AdminChat</bold> <white>%player_name%</white> <light_purple>»</light_purple> <reset><message>"
+      format: "<color:#d30000><bold>AdminChat</bold> <white>%mkernel_nick%</white> <light_purple>»</light_purple> <reset><message>"
 
   blacklist:
-    commands:
+    nicks: []
+    commands: # [ R ]
       - /minecraft:me
     recipes: []
 
@@ -91,6 +92,7 @@ arguments:
   warp: "warp"
   speed: "velocidad"
   sequence: "secuencia"
+  nickname: "nombre"
 
 commands:
   mkernel:
@@ -461,6 +463,17 @@ commands:
       success: "<gray>Se ha ejecutado la secuencia <green><name></green></gray>"
       error: "<red>Ha ocurrido un error al ejecutar la secuencia <green><name></green></red>"
 
+  nick:
+    name: "nick"
+    description: "Cambia tu usuario"
+    permission: "mkernel.command.nick"
+    usage: "/nick <nombre>"
+    messages:
+      set: "<gray>Has establecido tu usuario a <green><nickname></green></gray>"
+      setOthers: "<gray>Has establecido el usuario de <green><target></green> <gray>a</gray> <green><nickname></green></gray>"
+      reset: "<gray>Has reseteado tu usuario</gray>"
+      resetOthers: "<gray>Has reseteado el usuario de <green><target></green>"
+
 # -----------------------------------------------------------
 #  Language Configuration
 # -----------------------------------------------------------
@@ -485,6 +498,10 @@ language:
       death: "<red><player> ha muerto</red>"
 
   events:
+    onJoin:
+      message: "<yellow><player> <yellow>se ha unido a la partida"
+    onLeave:
+      message: "<yellow><player> <yellow>ha abandonado la partida"
     onMention:
       format: "<color:#d30000><bold>@<player>"
       youWereMentioned: "<yellow><player></yellow> <gray>te ha mencionado!</gray>"
@@ -519,4 +536,4 @@ language:
     noLastPosition: "<red>No tienes una última posición a la que volver</red>"
 
 # ⚠️ Do not modify this line ⚠️
-file-version: 6
+file-version: 7

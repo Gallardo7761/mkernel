@@ -7,7 +7,9 @@ import net.kyori.adventure.title.Title
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.MessageService
+import net.miarma.mkernel.common.service.impl.PlayerService
 import net.miarma.mkernel.util.PlayerUtil
+import net.miarma.mkernel.util.PlayerUtil.getNickName
 import org.bukkit.Bukkit
 import org.bukkit.Sound
 import org.bukkit.event.EventHandler
@@ -19,7 +21,8 @@ import java.time.Duration
 class PlayerStatusListener @Inject constructor(
     private val configService: ConfigService,
     private val databaseService: DatabaseService,
-    private val messageService: MessageService
+    private val messageService: MessageService,
+    private val playerService: PlayerService
 ) : Listener {
 
     @EventHandler
@@ -34,7 +37,9 @@ class PlayerStatusListener @Inject constructor(
 
             Bukkit.getOnlinePlayers().forEach { p ->
                 p.playSound(p.location, Sound.ENTITY_WITHER_DEATH, 1.0f, 1.0f)
-                val subTitle = messageService.builder(rawSubtitle).tag("player", player.name).build()
+                val subTitle = messageService.builder(rawSubtitle)
+                    .tag("player", player.getNickName(playerService))
+                    .build()
                 p.showTitle(Title.title(Component.empty(), subTitle, times))
             }
         }
