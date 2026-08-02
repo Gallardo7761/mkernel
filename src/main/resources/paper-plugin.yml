@@ -144,6 +144,9 @@ permissions:
     mkernel.command.nick:
         description: Cambia tu usuario
         default: true
+    mkernel.command.nick.others:
+        description: Cambia el usuario a otro jugador
+        default: op
 
     mkernel.events.chatformat:
         description: Permite al usuario usar formatos y colores en los mensajes de chat
@@ -182,6 +185,7 @@ permissions:
             mkernel.command.invsee: true
             mkernel.command.flyspeed: true
             mkernel.command.sequence: true
+            mkernel.command.nick.others: true
             mkernel.events.adminchat: true
             mkernel.player: true
 

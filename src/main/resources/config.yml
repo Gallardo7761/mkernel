@@ -466,7 +466,9 @@ commands:
   nick:
     name: "nick"
     description: "Cambia tu usuario"
-    permission: "mkernel.command.nick"
+    permissions:
+      base: "mkernel.command.nick"
+      others: "mkernel.command.nick.others"
     usage: "/nick <nombre>"
     messages:
       set: "<gray>Has establecido tu usuario a <green><nickname></green></gray>"
