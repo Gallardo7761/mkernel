@@ -1,9 +1,9 @@
-name: MKernel
-version: '26.8.2'
+name: mkernel
+version: '${version}'
 main: MKernel
 api-version: '26.1.2'
 website: https://git.miarma.net/Gallardo7761/mkernel
-authors: [Gallardo7761, elpapuu1333 (Contributor & tester)]
+authors: [Gallardo7761, elpapuu1333 (helper & tester)]
 dependencies:
   server:
     NBTAPI:
@@ -14,11 +14,16 @@ dependencies:
       load: BEFORE
       required: true
       join-classpath: true
-    GriefPrevention:
+    DecentHolograms:
+      load: BEFORE
+      required: false
+    banco:
       load: BEFORE
       required: false
     PlaceholderAPI:
       load: BEFORE
+      required: false
+    GriefPrevention:
       required: false
 permissions:
     mkernel.command:
@@ -157,6 +162,10 @@ permissions:
     mkernel.events.mentions:
         description: Permite al usuario usar menciones
         default: true
+
+    mkernel.shop.admin:
+        description: Permiso de administrador para el sistema de tiendas
+        default: op
 
     mkernel.admin:
         description: Permite al usuario ejecutar comandos de administrador

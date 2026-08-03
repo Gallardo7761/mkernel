@@ -6,6 +6,7 @@ import com.google.inject.Singleton
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import net.miarma.mkernel.common.model.Shop
 import net.miarma.mkernel.common.model.Warp
 import net.miarma.mkernel.common.service.IService
 import net.miarma.mkernel.common.teleport.TpaRequest
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemStack
 import java.io.File
 import java.sql.Connection
 import java.sql.DriverManager
+import java.sql.ResultSet
 import java.sql.SQLException
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
@@ -147,6 +149,24 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
                 FOREIGN KEY (sender_uuid) REFERENCES User(uuid),
                 FOREIGN KEY (receiver_uuid) REFERENCES User(uuid),
                 UNIQUE (sender_uuid, receiver_uuid)
+            );
+        """
+            )
+            stmt.execute(
+                """
+            CREATE TABLE IF NOT EXISTS Shop (
+                shop_id TEXT PRIMARY KEY,
+                owner_uuid TEXT NOT NULL,
+                world_id INTEGER NOT NULL,
+                x INTEGER NOT NULL,
+                y INTEGER NOT NULL,
+                z INTEGER NOT NULL,
+                item_data BLOB NOT NULL,
+                price REAL NOT NULL,
+                stock INTEGER NOT NULL DEFAULT 0,
+                FOREIGN KEY (owner_uuid) REFERENCES User(uuid),
+                FOREIGN KEY (world_id) REFERENCES World(world_id),
+                UNIQUE (world_id, x, y, z)
             );
         """
             )
@@ -478,6 +498,97 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
             ps.executeQuery().use { rs ->
                 if (rs.next()) rs.getBytes("data") else null
             }
+        }
+    }
+
+    suspend fun getAllShops(): List<Shop> = withContext(dbDispatcher) {
+        val shops = mutableListOf<Shop>()
+
+        getConnection().use { conn ->
+            conn.prepareStatement("SELECT s.shop_id, s.owner_uuid, w.name AS world_name, s.x, s.y, s.z, s.item_data," +
+                    " s.price, s.stock FROM Shop s LEFT JOIN World w ON s.world_id = w.world_id").use { stmt ->
+                stmt.executeQuery().use { rs ->
+                    while (rs.next()) {
+                        val shop = mapResultSetToShop(rs)
+                        if (shop != null) {
+                            shops.add(shop)
+                        }
+                    }
+                }
+            }
+        }
+
+        shops
+    }
+
+    private fun mapResultSetToShop(rs: ResultSet): Shop? {
+        return try {
+            val id = rs.getString("shop_id")
+            val ownerUuid = UUID.fromString(rs.getString("owner_uuid"))
+
+            val worldName = rs.getString("world_name") ?: return null
+            val world = Bukkit.getWorld(worldName) ?: run {
+                return null
+            }
+
+            val x = rs.getInt("x").toDouble()
+            val y = rs.getInt("y").toDouble()
+            val z = rs.getInt("z").toDouble()
+            val location = Location(world, x, y, z)
+
+            val price = rs.getDouble("price")
+            val stock = rs.getInt("stock")
+
+            val bytes = rs.getBytes("item_data")
+            val itemArray = InventoryService.fromBase64(bytes)
+            val item = itemArray.firstOrNull() ?: return null
+
+            Shop(
+                id = id,
+                ownerUuid = ownerUuid,
+                location = location,
+                item = item,
+                price = price,
+                stock = stock
+            )
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+    suspend fun insertShop(shop: Shop) = withContext(dbDispatcher) {
+        val conn = getConnection()
+        ensureUserAndWorldExist(conn, Bukkit.getPlayer(shop.ownerUuid), shop.location.world)
+
+        conn.prepareStatement(
+            "INSERT OR REPLACE INTO Shop (shop_id, owner_uuid, world_id, x, y, z, item_data, price, stock) " +
+                    "VALUES (?, ?, (SELECT world_id FROM World WHERE name = ?), ?, ?, ?, ?, ?, ?)"
+        ).use { ps ->
+            ps.setString(1, shop.id)
+            ps.setString(2, shop.ownerUuid.toString())
+            ps.setString(3, shop.location.world.name)
+            ps.setInt(4, shop.location.blockX)
+            ps.setInt(5, shop.location.blockY)
+            ps.setInt(6, shop.location.blockZ)
+            ps.setBytes(7, InventoryService.toBase64(arrayOf(shop.item)))
+            ps.setDouble(8, shop.price)
+            ps.setInt(9, shop.stock)
+            ps.executeUpdate()
+        }
+    }
+
+    suspend fun updateShopStock(shopId: String, newStock: Int) = withContext(dbDispatcher) {
+        getConnection().prepareStatement("UPDATE Shop SET stock = ? WHERE shop_id = ?").use { ps ->
+            ps.setInt(1, newStock)
+            ps.setString(2, shopId)
+            ps.executeUpdate()
+        }
+    }
+
+    suspend fun deleteShop(shopId: String) = withContext(dbDispatcher) {
+        getConnection().prepareStatement("DELETE FROM Shop WHERE shop_id = ?").use { ps ->
+            ps.setString(1, shopId)
+            ps.executeUpdate()
         }
     }
 }

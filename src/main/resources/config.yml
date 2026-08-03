@@ -6,7 +6,7 @@
 # ██ ██ ██  ██▀██▄    ██▀▀▀▀▀▀   ██       ██    ██  ██▀▀▀▀▀▀    ██    #
 # ██ ██ ██  ██  ▀█▄   ▀██▄▄▄▄█   ██       ██    ██  ▀██▄▄▄▄█    ██▄▄▄ #
 # ▀▀ ▀▀ ▀▀  ▀▀   ▀▀▀    ▀▀▀▀▀    ▀▀       ▀▀    ▀▀    ▀▀▀▀▀      ▀▀▀▀ #
-# by Gallardo7761                                             v26.8.2 #
+# by Gallardo7761                                             v${version} #
 #######################################################################
 #                  [ R ] = full restart for applying                  #
 #######################################################################
@@ -15,10 +15,12 @@
 #  Plugin Configuration
 # -----------------------------------------------------------
 config:
-  permissions: # [ R ]
+  permissions:
     chatFormat: "mkernel.events.chatformat"
     adminChat: "mkernel.events.adminchat"
     mentions: "mkernel.events.mentions"
+    shop:
+      admin: "mkernel.shop.admin"
 
   values:
     recInvRequiredLevel: 10
@@ -27,9 +29,12 @@ config:
     maxWarps: 3
     recInvPlayerRadius: 10
     recInvSpawnDistance: 150
+    unknown: "desconocido"
+    serverAccount: "Hacienda"
+    taxPercent: 21.0
 
   chat:
-    prefix: "<color:#d30000><bold>MKernel</bold> <white>»</white></color>"
+    prefix: "<color:#d30000><bold>mkernel</bold> <white>»</white></color>"
     public:
       format: "%vault_prefix% <white>%mkernel_nick%</white> <aqua>»</aqua> <reset><message>"
     admin:
@@ -41,6 +46,11 @@ config:
     commands: # [ R ]
       - /minecraft:me
     recipes: []
+
+  shops-format:
+    title: "<red><bold>TIENDA</bold></red>"
+    price: "<white>Precio:</white> <yellow><price></yellow> <green>%banco_suffix%"
+    stock: "<white>Stock:</white> <yellow><stock></yellow>"
 
   modules:
     joinTitle: true
@@ -491,6 +501,17 @@ language:
       title: "Configuración"
       valueName: "<color:#d30000><bold>"
       valueLore: "<gray>Valor: <color:#d30000>"
+    shop:
+      title: "Tienda de <owner>"
+      itemLore:
+        - "<italic:false><gray>Precio unidad: <yellow><price> <green>%banco_suffix%"
+        - "<italic:false><gray>Stock disponible: <aqua><stock>"
+        - "<italic:false><dark_gray>(<tax_percent>% IVA incluído)"
+        - ""
+        - "<italic:false><green>  ► Click Izq: <white>Comprar 1"
+        - "<italic:false><green>  ► Click Der: <white>Comprar 32"
+        - "<italic:false><green>  ► Shift + Click Izq: <white>Comprar 64"
+        - "<italic:false><green>  ► Q / Soltar: <white>Comprar TODO"
 
   titles:
     titleFormat: "<color:#d30000><bold><player>"
@@ -500,6 +521,12 @@ language:
       death: "<red><player> ha muerto</red>"
 
   events:
+    onShop:
+      placed: "<yellow>Escribe el precio por unidad en el chat (ej: 10.5):"
+      created: "<gray>Tienda <green>creada</green>! Para introducir stock, <green>ábrela</green></gray>"
+      buy: "<gray>Has comprado <green><amount>x</green> por <green><total_price> <green>%banco_suffix%</green> <dark_gray>(<tax_percent>% IVA incl.)</dark_gray></gray>"
+      sold: "<gray><green><buyer></green> te ha comprado <aqua><amount>x <item></aqua> por <yellow><total_price> %banco_suffix%</yellow> <dark_gray>(Impuestos: <red>-<tax></red> | Neto: <green>+<profit></green>)</dark_gray></gray>"
+      destroy: "<gray>Has destruido la tienda. Los items se han soltado.</gray>"
     onJoin:
       message: "<yellow><player> <yellow>se ha unido a la partida"
     onLeave:
@@ -536,6 +563,13 @@ language:
     maxWarpsReached: "<red>Has alcanzado el límite de warps almacenados</red>"
     cannotFreezeSelf: "<red>No te puedes congelar a ti mismo</red>"
     noLastPosition: "<red>No tienes una última posición a la que volver</red>"
+    notANumber: "<red>Eso no es un número válido</red>"
+    noStock: "<red>Esta tienda se ha quedado sin stock</red>"
+    noEconomy: "<red>Error: El sistema de economía no está disponible</red>"
+    notEnoughMoney: "<red>No tienes suficiente dinero</red>"
+    shopNotAccesible: "<red>El cofre de la tienda no es accesible."
+    errorBuyingItem: "<red>No se pudo comprar el item</red>"
+    inventoryFull: "<red>Inventario lleno</red>"
 
 # ⚠️ Do not modify this line ⚠️
-file-version: 7
+file-version: 8

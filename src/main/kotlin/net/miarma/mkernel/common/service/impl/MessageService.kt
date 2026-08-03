@@ -10,6 +10,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.miarma.mkernel.common.service.IService
+import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
@@ -31,12 +32,12 @@ class MessageService @Inject constructor(private val configService: ConfigServic
     fun builder(text: String) = Builder(text)
 
     inner class Builder(private val text: String?) {
-        private var player: Player? = null
+        private var player: OfflinePlayer? = null
         private var usePrefix = false
         private val resolvers = mutableListOf<TagResolver>()
 
         fun withPrefix() = apply { usePrefix = true }
-        fun forPlayer(player: Player) = apply { this.player = player }
+        fun forPlayer(player: OfflinePlayer?) = apply { this.player = player }
         fun tag(name: String, value: String) = apply { resolvers.add(Placeholder.parsed(name, value)) }
         fun componentTag(name: String, component: Component) = apply { resolvers.add(Placeholder.component(name, component)) }
 
@@ -68,9 +69,5 @@ class MessageService @Inject constructor(private val configService: ConfigServic
     fun parsePlayerMessage(text: String, player: Player?): Component {
         val placeholderText = player?.let { PlaceholderAPI.setPlaceholders(it, text) } ?: text
         return SAFE_MINI_MESSAGE.deserialize(placeholderText)
-    }
-
-    fun stripColors(message: String?): String {
-        return if (message.isNullOrEmpty()) "" else PlainTextComponentSerializer.plainText().serialize(MINI_MESSAGE.deserialize(message))
     }
 }

@@ -1,6 +1,6 @@
 package net.miarma.mkernel.common.service.impl
 
-import MKernel // <-- Necesitamos importar el plugin pa' las corrutinas
+import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.miarma.mkernel.common.service.IService

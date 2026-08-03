@@ -30,7 +30,6 @@ class NickCommand @Inject constructor(
             playerExecutor { sender, args ->
                 val nick = args[0] as? String
                 val targetArg = if (args.count() > 1) args[1] else null
-                val blackListedUsernames = configService.getStringList("config.blacklist.usernames")
 
                 val target = if (targetArg != null) PlayerUtil.fromArg(targetArg) else sender
 
@@ -40,7 +39,7 @@ class NickCommand @Inject constructor(
                     return@playerExecutor
                 }
 
-                if (nick.isNullOrEmpty() || nick.equals( "off", ignoreCase = true )) {
+                if (nick.isNullOrEmpty() || nick.equals("off", ignoreCase = true)) {
                     playerService.setNick(target, null)
 
                     if (target == sender) {
@@ -51,14 +50,13 @@ class NickCommand @Inject constructor(
                             .withPrefix().tag("target", target.name).send(sender)
                     }
                 } else {
-                    if (blackListedUsernames.contains(nick)) {
-                        messageService.builder(configService.getString("errors.nickBlacklisted"))
+                    val success = playerService.setNick(target, nick)
+
+                    if (!success) {
+                        messageService.builder(configService.getString("language.errors.nickBlacklisted"))
                             .withPrefix().send(sender)
                         return@playerExecutor
                     }
-
-                    playerService.setNick(target, nick)
-                    target.playerListName(messageService.builder(nick).build())
 
                     if (target == sender) {
                         messageService.builder(configService.getString("commands.nick.messages.set"))

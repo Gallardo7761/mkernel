@@ -79,6 +79,14 @@ class ConfigService @Inject constructor(private val plugin: MKernel) : IService 
         return configs["config.yml"]?.getBoolean(path) ?: false
     }
 
+    fun getFloat(path: String): Float {
+        return configs["config.yml"]?.getFloat(path) ?: 0.0f
+    }
+
+    fun getDouble(path: String): Double {
+        return configs["config.yml"]?.getDouble(path) ?: 0.0
+    }
+
     fun isModuleEnabled(moduleName: String): Boolean {
         return getBoolean("config.modules.$moduleName")
     }

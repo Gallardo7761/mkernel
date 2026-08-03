@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "net.miarma"
-version = "26.8.2"
+version = "26.8.4"
 
 repositories {
     mavenCentral()
@@ -18,6 +18,8 @@ repositories {
     maven("https://repo.xenondevs.xyz/releases")
     maven("https://git.miarma.net/api/packages/Gallardo7761/maven")
     maven("https://raw.githubusercontent.com/JorelAli/1.13-Command-API/mvn-repo/1.13CommandAPI/")
+    maven("https://repo.mythmc.ovh/releases")
+    maven("https://maven.enginehub.org/repo/")
 }
 
 dependencies {
@@ -31,6 +33,9 @@ dependencies {
     compileOnly("net.kyori:adventure-text-serializer-legacy:5.2.0")
     compileOnly("org.jspecify:jspecify:1.0.0")
     compileOnly("org.xerial:sqlite-jdbc:3.53.2.0")
+    compileOnly("com.github.decentsoftware-eu:decentholograms:2.10.1")
+    compileOnly("ovh.mythmc:banco-api:1.2.1")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.17")
 
     implementation("net.miarma:mscript:26.7.1")
     implementation("org.reflections:reflections:0.10.2")
@@ -57,10 +62,19 @@ tasks {
     }
 
     named("shadowJar", com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
-        archiveFileName.set("MKernel-${project.version}.jar")
+        archiveFileName.set("mkernel-${project.version}.jar")
         destinationDirectory.set(file("/home/jomaa/Escritorio/server/plugins"))
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
         mergeServiceFiles()
+    }
+
+    processResources {
+        val props = mapOf("version" to project.version)
+        inputs.properties(props)
+        filteringCharset = "UTF-8"
+        filesMatching(listOf("paper-plugin.yml", "config.yml")) {
+            expand(props)
+        }
     }
 
     build {
