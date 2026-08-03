@@ -30,8 +30,11 @@ class SpecialItemCommand @Inject constructor(
                 StringArgument(configService.getString("arguments.item"))
                     .replaceSuggestions(ArgumentSuggestions.strings { _ ->
                         recipeLoader.loadedRecipes
+                            .asSequence()
                             .filter { it !is CampfireRecipe && it is Keyed }
                             .map { (it as Keyed).key.key }
+                            .distinct()
+                            .toList()
                             .toTypedArray()
                     })
             )

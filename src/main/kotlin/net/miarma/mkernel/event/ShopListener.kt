@@ -53,6 +53,7 @@ class ShopListener @Inject constructor(
             val wgHook = hookService.getHook(WorldGuardHook::class.java).orElse(null)
             if (wgHook != null && !wgHook.canCreateShop(player, block.location)) {
                 event.isCancelled = true
+                pendingShops.remove(player.uniqueId)
                 messageService.builder(configService.getString("language.errors.noPermission"))
                     .withPrefix()
                     .send(player)
@@ -178,8 +179,13 @@ class ShopListener @Inject constructor(
         val block = event.block
         if (block.type != Material.CHEST && block.type != Material.TRAPPED_CHEST && block.type != Material.BARREL) return
 
-        val shop = shopService.getShopAt(block.location) ?: return
         val player = event.player
+
+        if (pendingShops[player.uniqueId] == block.location) {
+            pendingShops.remove(player.uniqueId)
+        }
+
+        val shop = shopService.getShopAt(block.location) ?: return
 
         if (player.uniqueId != shop.ownerUuid && !player.hasPermission(configService.getString("config.permissions.shop.admin"))) {
             event.isCancelled = true

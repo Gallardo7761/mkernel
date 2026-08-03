@@ -14,6 +14,9 @@ dependencies:
       load: BEFORE
       required: true
       join-classpath: true
+    WorldGuard:
+      load: BEFORE
+      required: false
     DecentHolograms:
       load: BEFORE
       required: false
