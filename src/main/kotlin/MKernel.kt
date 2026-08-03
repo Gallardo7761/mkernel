@@ -81,7 +81,8 @@ class MKernel : JavaPlugin(), CoroutineScope {
             injector.getInstance(DecentHologramsHook::class.java),
             injector.getInstance(BancoHook::class.java),
             GriefPreventionHook(),
-            MinepacksHook()
+            MinepacksHook(),
+            WorldGuardHook()
         )
 
         services.forEach { it.onEnable() }
