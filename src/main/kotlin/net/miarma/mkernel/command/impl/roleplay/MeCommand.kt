@@ -6,6 +6,7 @@ import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import org.bukkit.Bukkit
@@ -13,10 +14,10 @@ import org.bukkit.Bukkit
 @Singleton
 class MeCommand @Inject constructor(private val configService: ConfigService, private val messageService: MessageService) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.me.name")) {
-            withArguments(GreedyStringArgument(configService.getString("arguments.message")))
-            withFullDescription(configService.getString("commands.me.description"))
-            withPermission(configService.getString("commands.me.permission"))
+        commandAPICommand(configService.getString(ConfigKeys.Commands.Me.NAME)) {
+            withArguments(GreedyStringArgument(configService.getString(ConfigKeys.Arguments.MESSAGE)))
+            withFullDescription(configService.getString(ConfigKeys.Commands.Me.DESC))
+            withPermission(configService.getString(ConfigKeys.Commands.Me.PERM))
             playerExecutor { sender, args ->
                 val message = args[0] as String
                 val builder = messageService.builder("<gold>(<player>) [Me] <gray><message>")

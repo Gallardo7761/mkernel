@@ -5,21 +5,22 @@ import com.google.inject.Singleton
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 
 @Singleton
 class DeOpMeCommand @Inject constructor(private val configService: ConfigService, private val messageService: MessageService) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.deopme.name")) {
-            withFullDescription(configService.getString("commands.deopme.description"))
-            withPermission(configService.getString("commands.deopme.permission"))
+        commandAPICommand(configService.getString(ConfigKeys.Commands.DeOpMe.NAME)) {
+            withFullDescription(configService.getString(ConfigKeys.Commands.DeOpMe.DESC))
+            withPermission(configService.getString(ConfigKeys.Commands.DeOpMe.PERM))
             playerExecutor { sender, _ ->
                 if (sender.isOp) {
                     sender.isOp = false
-                    messageService.builder(configService.getString("commands.deopme.messages.deOpped")).withPrefix().send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Commands.DeOpMe.MSG_DEOPPED)).withPrefix().send(sender)
                 } else {
-                    messageService.builder(configService.getString("commands.deopme.messages.youAreNotOp")).withPrefix().send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Commands.DeOpMe.MSG_NOT_OP)).withPrefix().send(sender)
                 }
             }
         }

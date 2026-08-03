@@ -28,6 +28,6 @@ class CommandHandler @Inject constructor(private val injector: Injector) {
                 e.printStackTrace()
             }
         }
-        MKernel.LOGGER.info("$commands commands registered!")
+        MKernel.LOGGER.info("Loaded $commands commands!")
     }
 }

@@ -2,6 +2,7 @@ package net.miarma.mkernel.common.inventory
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import org.bukkit.Material
@@ -28,11 +29,11 @@ class ConfigInventory @Inject constructor(
 ) {
 
     fun open(player: Player) {
-        val confSec = configService.getConfig("config.yml")?.getSection("config.modules") ?: return
+        val confSec = configService.getSection("modules") ?: return
         val values = confSec.getStringRouteMappedValues(false)
 
-        val namePrefix = configService.getString("language.inventories.configMenu.valueName")
-        val lorePrefix = configService.getString("language.inventories.configMenu.valueLore")
+        val namePrefix = configService.getString(ConfigKeys.Messages.Inventories.CONFIG_VAL_NAME)
+        val lorePrefix = configService.getString(ConfigKeys.Messages.Inventories.CONFIG_VAL_LORE)
 
         val configItems = mutableListOf<Item>()
 
@@ -52,7 +53,7 @@ class ConfigInventory @Inject constructor(
             .setContent(configItems)
             .build()
 
-        val title = messageService.builder(configService.getString("language.inventories.configMenu.title")).build()
+        val title = messageService.builder(configService.getString(ConfigKeys.Messages.Inventories.CONFIG_TITLE)).build()
 
         Window.builder()
             .setTitle(title)
@@ -65,7 +66,7 @@ class ConfigInventory @Inject constructor(
     private fun getItem(key: String, namePrefix: String, lorePrefix: String): Item {
         return object : AbstractItem() {
             override fun getItemProvider(player: Player): ItemProvider {
-                val valBoolean = configService.getBoolean("config.modules.$key")
+                val valBoolean = configService.getBoolean("modules.$key")
                 val displayName = messageService.builder("<italic:false>$namePrefix$key").build()
                 val lore = messageService.builder("<italic:false>$lorePrefix$valBoolean").build()
 
@@ -81,11 +82,11 @@ class ConfigInventory @Inject constructor(
             }
 
             override fun handleClick(clickType: ClickType, clickPlayer: Player, click: Click) {
-                val configKey = "config.modules.$key"
+                val configKey = "modules.$key"
                 val currentValue = configService.getBoolean(configKey)
                 val newValue = !currentValue
 
-                configService.getConfig("config.yml")?.set(configKey, newValue)
+                configService.set(configKey, newValue)
                 try {
                     configService.getConfig("config.yml")?.save()
                 } catch (e: IOException) {

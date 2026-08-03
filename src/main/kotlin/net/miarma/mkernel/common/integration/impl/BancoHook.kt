@@ -2,6 +2,7 @@ package net.miarma.mkernel.common.integration.impl
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.integration.IHook
 import net.miarma.mkernel.common.service.impl.ConfigService
 import ovh.mythmc.banco.api.Banco
@@ -21,7 +22,7 @@ class BancoHook @Inject constructor(
     }
 
     fun getServerAccountUuid(): UUID {
-        val accountName = configService.getString("config.values.serverAccount")
+        val accountName = configService.getString(ConfigKeys.Settings.Shops.SERVER_ACCOUNT)
         return UUID.nameUUIDFromBytes("SERVER_${accountName.uppercase()}_ACCOUNT".toByteArray())
     }
 
@@ -30,7 +31,7 @@ class BancoHook @Inject constructor(
         val accountManager = banco.accountManager
 
         val uuid = getServerAccountUuid()
-        val accountName = configService.getString("config.values.serverAccount")
+        val accountName = configService.getString(ConfigKeys.Settings.Shops.SERVER_ACCOUNT)
 
         val existingAccount = accountManager.getByUuid(uuid)
         if (existingAccount != null) {

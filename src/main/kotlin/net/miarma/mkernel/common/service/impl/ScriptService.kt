@@ -4,12 +4,14 @@ import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.dejvokep.boostedyaml.YamlDocument
+import net.miarma.mkernel.common.annotation.LoaderPriority
 import net.miarma.mkernel.common.service.IService
 import net.miarma.mscript.MScriptEngine
 import java.io.File
 import java.io.IOException
 
 @Singleton
+@LoaderPriority(LoaderPriority.NORMAL)
 class ScriptService @Inject constructor(private val plugin: MKernel) : IService {
 
     var scriptEngine: MScriptEngine? = null

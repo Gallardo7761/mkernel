@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.MessageService
@@ -31,8 +32,8 @@ class PlayerStatusListener @Inject constructor(
         val playerLevel = player.level
         val playerExp = player.exp
 
-        if (configService.isModuleEnabled("deathTitle")) {
-            val rawSubtitle = configService.getString("language.titles.subtitles.death")
+        if (configService.isModuleEnabled(ConfigKeys.Modules.DEATH_TITLE)) {
+            val rawSubtitle = configService.getString(ConfigKeys.Messages.General.Titles.DEATH)
             val times = Title.Times.times(Duration.ofMillis(1500), Duration.ofMillis(1500), Duration.ofMillis(1500))
 
             Bukkit.getOnlinePlayers().forEach { p ->
@@ -44,14 +45,14 @@ class PlayerStatusListener @Inject constructor(
             }
         }
 
-        if (configService.isModuleEnabled("recoverInventory")) {
+        if (configService.isModuleEnabled(ConfigKeys.Modules.RECOVER_INVENTORY)) {
             val deathLocation = player.location
             val playerSpawnPoint = player.respawnLocation ?: player.world.spawnLocation
             val onlinePlayers = Bukkit.getOnlinePlayers()
 
-            if (deathLocation.distance(playerSpawnPoint) <= configService.getInt("config.values.recInvSpawnDistance") ||
-                PlayerUtil.playersNearRadius(player, onlinePlayers, configService.getInt("config.values.recInvPlayerRadius"))) {
-                messageService.builder(configService.getString("language.events.onDeath.itemsNotRecovered"))
+            if (deathLocation.distance(playerSpawnPoint) <= configService.getInt(ConfigKeys.Settings.Death.REC_INV_SPAWN_DIST) ||
+                PlayerUtil.playersNearRadius(player, onlinePlayers, configService.getInt(ConfigKeys.Settings.Death.REC_INV_RADIUS))) {
+                messageService.builder(configService.getString(ConfigKeys.Messages.Death.ITEMS_NOT_RECOVERED))
                     .withPrefix()
                     .forPlayer(player)
                     .tag("x", deathLocation.blockX.toString())
@@ -67,14 +68,14 @@ class PlayerStatusListener @Inject constructor(
                 player.inventory.clear()
                 player.updateInventory()
 
-                val xpLossOnDeath = configService.getConfig("config.yml")?.getFloat("config.values.xpLossOnDeath") ?: 0f
+                val xpLossOnDeath = configService.getFloat(ConfigKeys.Settings.Death.XP_LOSS)
                 val levelsToLose = (playerLevel * xpLossOnDeath).toInt()
                 val newLevel = (playerLevel - levelsToLose).coerceAtLeast(0)
 
                 event.newLevel = newLevel
                 event.newExp = playerExp.toInt()
 
-                messageService.builder(configService.getString("language.events.onDeath.lostLevelsItems"))
+                messageService.builder(configService.getString(ConfigKeys.Messages.Death.LOST_LEVELS_ITEMS))
                     .withPrefix()
                     .tag("levels", levelsToLose.toString())
                     .send(player)

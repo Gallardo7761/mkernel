@@ -6,11 +6,12 @@ import com.google.inject.Singleton
 import net.miarma.mkernel.common.integration.impl.DecentHologramsHook
 import net.miarma.mkernel.common.model.Shop
 import net.miarma.mkernel.common.service.IService
-import org.bukkit.Bukkit
+import net.miarma.mkernel.common.annotation.LoaderPriority
 import org.bukkit.Location
 import java.util.concurrent.ConcurrentHashMap
 
 @Singleton
+@LoaderPriority(LoaderPriority.LOWEST)
 class ShopService @Inject constructor(
     private val plugin: MKernel,
     private val databaseService: DatabaseService,
@@ -48,7 +49,7 @@ class ShopService @Inject constructor(
                     )
                 }
             }
-            MKernel.LOGGER.info("${loadedShops.size} shops loaded!")
+            MKernel.LOGGER.info("Loaded ${loadedShops.size} shops!")
         }
     }
 

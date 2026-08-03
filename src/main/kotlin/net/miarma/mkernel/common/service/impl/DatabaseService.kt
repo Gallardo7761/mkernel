@@ -9,6 +9,7 @@ import kotlinx.coroutines.withContext
 import net.miarma.mkernel.common.model.Shop
 import net.miarma.mkernel.common.model.Warp
 import net.miarma.mkernel.common.service.IService
+import net.miarma.mkernel.common.annotation.LoaderPriority
 import net.miarma.mkernel.common.teleport.TpaRequest
 import net.miarma.mkernel.common.teleport.TpaType
 import org.bukkit.Bukkit
@@ -26,6 +27,7 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.Executors
 
 @Singleton
+@LoaderPriority(LoaderPriority.HIGHEST)
 class DatabaseService @Inject constructor(private val plugin: MKernel) : IService {
 
     private val dbFile = File(plugin.dataFolder, "database.db")

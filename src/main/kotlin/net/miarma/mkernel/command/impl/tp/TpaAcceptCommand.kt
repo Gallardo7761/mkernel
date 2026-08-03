@@ -7,6 +7,7 @@ import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.TeleportService
@@ -22,30 +23,30 @@ class TpaAcceptCommand @Inject constructor(
     private val teleportService: TeleportService
 ) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.tpaccept.name")) {
-            withOptionalArguments(PlayerProfileArgument(configService.getString("arguments.player")))
-            withPermission(configService.getString("commands.tpaccept.permission"))
-            withFullDescription(configService.getString("commands.tpaccept.description"))
-            withUsage(configService.getString("commands.tpaccept.usage"))
+        commandAPICommand(configService.getString(ConfigKeys.Commands.TpAccept.NAME)) {
+            withOptionalArguments(PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER)))
+            withPermission(configService.getString(ConfigKeys.Commands.TpAccept.PERM))
+            withFullDescription(configService.getString(ConfigKeys.Commands.TpAccept.DESC))
+            withUsage(configService.getString(ConfigKeys.Commands.TpAccept.USAGE))
             playerExecutor { sender, args ->
                 plugin.launchSync {
                     if (args[0] == null) {
                         val request = teleportService.getIncomingTpaRequest(sender)
                         if (request == null) {
-                            messageService.builder(configService.getString("language.errors.noRequestFound")).withPrefix().send(sender)
+                            messageService.builder(configService.getString(ConfigKeys.Messages.Teleport.Errors.NO_REQ_FOUND)).withPrefix().send(sender)
                             return@launchSync
                         }
                         acceptRequest(sender, request.from, request)
                     } else {
                         val target = PlayerUtil.fromArg(args[0])
                         if (target == null || !target.isOnline) {
-                            messageService.builder(configService.getString("language.errors.playerNotFound")).withPrefix().send(sender)
+                            messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.PLAYER_NOT_FOUND)).withPrefix().send(sender)
                             return@launchSync
                         }
 
                         val request = teleportService.getTpaRequest(target, sender)
                         if (request == null) {
-                            messageService.builder(configService.getString("language.errors.noRequestFound")).withPrefix().send(sender)
+                            messageService.builder(configService.getString(ConfigKeys.Messages.Teleport.Errors.NO_REQ_FOUND)).withPrefix().send(sender)
                             return@launchSync
                         }
                         acceptRequest(sender, target, request)
@@ -64,7 +65,7 @@ class TpaAcceptCommand @Inject constructor(
             sender.teleportAsync(target.location)
         }
 
-        messageService.builder(configService.getString("commands.tpaccept.messages.acceptedToTarget")).withPrefix().forPlayer(target).tag("sender", sender.name).send(target)
-        messageService.builder(configService.getString("commands.tpaccept.messages.accepted")).withPrefix().tag("target", target.name).send(sender)
+        messageService.builder(configService.getString(ConfigKeys.Commands.TpAccept.MSG_ACCEPTED_TARGET)).withPrefix().forPlayer(target).tag("sender", sender.name).send(target)
+        messageService.builder(configService.getString(ConfigKeys.Commands.TpAccept.MSG_ACCEPTED)).withPrefix().tag("target", target.name).send(sender)
     }
 }

@@ -2,7 +2,7 @@ id: "shop_chest"
 type: "SHAPED"
 result:
   material: "CHEST"
-  name: "<italic:false><green><bold>Cofre Tienda</bold></green>"
+  name: "<italic:false><red><bold>Cofre Tienda</bold></red>"
   lore:
     - "<italic:false><gray>Ponlo en el suelo para"
     - "<italic:false><gray>crear tu tienda."

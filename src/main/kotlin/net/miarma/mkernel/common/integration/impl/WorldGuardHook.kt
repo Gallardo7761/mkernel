@@ -5,6 +5,7 @@ import com.sk89q.worldguard.WorldGuard
 import com.sk89q.worldguard.protection.flags.StateFlag
 import com.sk89q.worldguard.protection.flags.registry.FlagConflictException
 import com.sk89q.worldguard.protection.regions.RegionContainer
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.integration.IHook
 import org.bukkit.Location
 import org.bukkit.entity.Player
@@ -39,7 +40,7 @@ class WorldGuardHook : IHook {
 
     fun canCreateShop(player: Player, location: Location): Boolean {
         if (!isInstalled()) return true
-        if (player.hasPermission("mkernel.shop.admin")) return true
+        if (player.hasPermission(ConfigKeys.Settings.Shops.PERM_ADMIN)) return true
 
         val localPlayer = com.sk89q.worldguard.bukkit.WorldGuardPlugin.inst().wrapPlayer(player)
         val container: RegionContainer = WorldGuard.getInstance().platform.regionContainer

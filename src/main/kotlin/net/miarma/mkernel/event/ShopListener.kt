@@ -6,6 +6,7 @@ import com.google.inject.Singleton
 import de.tr7zw.nbtapi.NBT
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.integration.impl.WorldGuardHook
 import net.miarma.mkernel.common.inventory.ShopBuyInventory
 import net.miarma.mkernel.common.model.Shop
@@ -15,12 +16,21 @@ import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.ShopService
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.block.Block
 import org.bukkit.block.Chest
+import org.bukkit.entity.Enderman
 import org.bukkit.event.EventHandler
+import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
 import org.bukkit.event.block.Action
 import org.bukkit.event.block.BlockBreakEvent
+import org.bukkit.event.block.BlockBurnEvent
+import org.bukkit.event.block.BlockExplodeEvent
+import org.bukkit.event.block.BlockPistonExtendEvent
+import org.bukkit.event.block.BlockPistonRetractEvent
 import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.entity.EntityChangeBlockEvent
+import org.bukkit.event.entity.EntityExplodeEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.inventory.ItemStack
@@ -54,7 +64,7 @@ class ShopListener @Inject constructor(
             if (wgHook != null && !wgHook.canCreateShop(player, block.location)) {
                 event.isCancelled = true
                 pendingShops.remove(player.uniqueId)
-                messageService.builder(configService.getString("language.errors.noPermission"))
+                messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.NO_PERMISSION))
                     .withPrefix()
                     .send(player)
                 return
@@ -67,7 +77,7 @@ class ShopListener @Inject constructor(
             }
 
             pendingShops[player.uniqueId] = block.location
-            messageService.builder(configService.getString("language.events.onShop.placed"))
+            messageService.builder(configService.getString(ConfigKeys.Messages.Shops.Chat.PLACED))
                 .withPrefix()
                 .send(player)
             return
@@ -106,7 +116,7 @@ class ShopListener @Inject constructor(
         val price = msg.toDoubleOrNull()
 
         if (price == null || price <= 0) {
-            messageService.builder(configService.getString("language.errors.notANumber"))
+            messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.NOT_A_NUMBER))
                 .withPrefix()
                 .send(player)
             return
@@ -117,7 +127,7 @@ class ShopListener @Inject constructor(
         plugin.launchSync {
             val shop = Shop(shopService.generateShopId(loc), player.uniqueId, loc, ItemStack(Material.AIR), price, 0)
             shopService.syncShop(shop)
-            messageService.builder(configService.getString("language.events.onShop.created"))
+            messageService.builder(configService.getString(ConfigKeys.Messages.Shops.Chat.CREATED))
                 .withPrefix()
                 .tag("item", shop.item.type.name)
                 .send(player)
@@ -139,7 +149,7 @@ class ShopListener @Inject constructor(
             event.isCancelled = true
 
             if (shop.item.type.isAir || shop.stock <= 0) {
-                messageService.builder(configService.getString("language.errors.noStock"))
+                messageService.builder(configService.getString(ConfigKeys.Messages.Shops.Errors.NO_STOCK))
                     .withPrefix()
                     .send(player)
                 return
@@ -187,9 +197,9 @@ class ShopListener @Inject constructor(
 
         val shop = shopService.getShopAt(block.location) ?: return
 
-        if (player.uniqueId != shop.ownerUuid && !player.hasPermission(configService.getString("config.permissions.shop.admin"))) {
+        if (player.uniqueId != shop.ownerUuid && !player.hasPermission(configService.getString(ConfigKeys.Settings.Shops.PERM_ADMIN))) {
             event.isCancelled = true
-            messageService.builder(configService.getString("language.errors.noPermission"))
+            messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.NO_PERMISSION))
                 .withPrefix()
                 .send(player)
             return
@@ -198,8 +208,57 @@ class ShopListener @Inject constructor(
         shopService.deleteShop(shop.id)
         pendingShops.remove(player.uniqueId)
 
-        messageService.builder(configService.getString("language.events.onShop.destroy"))
+        messageService.builder(configService.getString(ConfigKeys.Messages.Shops.Chat.DESTROY))
             .withPrefix()
             .send(player)
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    fun onEntityExplode(event: EntityExplodeEvent) {
+        event.blockList().removeIf { block -> isShopBlock(block) }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    fun onBlockExplode(event: BlockExplodeEvent) {
+        event.blockList().removeIf { block -> isShopBlock(block) }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    fun onEntityChangeBlock(event: EntityChangeBlockEvent) {
+        if (isShopBlock(event.block)) {
+            event.isCancelled = true
+
+            if (event.entity is Enderman) {
+                (event.entity as Enderman).carriedBlock = null
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    fun onBlockBurn(event: BlockBurnEvent) {
+        if (isShopBlock(event.block)) {
+            event.isCancelled = true
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    fun onPistonExtend(event: BlockPistonExtendEvent) {
+        if (event.blocks.any { isShopBlock(it) }) {
+            event.isCancelled = true
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    fun onPistonRetract(event: BlockPistonRetractEvent) {
+        if (event.blocks.any { isShopBlock(it) }) {
+            event.isCancelled = true
+        }
+    }
+
+    private fun isShopBlock(block: Block): Boolean {
+        if (block.type != Material.CHEST && block.type != Material.TRAPPED_CHEST && block.type != Material.BARREL) {
+            return false
+        }
+        return shopService.getShopAt(block.location) != null
     }
 }

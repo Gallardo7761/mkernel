@@ -2,6 +2,7 @@ package net.miarma.mkernel.common.inventory
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.integration.impl.BancoHook
 import net.miarma.mkernel.common.model.Shop
 import net.miarma.mkernel.common.service.impl.*
@@ -49,9 +50,9 @@ class ShopBuyInventory @Inject constructor(
         val onlinePlayer = Bukkit.getPlayer(shop.ownerUuid)
         val ownerName = onlinePlayer?.getNickName(playerService)
             ?: Bukkit.getOfflinePlayer(shop.ownerUuid).name
-            ?: configService.getString("config.values.unknown")
+            ?: configService.getString(ConfigKeys.Messages.General.UNKNOWN)
 
-        val title = messageService.builder(configService.getString("language.inventories.shop.title"))
+        val title = messageService.builder(configService.getString(ConfigKeys.Messages.Shops.Inventory.TITLE))
             .tag("owner", ownerName)
             .build()
 
@@ -69,8 +70,8 @@ class ShopBuyInventory @Inject constructor(
                 val item = shop.item.clone()
                 val meta = item.itemMeta
 
-                val taxPercent = configService.getDouble("config.values.taxPercent")
-                val rawLore = configService.getStringList("language.inventories.shop.itemLore")
+                val taxPercent = configService.getDouble(ConfigKeys.Settings.Shops.TAX_PERCENT)
+                val rawLore = configService.getStringList(ConfigKeys.Messages.Shops.Inventory.ITEM_LORE)
                 val formattedLore = rawLore.map { line ->
                     messageService.builder(line)
                         .forPlayer(player)
@@ -91,13 +92,13 @@ class ShopBuyInventory @Inject constructor(
 
                 val banco = hookService.getHook(BancoHook::class.java).orElse(null)
                 if (banco == null) {
-                    sendError(clickPlayer, "language.errors.noEconomy")
+                    sendError(clickPlayer, ConfigKeys.Messages.Shops.Errors.NO_ECONOMY)
                     return
                 }
 
                 val chestInv = getChestInventory(shop)
                 if (chestInv == null) {
-                    sendError(clickPlayer, "language.errors.shopNotAccesible")
+                    sendError(clickPlayer, ConfigKeys.Messages.Shops.Errors.SHOP_NOT_ACCESSIBLE)
                     return
                 }
 
@@ -106,20 +107,20 @@ class ShopBuyInventory @Inject constructor(
                 val amountToBuy = min(targetAmount, maxAffordable)
 
                 if (amountToBuy <= 0) {
-                    sendErrorWithSound(clickPlayer, "language.errors.notEnoughMoney")
+                    sendErrorWithSound(clickPlayer, ConfigKeys.Messages.Shops.Errors.NOT_ENOUGH_MONEY)
                     return
                 }
 
                 val sampleItem = shop.item.clone()
                 val actualRemoved = removeItemsFromChest(chestInv, sampleItem, amountToBuy)
                 if (actualRemoved <= 0) {
-                    sendError(clickPlayer, "language.errors.errorBuyingItem")
+                    sendError(clickPlayer, ConfigKeys.Messages.Shops.Errors.ERROR_BUYING)
                     return
                 }
 
                 val finalBought = deliverItemsToPlayer(clickPlayer, chestInv, shop.item, actualRemoved)
                 if (finalBought <= 0) {
-                    sendErrorWithSound(clickPlayer, "language.errors.inventoryFull")
+                    sendErrorWithSound(clickPlayer, ConfigKeys.Messages.Shops.Errors.INVENTORY_FULL)
                     return
                 }
 
@@ -147,11 +148,11 @@ class ShopBuyInventory @Inject constructor(
 
     private fun validatePreconditions(player: Player, shop: Shop): Boolean {
         if (player.uniqueId == shop.ownerUuid) {
-            sendError(player, "language.errors.cantBuyOwnShop")
+            sendError(player, ConfigKeys.Messages.Shops.Errors.CANT_BUY_OWN)
             return false
         }
         if (shop.stock <= 0) {
-            sendErrorWithSound(player, "language.errors.noStock")
+            sendErrorWithSound(player, ConfigKeys.Messages.Shops.Errors.NO_STOCK)
             return false
         }
         return true
@@ -195,7 +196,7 @@ class ShopBuyInventory @Inject constructor(
     }
 
     private fun processFinancesAndSync(banco: BancoHook, shop: Shop, totalPrice: Double, finalBought: Int) {
-        val taxPercent = configService.getDouble("config.values.taxPercent")
+        val taxPercent = configService.getDouble(ConfigKeys.Settings.Shops.TAX_PERCENT)
         val rawTax = totalPrice * (taxPercent / 100.0)
         val tax = ceil(rawTax)
         val ownerProfit = totalPrice - tax
@@ -208,10 +209,10 @@ class ShopBuyInventory @Inject constructor(
     }
 
     private fun notifyPurchase(buyer: Player, shop: Shop, boughtCount: Int, totalPrice: Double) {
-        val taxPercent = configService.getDouble("config.values.taxPercent")
+        val taxPercent = configService.getDouble(ConfigKeys.Settings.Shops.TAX_PERCENT)
         buyer.playSound(buyer.location, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1f, 1f)
 
-        messageService.builder(configService.getString("language.events.onShop.buy"))
+        messageService.builder(configService.getString(ConfigKeys.Messages.Shops.Chat.BUY))
             .withPrefix()
             .tag("amount", boughtCount.toString())
             .tag("total_price", totalPrice.toString())
@@ -224,7 +225,7 @@ class ShopBuyInventory @Inject constructor(
             val tax = ceil(rawTax)
             val ownerProfit = totalPrice - tax
 
-            messageService.builder(configService.getString("language.events.onShop.sold"))
+            messageService.builder(configService.getString(ConfigKeys.Messages.Shops.Chat.SOLD))
                 .withPrefix()
                 .tag("buyer", buyer.getNickName(playerService))
                 .tag("amount", boughtCount.toString())

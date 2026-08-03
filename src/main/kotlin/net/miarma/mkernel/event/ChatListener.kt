@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import io.papermc.paper.event.player.AsyncChatEvent
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.PlayerService
@@ -32,16 +33,16 @@ class ChatListener @Inject constructor(
         val player = event.player
         val plainMessage = PlainTextComponentSerializer.plainText().serialize(event.message())
 
-        if (configService.isModuleEnabled("adminChat")) {
-            val adminPerm = configService.getString("config.permissions.adminChat")
-            val trigger = configService.getString("config.chat.admin.trigger")
+        if (configService.isModuleEnabled(ConfigKeys.Modules.ADMIN_CHAT)) {
+            val adminPerm = configService.getString(ConfigKeys.Settings.Chat.Admin.PERM)
+            val trigger = configService.getString(ConfigKeys.Settings.Chat.Admin.TRIGGER)
             if (!trigger.isNullOrEmpty() && plainMessage.startsWith(trigger)) {
                 event.isCancelled = true
                 if (!player.hasPermission(adminPerm)) {
-                    messageService.builder(configService.getString("language.errors.noPermission")).withPrefix().send(player)
+                    messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.NO_PERMISSION)).withPrefix().send(player)
                     return
                 }
-                val adminFormat = configService.getString("config.chat.admin.format")
+                val adminFormat = configService.getString(ConfigKeys.Settings.Chat.Admin.FORMAT)
                 val rawMsg = plainMessage.substring(trigger.length).trim()
                 val adminComponent = messageService.builder(adminFormat).forPlayer(player).tag("message", rawMsg).build()
                 Bukkit.getOnlinePlayers().filter { it.hasPermission(adminPerm) }.forEach { it.sendMessage(adminComponent) }
@@ -49,7 +50,7 @@ class ChatListener @Inject constructor(
             }
         }
 
-        if (configService.isModuleEnabled("endermanNWordAnger") &&
+        if (configService.isModuleEnabled(ConfigKeys.Modules.ENDERMAN_NWORD_ANGER) &&
                 SLUR_REGEX.containsMatchIn(plainMessage) &&
                 PlayerUtil.isEntityNear(player, Enderman::class.java, 5)) {
             player.location.chunk.entities.filterIsInstance<Enderman>().forEach { enderman ->
@@ -59,7 +60,8 @@ class ChatListener @Inject constructor(
             }
         }
 
-        if (configService.isModuleEnabled("mentions") && player.hasPermission(configService.getString("config.permissions.mentions"))) {
+        if (configService.isModuleEnabled(ConfigKeys.Modules.MENTIONS) &&
+                player.hasPermission(configService.getString(ConfigKeys.Settings.Chat.PERM_MENTIONS))) {
             Bukkit.getOnlinePlayers().forEach { target ->
                 val targetNick = target.getNickName(playerService)
                 val mentionedByName = plainMessage.contains("@${target.name}")
@@ -67,7 +69,7 @@ class ChatListener @Inject constructor(
                 val mentionedByNick = hasCustomNick && plainMessage.contains("@$targetNick")
 
                 if (mentionedByName || mentionedByNick) {
-                    val mentionFormat = configService.getString("language.events.onMention.format")
+                    val mentionFormat = configService.getString(ConfigKeys.Messages.Chat.MENTIONS_FORMAT)
                     val mentionComponent = messageService.builder(mentionFormat).tag("player", targetNick).build()
                     var newMessage = event.message()
 
@@ -87,7 +89,7 @@ class ChatListener @Inject constructor(
 
                     val senderNick = player.getNickName(playerService)
 
-                    messageService.builder(configService.getString("language.events.onMention.youWereMentioned"))
+                    messageService.builder(configService.getString(ConfigKeys.Messages.Chat.YOU_WERE_MENTIONED))
                         .withPrefix().forPlayer(target).tag("player", senderNick).send(target)
 
                     target.playSound(target.location, Sound.BLOCK_NOTE_BLOCK_PLING, 1.0f, 1.0f)
@@ -95,8 +97,9 @@ class ChatListener @Inject constructor(
             }
         }
 
-        if (configService.isModuleEnabled("chatFormat") && player.hasPermission(configService.getString("config.permissions.chatFormat"))) {
-            configService.getString("config.chat.public.format").takeIf { !it.isNullOrEmpty() }?.let { chatFormat ->
+        if (configService.isModuleEnabled(ConfigKeys.Modules.CHAT_FORMAT) &&
+                player.hasPermission(configService.getString(ConfigKeys.Settings.Chat.PERM_FORMAT))) {
+            configService.getString(ConfigKeys.Settings.Chat.PUBLIC_FORMAT).takeIf { !it.isNullOrEmpty() }?.let { chatFormat ->
                 event.renderer { source, _, message, _ ->
                     messageService.builder(chatFormat)
                         .forPlayer(source)
@@ -112,12 +115,12 @@ class ChatListener @Inject constructor(
         val player = event.player
         if (playerService.isFrozen(player)) {
             event.isCancelled = true
-            messageService.builder(configService.getString("language.events.whileFrozen")).send(player)
+            messageService.builder(configService.getString(ConfigKeys.Messages.Admin.WHILE_FROZEN)).send(player)
             return
         }
         val commandMessage = event.message
         Bukkit.getOnlinePlayers().filter { p -> playerService.canSpy(p) && p != player }.forEach {
-            messageService.builder(configService.getString("language.events.onCommand.spyMessage"))
+            messageService.builder(configService.getString(ConfigKeys.Messages.Admin.SPY_MESSAGE))
                 .tag("player", player.getNickName(playerService))
                 .tag("message", commandMessage)
                 .send(it)

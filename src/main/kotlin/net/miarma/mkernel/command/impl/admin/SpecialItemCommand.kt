@@ -8,6 +8,7 @@ import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.recipe.RecipeLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
@@ -24,33 +25,27 @@ class SpecialItemCommand @Inject constructor(
     private val recipeLoader: RecipeLoader
 ) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.specialitem.name")) {
+        commandAPICommand(configService.getString(ConfigKeys.Commands.SpecialItem.NAME)) {
             withAliases("spi")
             withArguments(
-                StringArgument(configService.getString("arguments.item"))
+                StringArgument(configService.getString(ConfigKeys.Arguments.ITEM))
                     .replaceSuggestions(ArgumentSuggestions.strings { _ ->
-                        recipeLoader.loadedRecipes
-                            .asSequence()
-                            .filter { it !is CampfireRecipe && it is Keyed }
-                            .map { (it as Keyed).key.key }
-                            .distinct()
-                            .toList()
-                            .toTypedArray()
+                        recipeLoader.loadedRecipes.keys.toTypedArray()
                     })
             )
-            withFullDescription(configService.getString("commands.specialitem.description"))
-            withPermission(configService.getString("commands.specialitem.permission"))
-            withUsage(configService.getString("commands.specialitem.usage"))
+            withFullDescription(configService.getString(ConfigKeys.Commands.SpecialItem.DESC))
+            withPermission(configService.getString(ConfigKeys.Commands.SpecialItem.PERM))
+            withUsage(configService.getString(ConfigKeys.Commands.SpecialItem.USAGE))
             playerExecutor { sender, args ->
                 val itemName = args[0] as String
                 val specialItem = Bukkit.getServer().getRecipe(NamespacedKey(plugin, itemName))
 
                 if (specialItem != null) {
                     sender.inventory.addItem(specialItem.result)
-                    messageService.builder(configService.getString("commands.specialitem.messages.itemReceived"))
+                    messageService.builder(configService.getString(ConfigKeys.Commands.SpecialItem.MSG_RECEIVED))
                         .withPrefix().tag("item", itemName).send(sender)
                 } else {
-                    messageService.builder(configService.getString("language.errors.itemNotFound"))
+                    messageService.builder(configService.getString(ConfigKeys.Messages.Misc.Errors.ITEM_NOT_FOUND))
                         .withPrefix().tag("item", itemName).send(sender)
                 }
             }

@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.decentsoftware.holograms.api.DHAPI
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.integration.IHook
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
@@ -33,16 +34,22 @@ class DecentHologramsHook @Inject constructor(
         val lines = listOf(
             "#ICON:${item.type.name}",
             serializer.serialize(
-                messageService.builder(configService.getString("config.shops-format.title")).build()
+                messageService.builder(configService.getString(
+                    ConfigKeys.Messages.Shops.Hologram.TITLE
+                )).build()
             ),
             serializer.serialize(
-                messageService.builder(configService.getString("config.shops-format.price"))
+                messageService.builder(configService.getString(
+                    ConfigKeys.Messages.Shops.Hologram.PRICE
+                ))
                     .forPlayer(offlineOwner)
                     .tag("price", price.toString())
                     .build()
             ),
             serializer.serialize(
-                messageService.builder(configService.getString("config.shops-format.stock"))
+                messageService.builder(configService.getString(
+                    ConfigKeys.Messages.Shops.Hologram.STOCK
+                ))
                     .tag("stock", stock.toString())
                     .build()
             )
@@ -55,7 +62,7 @@ class DecentHologramsHook @Inject constructor(
         val holo = DHAPI.getHologram(shopId) ?: return
 
         val newLine = serializer.serialize(
-            messageService.builder(configService.getString("config.shops-format.stock"))
+            messageService.builder(configService.getString(ConfigKeys.Messages.Shops.Hologram.STOCK))
                 .tag("stock", newStock.toString())
                 .build()
         )
