@@ -11,7 +11,7 @@ import org.bukkit.persistence.PersistentDataType
 
 @Singleton
 class PlayerService @Inject constructor(
-    plugin: MKernel,
+    private val plugin: MKernel,
     private val messageService: MessageService,
     private val configService: ConfigService
 ) : IService {

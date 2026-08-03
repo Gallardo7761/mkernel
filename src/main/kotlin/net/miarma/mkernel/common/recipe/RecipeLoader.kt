@@ -44,6 +44,7 @@ class RecipeLoader @Inject constructor(
             saveDefaultRecipe("spawner_breaker.yml")
             saveDefaultRecipe("zombification_potion.yml")
             saveDefaultRecipe("rotten_campfire.yml")
+            saveDefaultRecipe("shop_chest.yml")
         }
 
         folder.listFiles { _, name -> name.endsWith(".yml") }?.forEach { file ->

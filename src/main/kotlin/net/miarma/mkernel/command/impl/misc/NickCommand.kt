@@ -53,7 +53,7 @@ class NickCommand @Inject constructor(
                     val success = playerService.setNick(target, nick)
 
                     if (!success) {
-                        messageService.builder(configService.getString("errors.nickBlacklisted"))
+                        messageService.builder(configService.getString("language.errors.nickBlacklisted"))
                             .withPrefix().send(sender)
                         return@playerExecutor
                     }

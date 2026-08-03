@@ -8,9 +8,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.miarma.mkernel.command.CommandHandler
 import net.miarma.mkernel.common.inject.MKernelModule
-import net.miarma.mkernel.common.integration.impl.GriefPreventionHook
-import net.miarma.mkernel.common.integration.impl.MinepacksHook
-import net.miarma.mkernel.common.integration.impl.PlaceholderAPIHook
+import net.miarma.mkernel.common.integration.impl.*
 import net.miarma.mkernel.common.recipe.RecipeLoader
 import net.miarma.mkernel.common.service.IService
 import net.miarma.mkernel.common.service.impl.*
@@ -19,6 +17,7 @@ import net.miarma.mkernel.task.LocationTrackerTask
 import net.miarma.mkernel.util.BukkitDispatcher
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
+import ovh.mythmc.banco.api.Banco
 import java.util.logging.Logger
 import kotlin.coroutines.CoroutineContext
 
@@ -49,6 +48,8 @@ class MKernel : JavaPlugin(), CoroutineScope {
                 .verboseOutput(false)
                 .setNamespace("mkernel")
         )
+
+        WorldGuardHook.registerFlag()
     }
 
     override fun onEnable() {
@@ -71,19 +72,22 @@ class MKernel : JavaPlugin(), CoroutineScope {
             add(injector.getInstance(LastPositionService::class.java))
             add(injector.getInstance(MessageService::class.java))
             add(injector.getInstance(TeleportService::class.java))
+            add(injector.getInstance(ShopService::class.java))
         }
+
+        val hookService = injector.getInstance(HookService::class.java)
+        hookService.registerHooks(
+            injector.getInstance(PlaceholderAPIHook::class.java),
+            injector.getInstance(DecentHologramsHook::class.java),
+            injector.getInstance(BancoHook::class.java),
+            GriefPreventionHook(),
+            MinepacksHook()
+        )
 
         services.forEach { it.onEnable() }
 
         recipeLoader = injector.getInstance(RecipeLoader::class.java)
         recipeLoader.loadAll()
-
-        val hookService = injector.getInstance(HookService::class.java)
-        hookService.registerHooks(
-            injector.getInstance(PlaceholderAPIHook::class.java),
-            GriefPreventionHook(),
-            MinepacksHook()
-        )
 
         val commandHandler = injector.getInstance(CommandHandler::class.java)
         commandHandler.registerCommands()
@@ -108,6 +112,7 @@ class MKernel : JavaPlugin(), CoroutineScope {
         pm.registerEvents(injector.getInstance(PlayerConnectionListener::class.java), this)
         pm.registerEvents(injector.getInstance(PlayerStatusListener::class.java), this)
         pm.registerEvents(injector.getInstance(WorldInteractionListener::class.java), this)
+        pm.registerEvents(injector.getInstance(ShopListener::class.java), this)
     }
 
     fun launchAsync(block: suspend CoroutineScope.() -> Unit) {

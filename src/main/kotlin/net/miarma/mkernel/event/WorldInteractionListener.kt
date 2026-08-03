@@ -3,9 +3,6 @@ package net.miarma.mkernel.event
 import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import net.kyori.adventure.text.Component
-import net.kyori.adventure.text.TextComponent
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.miarma.mkernel.common.integration.impl.GriefPreventionHook
 import net.miarma.mkernel.common.integration.impl.MinepacksHook
 import net.miarma.mkernel.common.service.impl.*
@@ -19,7 +16,10 @@ import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.*
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
-import org.bukkit.event.block.*
+import org.bukkit.event.block.Action
+import org.bukkit.event.block.BlockCookEvent
+import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.block.CampfireStartEvent
 import org.bukkit.event.entity.EntityDeathEvent
 import org.bukkit.event.player.*
 import org.bukkit.event.world.PortalCreateEvent

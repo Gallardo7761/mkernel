@@ -1,0 +1,20 @@
+id: "shop_chest"
+type: "SHAPED"
+result:
+  material: "CHEST"
+  name: "<italic:false><green><bold>Cofre Tienda</bold></green>"
+  lore:
+    - "<italic:false><gray>Ponlo en el suelo para"
+    - "<italic:false><gray>crear tu tienda."
+  enchants:
+    - "unbreaking:1"
+  flags:
+    - "HIDE_ENCHANTS"
+recipe:
+  shape:
+    - "SSS"
+    - "SCS"
+    - "SSS"
+  ingredients:
+    S: "ECHO_SHARD"
+    C: "CHEST"
