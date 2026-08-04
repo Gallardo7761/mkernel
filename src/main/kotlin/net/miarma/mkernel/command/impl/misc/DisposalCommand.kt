@@ -25,7 +25,7 @@ class DisposalCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Disposal.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.DISPOSAL)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.DISPOSAL)
             withPermission(configService.getString(ConfigKeys.Commands.Disposal.PERM_BASE))
             withOptionalArguments(
                 PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER))

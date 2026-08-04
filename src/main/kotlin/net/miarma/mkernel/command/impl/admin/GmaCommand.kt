@@ -24,7 +24,7 @@ class GmaCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Gma.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.GMA)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.GMA)
             withPermission(configService.getString(ConfigKeys.Commands.Gma.PERM_BASE))
             withOptionalArguments(
                 PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER))

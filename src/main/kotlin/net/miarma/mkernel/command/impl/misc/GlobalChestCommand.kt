@@ -25,7 +25,7 @@ class GlobalChestCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.GlobalChest.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.GLOBAL_CHEST)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.GLOBAL_CHEST)
             withPermission(configService.getString(ConfigKeys.Commands.GlobalChest.PERM_BASE))
             withAliases(*configService.getStringList(ConfigKeys.Commands.GlobalChest.ALIASES).toTypedArray())
             withOptionalArguments(

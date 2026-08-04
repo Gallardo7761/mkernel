@@ -25,7 +25,7 @@ class InvseeCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Invsee.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.INVSEE)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.INVSEE)
             withArguments(PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER)))
             withShortDescription(configService.getString(ConfigKeys.Commands.Invsee.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.Invsee.PERM))

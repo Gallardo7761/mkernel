@@ -26,7 +26,7 @@ class NickCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Nick.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.NICK)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.NICK)
             withPermission(configService.getString(ConfigKeys.Commands.Nick.PERM_BASE))
             withOptionalArguments(
                 StringArgument(configService.getString(ConfigKeys.Arguments.NICKNAME)),

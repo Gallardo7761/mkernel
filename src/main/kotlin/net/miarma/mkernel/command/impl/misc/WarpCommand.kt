@@ -26,7 +26,7 @@ class WarpCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Warp.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Teleport.MAIN)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Teleport.MAIN)
             withPermission(configService.getString(ConfigKeys.Commands.Warp.PERM))
             withFullDescription(configService.getString(ConfigKeys.Commands.Warp.DESC))
             withUsage(configService.getString(ConfigKeys.Commands.Warp.USAGE))

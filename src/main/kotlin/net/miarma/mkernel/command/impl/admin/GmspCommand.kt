@@ -24,7 +24,7 @@ class GmspCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Gmsp.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.GMSP)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.GMSP)
             withPermission(configService.getString(ConfigKeys.Commands.Gmsp.PERM_BASE))
             withOptionalArguments(
                 PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER))

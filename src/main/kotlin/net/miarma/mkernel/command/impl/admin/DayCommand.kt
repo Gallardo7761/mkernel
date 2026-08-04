@@ -21,7 +21,7 @@ class DayCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Day.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.World.MAIN, ConfigKeys.Modules.World.TIME_WEATHER_CONTROL)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.World.MAIN, ConfigKeys.Modules.World.TIME_WEATHER_CONTROL)
             withShortDescription(configService.getString(ConfigKeys.Commands.Day.DESC))
             withFullDescription(configService.getString(ConfigKeys.Commands.Day.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.Day.PERM))

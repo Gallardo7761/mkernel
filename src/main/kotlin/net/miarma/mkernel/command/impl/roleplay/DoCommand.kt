@@ -23,7 +23,7 @@ class DoCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Do.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Chat.MAIN, ConfigKeys.Modules.Chat.ROLEPLAY)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Chat.MAIN, ConfigKeys.Modules.Chat.ROLEPLAY)
             withArguments(GreedyStringArgument(configService.getString(ConfigKeys.Arguments.MESSAGE)))
             withFullDescription(configService.getString(ConfigKeys.Commands.Do.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.Do.PERM))

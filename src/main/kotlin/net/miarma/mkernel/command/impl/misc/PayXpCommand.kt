@@ -25,7 +25,7 @@ class PayXpCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.PayXp.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.PAY_XP)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.PAY_XP)
             withArguments(
                 PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER)),
                 IntegerArgument(configService.getString(ConfigKeys.Arguments.LEVELS), 1)

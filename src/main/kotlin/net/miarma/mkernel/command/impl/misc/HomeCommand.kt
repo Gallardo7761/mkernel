@@ -1,6 +1,5 @@
 package net.miarma.mkernel.command.impl.misc
 
-import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
@@ -24,7 +23,7 @@ class HomeCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Home.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Teleport.MAIN)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Teleport.MAIN)
             withPermission(configService.getString(ConfigKeys.Commands.Home.PERM))
             withFullDescription(configService.getString(ConfigKeys.Commands.Home.DESC))
             playerExecutor { sender, _ ->

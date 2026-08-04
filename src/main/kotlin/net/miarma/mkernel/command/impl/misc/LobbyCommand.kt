@@ -1,5 +1,6 @@
 package net.miarma.mkernel.command.impl.misc
 
+import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.jorel.commandapi.arguments.PlayerProfileArgument
@@ -13,7 +14,6 @@ import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.util.CommandUtil.checkModule
 import net.miarma.mkernel.util.PlayerUtil
-import java.util.logging.Logger
 
 @Singleton
 @RequiresModule(ConfigKeys.Modules.Teleport.MAIN)
@@ -24,7 +24,7 @@ class LobbyCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Lobby.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Teleport.MAIN)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Teleport.MAIN)
             withFullDescription(configService.getString(ConfigKeys.Commands.Lobby.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.Lobby.PERM_BASE))
             withOptionalArguments(

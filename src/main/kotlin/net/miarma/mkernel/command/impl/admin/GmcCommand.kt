@@ -24,7 +24,7 @@ class GmcCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Gmc.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.GMC)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.GMC)
             withPermission(configService.getString(ConfigKeys.Commands.Gmc.PERM_BASE))
             withOptionalArguments(
                 PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER))

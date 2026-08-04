@@ -29,7 +29,7 @@ class TpaAcceptCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.TpAccept.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Teleport.MAIN)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Teleport.MAIN)
             withOptionalArguments(PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER)))
             withPermission(configService.getString(ConfigKeys.Commands.TpAccept.PERM))
             withFullDescription(configService.getString(ConfigKeys.Commands.TpAccept.DESC))

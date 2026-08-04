@@ -23,7 +23,7 @@ class BackCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Back.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Teleport.MAIN)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Teleport.MAIN)
             withPermission(configService.getString(ConfigKeys.Commands.Back.PERM))
             withFullDescription(configService.getString(ConfigKeys.Commands.Back.DESC))
             playerExecutor { sender, _ ->

@@ -30,7 +30,7 @@ class BlockWorldCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.BlockWorld.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.World.MAIN)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.World.MAIN)
             withArguments(
                 StringArgument(configService.getString(ConfigKeys.Arguments.WORLD))
                     .replaceSuggestions(ArgumentSuggestions.strings { _ ->

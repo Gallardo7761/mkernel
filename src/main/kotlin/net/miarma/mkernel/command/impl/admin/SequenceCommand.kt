@@ -25,7 +25,7 @@ class SequenceCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Sequence.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.SEQUENCE)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.SEQUENCE)
             withArguments(
                 StringArgument(configService.getString(ConfigKeys.Arguments.SEQUENCE))
                     .replaceSuggestions(ArgumentSuggestions.strings { _ ->

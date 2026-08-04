@@ -26,7 +26,7 @@ class InventoryRecoveryCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.RecInv.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Player.MAIN, ConfigKeys.Modules.Player.RECOVER_INVENTORY)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Player.MAIN, ConfigKeys.Modules.Player.RECOVER_INVENTORY)
             withPermission(configService.getString(ConfigKeys.Commands.RecInv.PERM))
             withShortDescription(configService.getString(ConfigKeys.Commands.RecInv.DESC))
             playerExecutor { sender, _ ->

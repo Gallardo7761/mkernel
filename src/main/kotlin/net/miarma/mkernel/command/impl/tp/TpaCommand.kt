@@ -28,7 +28,7 @@ class TpaCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Tpa.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Teleport.MAIN)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Teleport.MAIN)
             withArguments(PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER)))
             withPermission(configService.getString(ConfigKeys.Commands.Tpa.PERM))
             withFullDescription(configService.getString(ConfigKeys.Commands.Tpa.DESC))

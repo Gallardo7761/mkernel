@@ -24,7 +24,7 @@ class FlySpeedCommand @Inject constructor(
 
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.FlySpeed.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.FLYSPEED)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.FLYSPEED)
             withAliases(*configService.getStringList(ConfigKeys.Commands.FlySpeed.ALIASES).toTypedArray())
             withPermission(configService.getString(ConfigKeys.Commands.FlySpeed.PERM))
             withShortDescription(configService.getString(ConfigKeys.Commands.FlySpeed.DESC))

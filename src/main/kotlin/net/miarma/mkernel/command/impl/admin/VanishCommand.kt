@@ -23,7 +23,7 @@ class VanishCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Vanish.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.VANISH)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.VANISH)
             withAliases("v")
             withFullDescription(configService.getString(ConfigKeys.Commands.Vanish.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.Vanish.PERM))

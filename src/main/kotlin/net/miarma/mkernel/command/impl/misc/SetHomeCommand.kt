@@ -23,7 +23,7 @@ class SetHomeCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.SetHome.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Teleport.MAIN)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Teleport.MAIN)
             withPermission(configService.getString(ConfigKeys.Commands.SetHome.PERM))
             withFullDescription(configService.getString(ConfigKeys.Commands.SetHome.DESC))
             playerExecutor { sender, _ ->

@@ -23,7 +23,7 @@ class SpyCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Spy.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.SPY)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.SPY)
             withFullDescription(configService.getString(ConfigKeys.Commands.Spy.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.Spy.PERM))
             playerExecutor { sender, _ ->

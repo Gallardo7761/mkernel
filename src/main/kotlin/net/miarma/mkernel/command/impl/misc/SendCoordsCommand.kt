@@ -23,7 +23,7 @@ class SendCoordsCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.SendCoords.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.SEND_COORDS)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.SEND_COORDS)
             withArguments(PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER)))
             withFullDescription(configService.getString(ConfigKeys.Commands.SendCoords.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.SendCoords.PERM))

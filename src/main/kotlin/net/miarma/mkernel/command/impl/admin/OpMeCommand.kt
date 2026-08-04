@@ -21,7 +21,7 @@ class OpMeCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.OpMe.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.OPME)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.OPME)
             withFullDescription(configService.getString(ConfigKeys.Commands.OpMe.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.OpMe.PERM))
             playerExecutor { sender, _ ->

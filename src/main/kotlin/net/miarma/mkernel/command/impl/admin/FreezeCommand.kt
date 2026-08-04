@@ -25,7 +25,7 @@ class FreezeCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Freeze.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Player.MAIN)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Player.MAIN)
             withArguments(PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER)))
             withFullDescription(configService.getString(ConfigKeys.Commands.Freeze.DESC))
             withUsage(configService.getString(ConfigKeys.Commands.Freeze.USAGE))

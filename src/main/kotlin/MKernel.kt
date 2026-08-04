@@ -13,10 +13,8 @@ import net.miarma.mkernel.common.integration.impl.WorldGuardHook
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.recipe.RecipeLoader
 import net.miarma.mkernel.common.service.ServiceLoader
-import net.miarma.mkernel.event.*
 import net.miarma.mkernel.task.LocationTrackerTask
 import net.miarma.mkernel.util.BukkitDispatcher
-import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 import java.util.logging.Logger
 import kotlin.coroutines.CoroutineContext

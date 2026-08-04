@@ -29,7 +29,7 @@ class SpecialItemCommand @Inject constructor(
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.SpecialItem.NAME)) {
-            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.SPECIAL_ITEM)
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.SPECIAL_ITEM)
             withAliases("spi")
             withArguments(
                 StringArgument(configService.getString(ConfigKeys.Arguments.ITEM))
