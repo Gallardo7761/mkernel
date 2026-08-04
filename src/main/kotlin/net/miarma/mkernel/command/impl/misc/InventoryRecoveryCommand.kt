@@ -6,29 +6,30 @@ import com.google.inject.Singleton
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.annotation.RequiresModule
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.MessageService
+import net.miarma.mkernel.util.CommandUtil.checkModule
 import org.bukkit.Material
 
 @Singleton
+@RequiresModule(ConfigKeys.Modules.Player.MAIN, ConfigKeys.Modules.Player.RECOVER_INVENTORY)
 class InventoryRecoveryCommand @Inject constructor(
     private val plugin: MKernel,
     private val configService: ConfigService,
     private val databaseService: DatabaseService,
-    private val messageService: MessageService
+    private val messageService: MessageService,
+    private val moduleLoader: ModuleLoader
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.RecInv.NAME)) {
+            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Player.MAIN, ConfigKeys.Modules.Player.RECOVER_INVENTORY)
             withPermission(configService.getString(ConfigKeys.Commands.RecInv.PERM))
             withShortDescription(configService.getString(ConfigKeys.Commands.RecInv.DESC))
             playerExecutor { sender, _ ->
-                if (!configService.isModuleEnabled(ConfigKeys.Modules.RECOVER_INVENTORY)) {
-                    messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.TEMPORARILY_DISABLED)).withPrefix().send(sender)
-                    return@playerExecutor
-                }
-
                 val xpLevels = sender.level
                 val requiredLevels = configService.getInt(ConfigKeys.Settings.Death.REC_INV_LEVEL)
 

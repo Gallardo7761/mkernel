@@ -7,20 +7,26 @@ import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.annotation.RequiresModule
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.PlayerService
+import net.miarma.mkernel.util.CommandUtil.checkModule
 import net.miarma.mkernel.util.PlayerUtil
 
 @Singleton
+@RequiresModule(ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.NICK)
 class NickCommand @Inject constructor(
     private val configService: ConfigService,
     private val messageService: MessageService,
-    private val playerService: PlayerService
+    private val playerService: PlayerService,
+    private val moduleLoader: ModuleLoader
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Nick.NAME)) {
+            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.NICK)
             withPermission(configService.getString(ConfigKeys.Commands.Nick.PERM_BASE))
             withOptionalArguments(
                 StringArgument(configService.getString(ConfigKeys.Arguments.NICKNAME)),

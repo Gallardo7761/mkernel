@@ -10,6 +10,7 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
 import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.inventory.ConfigInventory
+import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.recipe.RecipeLoader
 import net.miarma.mkernel.common.service.impl.*
 
@@ -22,7 +23,8 @@ class BaseCommand @Inject constructor(
     private val sequenceService: SequenceService,
     private val blacklistService: BlacklistService,
     private val recipeLoader: RecipeLoader,
-    private val scriptService: ScriptService
+    private val scriptService: ScriptService,
+    private val moduleLoader: ModuleLoader
 ) : MCommand {
     val name = plugin.pluginMeta.name
     val version = plugin.pluginMeta.version

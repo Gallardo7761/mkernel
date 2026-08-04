@@ -8,24 +8,28 @@ import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.annotation.RequiresModule
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.recipe.RecipeLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
+import net.miarma.mkernel.util.CommandUtil.checkModule
 import org.bukkit.Bukkit
-import org.bukkit.Keyed
 import org.bukkit.NamespacedKey
-import org.bukkit.inventory.CampfireRecipe
 
 @Singleton
+@RequiresModule(ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.SPECIAL_ITEM)
 class SpecialItemCommand @Inject constructor(
     private val plugin: MKernel,
     private val configService: ConfigService,
     private val messageService: MessageService,
-    private val recipeLoader: RecipeLoader
+    private val recipeLoader: RecipeLoader,
+    private val moduleLoader: ModuleLoader
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.SpecialItem.NAME)) {
+            checkModule(moduleLoader, configService, messageService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.SPECIAL_ITEM)
             withAliases("spi")
             withArguments(
                 StringArgument(configService.getString(ConfigKeys.Arguments.ITEM))

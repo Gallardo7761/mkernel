@@ -5,9 +5,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.dejvokep.boostedyaml.YamlDocument
 import dev.dejvokep.boostedyaml.block.implementation.Section
-import dev.dejvokep.boostedyaml.dvs.versioning.AutomaticVersioning
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning
-import dev.dejvokep.boostedyaml.dvs.versioning.ManualVersioning
 import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings

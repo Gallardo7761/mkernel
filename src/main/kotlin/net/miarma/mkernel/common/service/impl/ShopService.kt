@@ -3,10 +3,10 @@ package net.miarma.mkernel.common.service.impl
 import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.annotation.LoaderPriority
 import net.miarma.mkernel.common.integration.impl.DecentHologramsHook
 import net.miarma.mkernel.common.model.Shop
 import net.miarma.mkernel.common.service.IService
-import net.miarma.mkernel.common.annotation.LoaderPriority
 import org.bukkit.Location
 import java.util.concurrent.ConcurrentHashMap
 
