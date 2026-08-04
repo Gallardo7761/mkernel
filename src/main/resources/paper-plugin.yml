@@ -27,6 +27,7 @@ dependencies:
       load: BEFORE
       required: false
     GriefPrevention:
+      load: BEFORE
       required: false
 permissions:
     mkernel.command:
@@ -134,9 +135,6 @@ permissions:
     mkernel.command.heal.others:
         description: Permite al usuario curar a otro jugador
         default: op
-    mkernel.command.launch:
-        description: Permite al usuario lanzar a otro jugador
-        default: op
     mkernel.command.invsee:
         description: Abre el inventario de otro jugador
         default: op
@@ -193,7 +191,6 @@ permissions:
             mkernel.command.freeze: true
             mkernel.command.heal: true
             mkernel.command.heal.others: true
-            mkernel.command.launch: true
             mkernel.command.invsee: true
             mkernel.command.flyspeed: true
             mkernel.command.sequence: true

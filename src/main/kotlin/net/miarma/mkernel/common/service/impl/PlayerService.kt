@@ -4,12 +4,15 @@ import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.kyori.adventure.text.Component
+import net.miarma.mkernel.common.annotation.LoaderPriority
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.IService
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
 
 @Singleton
+@LoaderPriority(LoaderPriority.NORMAL)
 class PlayerService @Inject constructor(
     private val plugin: MKernel,
     private val messageService: MessageService,
@@ -61,7 +64,7 @@ class PlayerService @Inject constructor(
             return true
         }
 
-        val blackListedUsernames = configService.getStringList("config.blacklist.usernames")
+        val blackListedUsernames = configService.getStringList(ConfigKeys.Settings.Blacklist.NICKS)
         if (blackListedUsernames.any { it.equals(nick, ignoreCase = true) }) {
             return false
         }

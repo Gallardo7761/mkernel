@@ -2,6 +2,7 @@ package net.miarma.mkernel.common.inventory
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import org.bukkit.entity.Player
@@ -28,7 +29,7 @@ class InvseeInventory @Inject constructor(
             .addIngredient('x', inv)
             .build()
 
-        val title = messageService.builder(configService.getString("language.inventories.invsee.title"))
+        val title = messageService.builder(configService.getString(ConfigKeys.Messages.Inventories.INVSEE_TITLE))
             .tag("player", target.name)
             .build()
 

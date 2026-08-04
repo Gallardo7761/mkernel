@@ -6,6 +6,7 @@ import com.google.inject.Singleton
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.MessageService
@@ -18,21 +19,21 @@ class HomeCommand @Inject constructor(
     private val messageService: MessageService
 ) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.home.name")) {
-            withPermission(configService.getString("commands.home.permission"))
-            withFullDescription(configService.getString("commands.home.description"))
+        commandAPICommand(configService.getString(ConfigKeys.Commands.Home.NAME)) {
+            withPermission(configService.getString(ConfigKeys.Commands.Home.PERM))
+            withFullDescription(configService.getString(ConfigKeys.Commands.Home.DESC))
             playerExecutor { sender, _ ->
                 val loc = databaseService.getHome(sender)
 
                 if (loc != null) {
                     sender.teleportAsync(loc).thenAccept { success ->
                         if (success) {
-                            messageService.builder(configService.getString("commands.home.messages.teleported"))
+                            messageService.builder(configService.getString(ConfigKeys.Commands.Home.MSG_TELEPORTED))
                                 .withPrefix().send(sender)
                         }
                     }
                 } else {
-                    messageService.builder(configService.getString("commands.home.messages.homeDoesNotExist"))
+                    messageService.builder(configService.getString(ConfigKeys.Commands.Home.MSG_NOT_EXIST))
                         .withPrefix().send(sender)
                 }
             }

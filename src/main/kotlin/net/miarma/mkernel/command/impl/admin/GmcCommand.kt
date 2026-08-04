@@ -6,6 +6,7 @@ import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.util.PlayerUtil
@@ -17,29 +18,29 @@ class GmcCommand @Inject constructor(
     private val messageService: MessageService
 ) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.gmc.name")) {
-            withPermission(configService.getString("commands.gmc.permissions.base"))
+        commandAPICommand(configService.getString(ConfigKeys.Commands.Gmc.NAME)) {
+            withPermission(configService.getString(ConfigKeys.Commands.Gmc.PERM_BASE))
             withOptionalArguments(
-                PlayerProfileArgument(configService.getString("arguments.player"))
-                    .withPermission(configService.getString("commands.gmc.permissions.others"))
+                PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER))
+                    .withPermission(configService.getString(ConfigKeys.Commands.Gmc.PERM_OTHERS))
             )
-            withShortDescription(configService.getString("commands.gmc.description"))
-            withUsage(configService.getString("commands.gmc.usage"))
+            withShortDescription(configService.getString(ConfigKeys.Commands.Gmc.DESC))
+            withUsage(configService.getString(ConfigKeys.Commands.Gmc.USAGE))
             playerExecutor { sender, args ->
                 if (args[0] == null) {
                     sender.gameMode = GameMode.CREATIVE
-                    messageService.builder(configService.getString("commands.gmc.messages.self")).withPrefix().send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Commands.Gmc.MSG_SELF)).withPrefix().send(sender)
                     return@playerExecutor
                 }
 
                 val target = PlayerUtil.fromArg(args[0])
                 if (target == null || !target.isOnline) {
-                    messageService.builder(configService.getString("language.errors.playerNotFound")).withPrefix().send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.PLAYER_NOT_FOUND)).withPrefix().send(sender)
                     return@playerExecutor
                 }
 
                 target.gameMode = GameMode.CREATIVE
-                messageService.builder(configService.getString("commands.gmc.messages.others"))
+                messageService.builder(configService.getString(ConfigKeys.Commands.Gmc.MSG_OTHERS))
                     .withPrefix().tag("player", target.name).send(sender)
             }
         }

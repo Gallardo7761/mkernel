@@ -4,9 +4,11 @@ import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.miarma.mkernel.common.service.IService
+import net.miarma.mkernel.common.annotation.LoaderPriority
 import xyz.xenondevs.invui.inventory.VirtualInventory
 
 @Singleton
+@LoaderPriority(LoaderPriority.LOWEST)
 class GlobalChestService @Inject constructor(
     private val plugin: MKernel,
     private val databaseService: DatabaseService

@@ -5,6 +5,7 @@ import com.google.inject.Singleton
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 
@@ -14,13 +15,13 @@ class NightCommand @Inject constructor(
     private val messageService: MessageService
 ) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.night.name")) {
-            withShortDescription(configService.getString("commands.night.description"))
-            withFullDescription(configService.getString("commands.night.description"))
-            withPermission(configService.getString("commands.night.permission"))
+        commandAPICommand(configService.getString(ConfigKeys.Commands.Night.NAME)) {
+            withShortDescription(configService.getString(ConfigKeys.Commands.Night.DESC))
+            withFullDescription(configService.getString(ConfigKeys.Commands.Night.DESC))
+            withPermission(configService.getString(ConfigKeys.Commands.Night.PERM))
             playerExecutor { sender, _ ->
                 sender.world.time = 13000
-                messageService.builder(configService.getString("commands.night.messages.nightSet"))
+                messageService.builder(configService.getString(ConfigKeys.Commands.Night.MSG_SET))
                     .withPrefix()
                     .send(sender)
             }

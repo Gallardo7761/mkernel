@@ -8,9 +8,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import net.miarma.mkernel.command.CommandHandler
 import net.miarma.mkernel.common.inject.MKernelModule
+import net.miarma.mkernel.common.integration.HookLoader
 import net.miarma.mkernel.common.integration.impl.*
+import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.recipe.RecipeLoader
 import net.miarma.mkernel.common.service.IService
+import net.miarma.mkernel.common.service.ServiceLoader
 import net.miarma.mkernel.common.service.impl.*
 import net.miarma.mkernel.event.*
 import net.miarma.mkernel.task.LocationTrackerTask
@@ -39,8 +42,6 @@ class MKernel : JavaPlugin(), CoroutineScope {
         private set
 
     private lateinit var injector: Injector
-    private val services = mutableListOf<IService>()
-    private lateinit var recipeLoader: RecipeLoader
 
     override fun onLoad() {
         CommandAPI.onLoad(
@@ -60,49 +61,21 @@ class MKernel : JavaPlugin(), CoroutineScope {
         syncDispatcher = BukkitDispatcher(this)
         injector = Guice.createInjector(MKernelModule(this))
 
-        services.apply {
-            add(injector.getInstance(ConfigService::class.java))
-            add(injector.getInstance(DatabaseService::class.java))
-            add(injector.getInstance(GlobalChestService::class.java))
-            add(injector.getInstance(ScriptService::class.java))
-            add(injector.getInstance(BlacklistService::class.java))
-            add(injector.getInstance(SequenceService::class.java))
-            add(injector.getInstance(HookService::class.java))
-            add(injector.getInstance(PlayerService::class.java))
-            add(injector.getInstance(LastPositionService::class.java))
-            add(injector.getInstance(MessageService::class.java))
-            add(injector.getInstance(TeleportService::class.java))
-            add(injector.getInstance(ShopService::class.java))
-        }
+        injector.getInstance(ServiceLoader::class.java).loadAll()
+        injector.getInstance(HookLoader::class.java).loadAll()
+        injector.getInstance(ModuleLoader::class.java).loadAll()
 
-        val hookService = injector.getInstance(HookService::class.java)
-        hookService.registerHooks(
-            injector.getInstance(PlaceholderAPIHook::class.java),
-            injector.getInstance(DecentHologramsHook::class.java),
-            injector.getInstance(BancoHook::class.java),
-            GriefPreventionHook(),
-            MinepacksHook(),
-            WorldGuardHook()
-        )
-
-        services.forEach { it.onEnable() }
-
-        recipeLoader = injector.getInstance(RecipeLoader::class.java)
-        recipeLoader.loadAll()
-
-        val commandHandler = injector.getInstance(CommandHandler::class.java)
-        commandHandler.registerCommands()
+        injector.getInstance(RecipeLoader::class.java).loadAll()
+        injector.getInstance(CommandHandler::class.java).registerCommands()
+        injector.getInstance(LocationTrackerTask::class.java).start()
 
         registerListeners()
-
-        injector.getInstance(LocationTrackerTask::class.java).start()
 
         LOGGER.info("I've been enabled! :)")
     }
 
     override fun onDisable() {
         job.cancel()
-        services.forEach { it.onDisable() }
         LOGGER.info("I've been disabled! :(")
     }
 

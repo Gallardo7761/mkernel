@@ -3,6 +3,7 @@ package net.miarma.mkernel.event
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.kyori.adventure.title.Title
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.*
 import net.miarma.mkernel.util.PlayerUtil.getNickName
 import org.bukkit.Bukkit
@@ -27,21 +28,21 @@ class PlayerConnectionListener @Inject constructor(
 
         player.playerListName(messageService.builder(player.getNickName(playerService)).build())
 
-        val customJoinMessage = messageService.builder(configService.getString("language.events.onJoin.message"))
+        val customJoinMessage = messageService.builder(configService.getString(ConfigKeys.Messages.Connection.JOIN))
             .tag("player", player.getNickName(playerService))
             .build()
         event.joinMessage(customJoinMessage)
 
         databaseService.loadPlayerData(player)
 
-        if (configService.isModuleEnabled("spawnAtLobby")) {
+        if (configService.isModuleEnabled(ConfigKeys.Modules.SPAWN_AT_LOBBY)) {
             val lobby = configService.getLobbyWorld()
             lobby.toLocation().world?.let { player.teleportAsync(lobby.toLocation()) }
         }
 
-        if (configService.isModuleEnabled("joinTitle")) {
-            val rawTitleTemplate = configService.getString("language.titles.titleFormat")
-            val rawSubtitle = configService.getString("language.titles.subtitles.join")
+        if (configService.isModuleEnabled(ConfigKeys.Modules.JOIN_TITLE)) {
+            val rawTitleTemplate = configService.getString(ConfigKeys.Messages.General.Titles.FORMAT)
+            val rawSubtitle = configService.getString(ConfigKeys.Messages.General.Titles.JOIN)
             val times = Title.Times.times(Duration.ofMillis(1500), Duration.ofMillis(1500), Duration.ofMillis(1500))
 
             Bukkit.getOnlinePlayers().forEach { p ->
@@ -61,16 +62,16 @@ class PlayerConnectionListener @Inject constructor(
     fun onPlayerLeave(event: PlayerQuitEvent) {
         val player = event.player
 
-        val customLeaveMessage = messageService.builder(configService.getString("language.events.onLeave.message"))
+        val customLeaveMessage = messageService.builder(configService.getString(ConfigKeys.Messages.Connection.LEAVE))
             .tag("player", player.getNickName(playerService))
             .build()
         event.quitMessage(customLeaveMessage)
 
         databaseService.unloadPlayerData(player)
 
-        if (configService.isModuleEnabled("leaveTitle")) {
-            val rawTitleTemplate = configService.getString("language.titles.titleFormat")
-            val rawSubtitle = configService.getString("language.titles.subtitles.leave")
+        if (configService.isModuleEnabled(ConfigKeys.Modules.LEAVE_TITLE)) {
+            val rawTitleTemplate = configService.getString(ConfigKeys.Messages.General.Titles.FORMAT)
+            val rawSubtitle = configService.getString(ConfigKeys.Messages.General.Titles.LEAVE)
             val times = Title.Times.times(Duration.ofMillis(1500), Duration.ofMillis(1500), Duration.ofMillis(1500))
 
             Bukkit.getOnlinePlayers().forEach { p ->

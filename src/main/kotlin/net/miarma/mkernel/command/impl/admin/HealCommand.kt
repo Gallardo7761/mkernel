@@ -6,6 +6,7 @@ import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.util.PlayerUtil
@@ -16,26 +17,26 @@ class HealCommand @Inject constructor(
     private val messageService: MessageService
 ) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.heal.name")) {
-            withPermission(configService.getString("commands.heal.permissions.base"))
+        commandAPICommand(configService.getString(ConfigKeys.Commands.Heal.NAME)) {
+            withPermission(configService.getString(ConfigKeys.Commands.Heal.PERM_BASE))
             withOptionalArguments(
-                PlayerProfileArgument(configService.getString("arguments.player"))
-                    .withPermission(configService.getString("commands.heal.permissions.others"))
+                PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER))
+                    .withPermission(configService.getString(ConfigKeys.Commands.Heal.PERM_OTHERS))
             )
-            withFullDescription(configService.getString("commands.heal.description"))
-            withUsage(configService.getString("commands.heal.usage"))
+            withFullDescription(configService.getString(ConfigKeys.Commands.Heal.DESC))
+            withUsage(configService.getString(ConfigKeys.Commands.Heal.USAGE))
             playerExecutor { sender, args ->
                 if (args[0] == null) {
                     sender.foodLevel = 20
                     sender.health = 20.0
                     sender.fireTicks = 0
-                    messageService.builder(configService.getString("commands.heal.messages.healedSelf")).withPrefix().send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Commands.Heal.MSG_HEALED_SELF)).withPrefix().send(sender)
                     return@playerExecutor
                 }
 
                 val target = PlayerUtil.fromArg(args[0])
                 if (target == null || !target.isOnline) {
-                    messageService.builder(configService.getString("language.errors.playerNotFound")).withPrefix().send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.PLAYER_NOT_FOUND)).withPrefix().send(sender)
                     return@playerExecutor
                 }
 
@@ -43,8 +44,8 @@ class HealCommand @Inject constructor(
                 target.health = 20.0
                 target.fireTicks = 0
 
-                messageService.builder(configService.getString("commands.heal.messages.healedPlayer")).withPrefix().tag("player", target.name).send(sender)
-                messageService.builder(configService.getString("commands.heal.messages.beenHealed")).withPrefix().forPlayer(target).tag("sender", sender.name).send(target)
+                messageService.builder(configService.getString(ConfigKeys.Commands.Heal.MSG_HEALED_PLAYER)).withPrefix().tag("player", target.name).send(sender)
+                messageService.builder(configService.getString(ConfigKeys.Commands.Heal.MSG_BEEN_HEALED)).withPrefix().forPlayer(target).tag("sender", sender.name).send(target)
             }
         }
     }

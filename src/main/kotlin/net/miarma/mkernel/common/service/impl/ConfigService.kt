@@ -4,22 +4,31 @@ import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.dejvokep.boostedyaml.YamlDocument
+import dev.dejvokep.boostedyaml.block.implementation.Section
+import dev.dejvokep.boostedyaml.dvs.versioning.AutomaticVersioning
 import dev.dejvokep.boostedyaml.dvs.versioning.BasicVersioning
+import dev.dejvokep.boostedyaml.dvs.versioning.ManualVersioning
+import dev.dejvokep.boostedyaml.settings.dumper.DumperSettings
 import dev.dejvokep.boostedyaml.settings.general.GeneralSettings
 import dev.dejvokep.boostedyaml.settings.loader.LoaderSettings
 import dev.dejvokep.boostedyaml.settings.updater.UpdaterSettings
+import net.miarma.mkernel.common.annotation.LoaderPriority
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.model.World
 import net.miarma.mkernel.common.service.IService
 import java.io.File
 import java.io.IOException
 
 @Singleton
+@LoaderPriority(LoaderPriority.HIGHEST)
 class ConfigService @Inject constructor(private val plugin: MKernel) : IService {
 
     private val configs = mutableMapOf<String, YamlDocument>()
 
     override fun onEnable() {
         loadConfigFile("config.yml")
+        loadConfigFile("commands.yml")
+        loadConfigFile("messages.yml")
     }
 
     fun getConfig(name: String): YamlDocument? {
@@ -30,7 +39,7 @@ class ConfigService @Inject constructor(private val plugin: MKernel) : IService 
         try {
             val file = File(plugin.dataFolder, fileName)
             val resource = plugin.getResource(fileName) ?: run {
-                MKernel.LOGGER.severe("Could not find the resource: $fileName")
+                MKernel.LOGGER.severe("Error finding internal resource: $fileName")
                 return
             }
 
@@ -39,15 +48,16 @@ class ConfigService @Inject constructor(private val plugin: MKernel) : IService 
                 resource,
                 GeneralSettings.DEFAULT,
                 LoaderSettings.builder().setAutoUpdate(true).build(),
-                dev.dejvokep.boostedyaml.settings.dumper.DumperSettings.DEFAULT,
+                DumperSettings.DEFAULT,
                 UpdaterSettings.builder()
                     .setVersioning(BasicVersioning("file-version"))
                     .setKeepAll(true)
                     .build()
             )
             configs[fileName] = document
+            MKernel.LOGGER.info("Configuration loaded/updated: $fileName")
         } catch (e: IOException) {
-            MKernel.LOGGER.severe("Failed to load configuration file: $fileName")
+            MKernel.LOGGER.severe("Error reloading file: $fileName")
             e.printStackTrace()
         }
     }
@@ -57,49 +67,60 @@ class ConfigService @Inject constructor(private val plugin: MKernel) : IService 
             try {
                 config.reload()
             } catch (e: IOException) {
-                MKernel.LOGGER.severe("Failed to reload a config file: ${config.file?.name}")
+                MKernel.LOGGER.severe("Error reloading file: ${config.file?.name}")
                 e.printStackTrace()
             }
         }
     }
 
-    fun getString(path: String): String {
-        return configs["config.yml"]?.getString(path, "") ?: ""
+    fun getString(path: String, def: String = ""): String {
+        return configs.values.firstNotNullOfOrNull { if (it.contains(path)) it.getString(path) else null } ?: def
     }
 
     fun getStringList(path: String): List<String> {
-        return configs["config.yml"]?.getStringList(path) ?: emptyList()
+        return configs.values.firstNotNullOfOrNull {
+            if (it.contains(path)) it.getStringList(path) else null
+        } ?: emptyList()
     }
 
-    fun getInt(path: String): Int {
-        return configs["config.yml"]?.getInt(path) ?: 0
+    fun getInt(path: String, def: Int = 0): Int {
+        return configs.values.firstNotNullOfOrNull { if (it.contains(path)) it.getInt(path) else null } ?: def
     }
 
-    fun getBoolean(path: String): Boolean {
-        return configs["config.yml"]?.getBoolean(path) ?: false
+    fun getBoolean(path: String, def: Boolean = false): Boolean {
+        return configs.values.firstNotNullOfOrNull { if (it.contains(path)) it.getBoolean(path) else null } ?: def
     }
 
-    fun getFloat(path: String): Float {
-        return configs["config.yml"]?.getFloat(path) ?: 0.0f
+    fun getFloat(path: String, def: Float = 0.0f): Float {
+        return configs.values.firstNotNullOfOrNull { if (it.contains(path)) it.getFloat(path) else null } ?: def
     }
 
-    fun getDouble(path: String): Double {
-        return configs["config.yml"]?.getDouble(path) ?: 0.0
+    fun getDouble(path: String, def: Double = 0.0): Double {
+        return configs.values.firstNotNullOfOrNull { if (it.contains(path)) it.getDouble(path) else null } ?: def
+    }
+
+    fun getSection(path: String, def: Section? = null): Section? {
+        return configs.values.firstNotNullOfOrNull { if (it.contains(path)) it.getSection(path) else null } ?: def
+    }
+
+    fun set(path: String, value: Any?) {
+        val targetConfig = configs.values.firstOrNull { it.contains(path) } ?: configs["config.yml"]
+        targetConfig?.set(path, value)
+        targetConfig?.save()
     }
 
     fun isModuleEnabled(moduleName: String): Boolean {
-        return getBoolean("config.modules.$moduleName")
+        return getBoolean(moduleName, true)
     }
 
     fun getLobbyWorld(): World {
-        val config = configs["config.yml"]!!
         return World(
-            name = config.getString("config.worlds.lobby.name"),
-            x = config.getDouble("config.worlds.lobby.coords.x"),
-            y = config.getDouble("config.worlds.lobby.coords.y"),
-            z = config.getDouble("config.worlds.lobby.coords.z"),
-            yaw = config.getInt("config.worlds.lobby.coords.yaw"),
-            pitch = config.getInt("config.worlds.lobby.coords.pitch")
+            name = getString(ConfigKeys.Settings.Worlds.LOBBY_NAME, "lobby"),
+            x = getDouble(ConfigKeys.Settings.Worlds.LOBBY_X, 0.5),
+            y = getDouble(ConfigKeys.Settings.Worlds.LOBBY_Y, 65.0),
+            z = getDouble(ConfigKeys.Settings.Worlds.LOBBY_Z, 0.5),
+            yaw = getInt(ConfigKeys.Settings.Worlds.LOBBY_YAW, 180),
+            pitch = getInt(ConfigKeys.Settings.Worlds.LOBBY_PITCH, 0)
         )
     }
 }

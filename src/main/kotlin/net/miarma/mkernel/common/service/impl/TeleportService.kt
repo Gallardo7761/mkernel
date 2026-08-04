@@ -2,12 +2,14 @@ package net.miarma.mkernel.common.service.impl
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.annotation.LoaderPriority
 import net.miarma.mkernel.common.service.IService
 import net.miarma.mkernel.common.teleport.TpaRequest
 import net.miarma.mkernel.common.teleport.TpaType
 import org.bukkit.entity.Player
 
 @Singleton
+@LoaderPriority(LoaderPriority.LOWEST)
 class TeleportService @Inject constructor(private val databaseService: DatabaseService) : IService {
 
     fun addRequest(from: Player, to: Player, type: TpaType) {

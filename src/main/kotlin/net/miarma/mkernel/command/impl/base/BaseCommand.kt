@@ -8,6 +8,7 @@ import dev.jorel.commandapi.kotlindsl.anyExecutor
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.inventory.ConfigInventory
 import net.miarma.mkernel.common.recipe.RecipeLoader
 import net.miarma.mkernel.common.service.impl.*
@@ -30,18 +31,18 @@ class BaseCommand @Inject constructor(
     override fun register() {
         commandAPICommand("mkernel") {
             withAliases("mk")
-            withPermission(configService.getString("commands.mkernel.permission"))
-            withFullDescription(configService.getString("commands.mkernel.description"))
-            withUsage(configService.getString("commands.mkernel.usage"))
+            withPermission(configService.getString(ConfigKeys.Commands.MKernel.PERM))
+            withFullDescription(configService.getString(ConfigKeys.Commands.MKernel.DESC))
+            withUsage(configService.getString(ConfigKeys.Commands.MKernel.USAGE))
             anyExecutor { sender, _ ->
                 messageService.builder("<gray>$name <green>v$version <gray>by <yellow>$authors")
                     .withPrefix()
                     .send(sender)
             }
             withSubcommand(CommandAPICommand("reload").apply {
-                withPermission(configService.getString("commands.mkernel.subcommands.reload.permission"))
-                withFullDescription(configService.getString("commands.mkernel.subcommands.reload.description"))
-                withUsage(configService.getString("commands.mkernel.subcommands.reload.usage"))
+                withPermission(configService.getString(ConfigKeys.Commands.MKernel.Reload.PERM))
+                withFullDescription(configService.getString(ConfigKeys.Commands.MKernel.Reload.DESC))
+                withUsage(configService.getString(ConfigKeys.Commands.MKernel.Reload.USAGE))
                 playerExecutor { sender, _ ->
                     plugin.launchAsync {
                         try {
@@ -51,13 +52,13 @@ class BaseCommand @Inject constructor(
                             plugin.launchSync {
                                 blacklistService.unregisterRecipes()
                                 recipeLoader.loadAll()
-                                messageService.builder(configService.getString("commands.mkernel.subcommands.reload.messages.success"))
+                                messageService.builder(configService.getString(ConfigKeys.Commands.MKernel.Reload.MSG_SUCCESS))
                                     .withPrefix()
                                     .send(sender)
                             }
                         } catch (e: Exception) {
                             plugin.launchSync {
-                                messageService.builder(configService.getString("commands.mkernel.subcommands.reload.messages.error"))
+                                messageService.builder(configService.getString(ConfigKeys.Commands.MKernel.Reload.MSG_ERROR))
                                     .withPrefix()
                                     .send(sender)
                             }
@@ -67,9 +68,9 @@ class BaseCommand @Inject constructor(
                 }
             })
             withSubcommand(CommandAPICommand("config").apply {
-                withPermission(configService.getString("commands.mkernel.subcommands.config.permission"))
-                withFullDescription(configService.getString("commands.mkernel.subcommands.config.description"))
-                withUsage(configService.getString("commands.mkernel.subcommands.config.usage"))
+                withPermission(configService.getString(ConfigKeys.Commands.MKernel.Config.PERM))
+                withFullDescription(configService.getString(ConfigKeys.Commands.MKernel.Config.DESC))
+                withUsage(configService.getString(ConfigKeys.Commands.MKernel.Config.USAGE))
                 playerExecutor { sender, _ ->
                     configInventory.open(sender)
                 }

@@ -8,6 +8,7 @@ import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.MessageService
@@ -23,21 +24,21 @@ class BlockWorldCommand @Inject constructor(
     private val locationTrackerTask: LocationTrackerTask
 ) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.blockworld.name")) {
+        commandAPICommand(configService.getString(ConfigKeys.Commands.BlockWorld.NAME)) {
             withArguments(
-                StringArgument(configService.getString("arguments.world"))
+                StringArgument(configService.getString(ConfigKeys.Arguments.WORLD))
                     .replaceSuggestions(ArgumentSuggestions.strings { _ ->
                         Bukkit.getWorlds().map { it.name }.toTypedArray()
                     })
             )
-            withAliases(*configService.getStringList("commands.blockworld.aliases").toTypedArray())
-            withFullDescription(configService.getString("commands.blockworld.description"))
-            withPermission(configService.getString("commands.blockworld.permission"))
-            withUsage(configService.getString("commands.blockworld.usage"))
+            withAliases(*configService.getStringList(ConfigKeys.Commands.BlockWorld.ALIASES).toTypedArray())
+            withFullDescription(configService.getString(ConfigKeys.Commands.BlockWorld.DESC))
+            withPermission(configService.getString(ConfigKeys.Commands.BlockWorld.PERM))
+            withUsage(configService.getString(ConfigKeys.Commands.BlockWorld.USAGE))
             playerExecutor { sender, args ->
                 val worldName = args[0] as? String
                 if (worldName == null || Bukkit.getWorld(worldName) == null) {
-                    messageService.builder(configService.getString("language.errors.invalidArgument")).withPrefix().send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.INVALID_ARGUMENT)).withPrefix().send(sender)
                     return@playerExecutor
                 }
 
@@ -46,7 +47,7 @@ class BlockWorldCommand @Inject constructor(
 
                     if (isBlocked) {
                         databaseService.setWorldBlocked(worldName, false)
-                        messageService.builder(configService.getString("commands.blockworld.messages.worldHasBeenUnblocked")).withPrefix().tag("world", worldName).send(sender)
+                        messageService.builder(configService.getString(ConfigKeys.Commands.BlockWorld.MSG_UNBLOCKED)).withPrefix().tag("world", worldName).send(sender)
                     } else {
                         databaseService.setWorldBlocked(worldName, true)
 
@@ -55,7 +56,7 @@ class BlockWorldCommand @Inject constructor(
                                 p.teleportAsync(loc)
                             }
                         }
-                        messageService.builder(configService.getString("commands.blockworld.messages.worldHasBeenBlocked")).withPrefix().tag("world", worldName).send(sender)
+                        messageService.builder(configService.getString(ConfigKeys.Commands.BlockWorld.MSG_BLOCKED)).withPrefix().tag("world", worldName).send(sender)
                     }
                 }
             }

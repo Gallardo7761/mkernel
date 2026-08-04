@@ -2,6 +2,7 @@ package net.miarma.mkernel.common.service.impl
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.annotation.LoaderPriority
 import net.miarma.mkernel.common.model.LastPosition
 import net.miarma.mkernel.common.service.IService
 import org.bukkit.Location
@@ -10,6 +11,7 @@ import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 @Singleton
+@LoaderPriority(LoaderPriority.LOW)
 class LastPositionService @Inject constructor() : IService {
 
     private val positions = ConcurrentHashMap<UUID, LastPosition>()

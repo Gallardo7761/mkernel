@@ -3,6 +3,8 @@ package net.miarma.mkernel.common.service.impl
 import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.annotation.LoaderPriority
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.IService
 import org.bukkit.Bukkit
 import org.bukkit.NamespacedKey
@@ -10,6 +12,7 @@ import org.bukkit.command.Command
 import org.bukkit.command.SimpleCommandMap
 
 @Singleton
+@LoaderPriority(LoaderPriority.LOWEST)
 class BlacklistService @Inject constructor(private val configService: ConfigService) : IService {
 
     override fun onEnable() {
@@ -18,7 +21,7 @@ class BlacklistService @Inject constructor(private val configService: ConfigServ
     }
 
     fun unregisterCommands() {
-        val blacklistedCommands = configService.getStringList("config.blacklist.commands")
+        val blacklistedCommands = configService.getStringList(ConfigKeys.Settings.Blacklist.COMMANDS)
 
         try {
             val server = Bukkit.getServer()
@@ -42,7 +45,7 @@ class BlacklistService @Inject constructor(private val configService: ConfigServ
     }
 
     fun unregisterRecipes() {
-        val blacklistedRecipes = configService.getStringList("config.blacklist.recipes")
+        val blacklistedRecipes = configService.getStringList(ConfigKeys.Settings.Blacklist.RECIPES)
 
         for (recipeStr in blacklistedRecipes) {
             val key = NamespacedKey.fromString(recipeStr) ?: NamespacedKey.minecraft(recipeStr.lowercase())

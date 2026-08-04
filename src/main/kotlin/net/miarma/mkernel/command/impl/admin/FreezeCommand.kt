@@ -6,6 +6,7 @@ import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.PlayerService
@@ -18,30 +19,30 @@ class FreezeCommand @Inject constructor(
     private val playerService: PlayerService
 ) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.freeze.name")) {
-            withArguments(PlayerProfileArgument(configService.getString("arguments.player")))
-            withFullDescription(configService.getString("commands.freeze.description"))
-            withUsage(configService.getString("commands.freeze.usage"))
-            withPermission(configService.getString("commands.freeze.permission"))
+        commandAPICommand(configService.getString(ConfigKeys.Commands.Freeze.NAME)) {
+            withArguments(PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER)))
+            withFullDescription(configService.getString(ConfigKeys.Commands.Freeze.DESC))
+            withUsage(configService.getString(ConfigKeys.Commands.Freeze.USAGE))
+            withPermission(configService.getString(ConfigKeys.Commands.Freeze.PERM))
             playerExecutor { sender, args ->
                 val target = PlayerUtil.fromArg(args[0]) ?: run {
-                    messageService.builder(configService.getString("language.errors.playerNotFound")).withPrefix().send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.PLAYER_NOT_FOUND)).withPrefix().send(sender)
                     return@playerExecutor
                 }
 
                 if (target == sender) {
-                    messageService.builder(configService.getString("language.errors.cannotFreezeSelf")).withPrefix().send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Messages.Admin.Errors.CANNOT_FREEZE_SELF)).withPrefix().send(sender)
                     return@playerExecutor
                 }
 
                 if (playerService.isFrozen(target)) {
                     playerService.setFrozen(target, false)
-                    messageService.builder(configService.getString("commands.freeze.messages.unfrozen")).withPrefix().tag("player", target.name).send(sender)
-                    messageService.builder(configService.getString("commands.freeze.messages.beenUnfrozen")).withPrefix().forPlayer(target).tag("sender", sender.name).send(target)
+                    messageService.builder(configService.getString(ConfigKeys.Commands.Freeze.MSG_UNFROZEN)).withPrefix().tag("player", target.name).send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Commands.Freeze.MSG_BEEN_UNFROZEN)).withPrefix().forPlayer(target).tag("sender", sender.name).send(target)
                 } else {
                     playerService.setFrozen(target, true)
-                    messageService.builder(configService.getString("commands.freeze.messages.frozen")).withPrefix().tag("player", target.name).send(sender)
-                    messageService.builder(configService.getString("commands.freeze.messages.beenFrozen")).withPrefix().forPlayer(target).tag("sender", sender.name).send(target)
+                    messageService.builder(configService.getString(ConfigKeys.Commands.Freeze.MSG_FROZEN)).withPrefix().tag("player", target.name).send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Commands.Freeze.MSG_BEEN_FROZEN)).withPrefix().forPlayer(target).tag("sender", sender.name).send(target)
                 }
             }
         }

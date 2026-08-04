@@ -1,0 +1,112 @@
+# -----------------------------------------------------------
+#  MKernel - Language & Texts
+# -----------------------------------------------------------
+
+general:
+  unknown: "desconocido"
+  titles:
+    format: "<color:#d30000><bold><player></bold></color>"
+    join: "<green>Ha entrado al servidor!</green>"
+    leave: "<red>Se ha ido del servidor!</red>"
+    death: "<red><player> ha muerto</red>"
+  errors:
+    langs: "<red>Error creando los archivos de lenguaje</red>"
+    notConsoleCommand: "<red>Este comando no se puede ejecutar desde la consola</red>"
+    onlyPlayerCommand: "<red>Este comando sólo lo puede ejecutar un jugador</red>"
+    playerNotFound: "<red>El jugador no se ha encontrado o no está conectado</red>"
+    noPermission: "<red>No tienes permisos para eso</red>"
+    tooManyArguments: "<red>Demasiados argumentos</red>"
+    playerRequired: "<red>Debes especificar un jugador</red>"
+    invalidArgument: "<red>Argumento no válido</red>"
+    temporarilyDisabled: "<red>Este comando está temporalmente desactivado</red>"
+    notANumber: "<red>Eso no es un número válido</red>"
+
+inventories:
+  globalChestTitle: "Cofre global"
+  disposalTitle: "Basura"
+  invseeTitle: "Inventario de <player>"
+  configMenu:
+    title: "Configuración"
+    valueName: "<color:#d30000><bold>"
+    valueLore: "<gray>Valor: <color:#d30000>"
+
+modules:
+  connection:
+    joinMessage: "<yellow><player> se ha unido a la partida"
+    leaveMessage: "<yellow><player> ha abandonado la partida"
+
+  chat:
+    mentionFormat: "<color:#d30000><bold>@<player></bold></color>"
+    youWereMentioned: "<yellow><player></yellow> <gray>te ha mencionado!</gray>"
+
+  shops:
+    hologram:
+      title: "<red><bold>TIENDA</bold></red>"
+      price: "<white>Precio:</white> <yellow><price></yellow> <green>♦"
+      stock: "<white>Stock:</white> <yellow><stock></yellow>"
+    inventory:
+      title: "Tienda de <owner>"
+      itemLore:
+        - "<italic:false><gray>Precio unidad: <yellow><price> <green>♦"
+        - "<italic:false><gray>Stock disponible: <aqua><stock>"
+        - "<italic:false><dark_gray>(<tax_percent>% IVA incluído)"
+        - ""
+        - "<italic:false><green>  ► Click Izq: <white>Comprar 1"
+        - "<italic:false><green>  ► Click Der: <white>Comprar 32"
+        - "<italic:false><green>  ► Shift + Click Izq: <white>Comprar 64"
+        - "<italic:false><green>  ► Q / Soltar: <white>Comprar TODO"
+    chat:
+      placed: "<yellow>Escribe el precio por unidad en el chat (ej: 10.5):"
+      created: "<gray>Tienda <green>creada</green>! Para introducir stock, <green>ábrela</green></gray>"
+      buy: "<gray>Has comprado <green><amount>x</green> por <green><total_price> <green>%banco_suffix%</green> <dark_gray>(<tax_percent>% IVA incl.)</dark_gray></gray>"
+      sold: "<gray><green><buyer></green> te ha comprado <aqua><amount>x <item></aqua> por <yellow><total_price> %banco_suffix%</yellow> <dark_gray>(Impuestos: <red>-<tax></red> | Neto: <green>+<profit></green>)</dark_gray></gray>"
+      destroy: "<gray>Has destruido la tienda. Los items se han soltado.</gray>"
+    errors:
+      noStock: "<red>Esta tienda se ha quedado sin stock</red>"
+      noEconomy: "<red>Error: El sistema de economía no está disponible</red>"
+      notEnoughMoney: "<red>No tienes suficiente dinero</red>"
+      shopNotAccessible: "<red>El cofre de la tienda no es accesible.</red>"
+      errorBuyingItem: "<red>No se pudo comprar el item</red>"
+      inventoryFull: "<red>Inventario lleno</red>"
+      cantBuyOwn: "<red>No puedes comprar de tu propia tienda</red>"
+
+  teleport:
+    chat:
+      accepted: "<gray>Has aceptado la petición de teletransporte</gray>"
+      acceptedToTarget: "<gray>El jugador <green><sender></green> ha aceptado tu petición de teletransporte</gray>"
+      denied: "<gray>Has rechazado la petición de teletransporte</gray>"
+      deniedToTarget: "<gray>El jugador <green><sender></green> ha rechazado tu petición de teletransporte</gray>"
+      tpaHereToTarget: "<gray>El jugador <green><sender></green> te ha enviado una petición de teletransporte <red>[Tú -> <sender>]</red></gray> <dark_gray>» </dark_gray><click:run_command:'/tpaccept <sender>'><hover:show_text:'<green>Aceptar petición</green>'><bold><green>[ACEPTAR]</green></bold></hover></click>  <click:run_command:'/tpdeny <sender>'><hover:show_text:'<red>Rechazar petición</red>'><bold><red>[RECHAZAR]</red></bold></hover></click>"
+      tpaHereToSender: "<gray>Has enviado una petición de teletransporte a <green><target></green> <red>[<target> -> Tú]</red></gray>"
+      tpaToTarget: "<gray>El jugador <green><sender></green> te ha enviado una petición de teletransporte <red>[<sender> -> Tú]</red></gray> <dark_gray>» </dark_gray><click:run_command:'/tpaccept <sender>'><hover:show_text:'<green>Aceptar petición</green>'><bold><green>[ACEPTAR]</green></bold></hover></click>  <click:run_command:'/tpdeny <sender>'><hover:show_text:'<red>Rechazar petición</red>'><bold><red>[RECHAZAR]</red></bold></hover></click>"
+      tpaToSender: "<gray>Has enviado una petición de teletransporte a <green><target></green> <red>[Tú -> <target>]</red></gray>"
+    errors:
+      cantTeleportToYourself: "<red>No puedes teletransportarte a ti mismo</red>"
+      requestAlreadySent: "<red>Ya has enviado una petición de teletransporte a este jugador</red>"
+      noRequestFound: "<red>No tienes ninguna petición de teletransporte</red>"
+      lobbyDoesNotExist: "<red>El lobby definido en el config no existe</red>"
+      cooldownHasNotExpired: "<red>Debes esperar <time> segundos para volver a usar este comando</red>"
+      maxWarpsReached: "<red>Has alcanzado el límite de warps almacenados</red>"
+      noLastPosition: "<red>No tienes una última posición a la que volver</red>"
+
+  death:
+    chat:
+      lostLevelsItems: "<gray>Has perdido <green>tus items</green> y <green><levels> niveles de XP</green> al morir. Puedes recuperarlas con </gray><click:suggest_command:'/recinv'><hover:show_text:'<green>Haz click para escribir /recinv</green>'><green><u>/recinv</u></green></hover></click>"
+      itemsNotRecovered: "<gray>Tus items no se han recuperado porque has muerto muy cerca del spawn/point o había jugadores cerca tuya. Los puedes recuperar en: <green><x> <y> <z></green></gray>"
+    errors:
+      notEnoughLevels: "<red>No tienes suficientes niveles. Necesitas <green><required></green></red>"
+      noItemsToRecover: "<red>No hay items que recuperar</red>"
+
+  admin:
+    spyMessage: "<gray><i>[Spy] <click:run_command:'/tp <player>'><hover:show_text:'<red>Jugador:</red> <white><player></white>\n<yellow>Haz click para hacer TP</yellow>'><red><player></red></hover></click>: <message></i></gray>"
+    whileFrozen: "<red>No puedes hacer esto mientras estás congelado</red>"
+    errors:
+      cannotFreezeSelf: "<red>No te puedes congelar a ti mismo</red>"
+      worldIsBlocked: "<gray>El mundo <green><world></green> está bloqueado</gray>"
+
+  misc:
+    illegalPortal: "<red>No puedes crear portales, deberás usar el portal comunitario. Este intento ha sido registrado por el Ministerio de Portales.</red>"
+    errors:
+      itemNotFound: "<red>No se ha encontrado el item</red>"
+
+file-version: 1

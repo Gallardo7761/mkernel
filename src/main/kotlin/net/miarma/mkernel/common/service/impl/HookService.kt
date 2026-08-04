@@ -3,11 +3,13 @@ package net.miarma.mkernel.common.service.impl
 import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.annotation.LoaderPriority
 import net.miarma.mkernel.common.integration.IHook
 import net.miarma.mkernel.common.service.IService
 import java.util.*
 
 @Singleton
+@LoaderPriority(LoaderPriority.HIGH)
 class HookService @Inject constructor() : IService {
 
     private val hooks = mutableMapOf<Class<out IHook>, IHook>()

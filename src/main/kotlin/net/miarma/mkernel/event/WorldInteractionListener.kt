@@ -3,6 +3,7 @@ package net.miarma.mkernel.event
 import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.integration.impl.GriefPreventionHook
 import net.miarma.mkernel.common.integration.impl.MinepacksHook
 import net.miarma.mkernel.common.service.impl.*
@@ -41,7 +42,7 @@ class WorldInteractionListener @Inject constructor(
 
     @EventHandler
     fun onRightClick(event: PlayerInteractEvent) {
-        if (!configService.isModuleEnabled("harvestOnRightClick") || event.action != Action.RIGHT_CLICK_BLOCK) return
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.HARVEST_ON_RIGHT_CLICK) || event.action != Action.RIGHT_CLICK_BLOCK) return
         val hasAccess = hookService.getHook(GriefPreventionHook::class.java).map { it.hasAccess(event.player, event.player.location) }.orElse(true)
         if (hasAccess) {
             event.clickedBlock?.let { block ->
@@ -96,7 +97,7 @@ class WorldInteractionListener @Inject constructor(
             if (blockedWorlds.contains(toWorld.name)) {
                 val pushBackLoc = fromLoc.clone().subtract(2.0, 0.0, 2.0)
                 player.teleportAsync(pushBackLoc)
-                messageService.builder(configService.getString("language.errors.worldIsBlocked"))
+                messageService.builder(configService.getString(ConfigKeys.Messages.Admin.Errors.WORLD_BLOCKED))
                     .withPrefix()
                     .tag("world", toWorld.name)
                     .send(player)
@@ -109,7 +110,7 @@ class WorldInteractionListener @Inject constructor(
 
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
-        if (!configService.isModuleEnabled("autoItemRefill") || event.itemInHand.amount != 1) return
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.AUTO_ITEM_REFILL) || event.itemInHand.amount != 1) return
         plugin.launchSync {
             delayTicks(plugin, 1L)
             handleRefill(event.player, event.blockPlaced.type, event.hand)
@@ -118,7 +119,7 @@ class WorldInteractionListener @Inject constructor(
 
     @EventHandler
     fun onItemBreak(event: PlayerItemBreakEvent) {
-        if (!configService.isModuleEnabled("autoItemRefill")) return
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.AUTO_ITEM_REFILL)) return
         val player = event.player
         val brokenItem = event.brokenItem
         val hand = if (player.inventory.itemInMainHand.type.isAir || player.inventory.itemInMainHand.type != brokenItem.type) EquipmentSlot.OFF_HAND else EquipmentSlot.HAND
@@ -146,10 +147,10 @@ class WorldInteractionListener @Inject constructor(
 
     @EventHandler
     fun onPortalLight(event: PortalCreateEvent) {
-        if (configService.isModuleEnabled("noNetherPortals")) {
+        if (configService.isModuleEnabled(ConfigKeys.Modules.NO_NETHER_PORTALS)) {
             event.isCancelled = true
             (event.entity as? Player)?.let {
-                messageService.builder(configService.getString("language.events.illegalPortal")).withPrefix().send(it)
+                messageService.builder(configService.getString(ConfigKeys.Messages.Misc.ILLEGAL_PORTAL)).withPrefix().send(it)
             }
         }
     }

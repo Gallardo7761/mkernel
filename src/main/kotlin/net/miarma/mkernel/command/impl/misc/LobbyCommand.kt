@@ -6,6 +6,7 @@ import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.util.PlayerUtil
@@ -18,40 +19,40 @@ class LobbyCommand @Inject constructor(
     private val logger: Logger
 ) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.lobby.name")) {
-            withFullDescription(configService.getString("commands.lobby.description"))
-            withPermission(configService.getString("commands.lobby.permissions.base"))
+        commandAPICommand(configService.getString(ConfigKeys.Commands.Lobby.NAME)) {
+            withFullDescription(configService.getString(ConfigKeys.Commands.Lobby.DESC))
+            withPermission(configService.getString(ConfigKeys.Commands.Lobby.PERM_BASE))
             withOptionalArguments(
-                PlayerProfileArgument(configService.getString("arguments.player"))
-                    .withPermission(configService.getString("commands.lobby.permissions.others"))
+                PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER))
+                    .withPermission(configService.getString(ConfigKeys.Commands.Lobby.PERM_OTHERS))
             )
             playerExecutor { sender, args ->
                 val lobby = configService.getLobbyWorld()
                 val lobbyCoords = lobby.toLocation()
 
                 if (lobbyCoords.world == null) {
-                    messageService.builder(configService.getString("language.errors.lobbyDoesNotExist")).withPrefix().send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Messages.Teleport.Errors.LOBBY_NOT_EXIST)).withPrefix().send(sender)
                     logger.warning("The lobby defined in config does not exist!")
                     return@playerExecutor
                 }
 
                 if (args[0] == null) {
                     sender.teleportAsync(lobbyCoords).thenAccept { success ->
-                        if (success) messageService.builder(configService.getString("commands.lobby.messages.teleported")).withPrefix().send(sender)
+                        if (success) messageService.builder(configService.getString(ConfigKeys.Commands.Lobby.MSG_TELEPORTED)).withPrefix().send(sender)
                     }
                     return@playerExecutor
                 }
 
                 val target = PlayerUtil.fromArg(args[0])
                 if (target == null || !target.isOnline) {
-                    messageService.builder(configService.getString("language.errors.playerNotFound")).withPrefix().send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.PLAYER_NOT_FOUND)).withPrefix().send(sender)
                     return@playerExecutor
                 }
 
                 target.teleportAsync(lobbyCoords).thenAccept { success ->
                     if (success) {
-                        messageService.builder(configService.getString("commands.lobby.messages.lobbyYouOthers")).withPrefix().tag("target", target.name).send(sender)
-                        messageService.builder(configService.getString("commands.lobby.messages.lobbyOthersYou")).withPrefix().forPlayer(target).tag("sender", sender.name).send(target)
+                        messageService.builder(configService.getString(ConfigKeys.Commands.Lobby.MSG_YOU_OTHERS)).withPrefix().tag("target", target.name).send(sender)
+                        messageService.builder(configService.getString(ConfigKeys.Commands.Lobby.MSG_OTHERS_YOU)).withPrefix().forPlayer(target).tag("sender", sender.name).send(target)
                     }
                 }
             }

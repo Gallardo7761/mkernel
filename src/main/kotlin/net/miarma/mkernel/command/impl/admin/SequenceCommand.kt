@@ -7,6 +7,7 @@ import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.SequenceService
@@ -18,24 +19,24 @@ class SequenceCommand @Inject constructor(
     private val sequenceService: SequenceService
 ) : MCommand {
     override fun register() {
-        commandAPICommand(configService.getString("commands.sequence.name")) {
+        commandAPICommand(configService.getString(ConfigKeys.Commands.Sequence.NAME)) {
             withArguments(
-                StringArgument(configService.getString("arguments.sequence"))
+                StringArgument(configService.getString(ConfigKeys.Arguments.SEQUENCE))
                     .replaceSuggestions(ArgumentSuggestions.strings { _ ->
                         sequenceService.getAllNames().toTypedArray()
                     })
             )
-            withAliases(*configService.getStringList("commands.sequence.aliases").toTypedArray())
-            withFullDescription(configService.getString("commands.sequence.description"))
-            withPermission(configService.getString("commands.sequence.permission"))
-            withUsage(configService.getString("commands.sequence.usage"))
+            withAliases(*configService.getStringList(ConfigKeys.Commands.Sequence.ALIASES).toTypedArray())
+            withFullDescription(configService.getString(ConfigKeys.Commands.Sequence.DESC))
+            withPermission(configService.getString(ConfigKeys.Commands.Sequence.PERM))
+            withUsage(configService.getString(ConfigKeys.Commands.Sequence.USAGE))
             playerExecutor { sender, args ->
                 val sequenceName = args[0] as String
                 if (!sequenceService.executeSequence(sequenceName)) {
-                    messageService.builder(configService.getString("commands.sequence.messages.error")).withPrefix().tag("name", sequenceName).send(sender)
+                    messageService.builder(configService.getString(ConfigKeys.Commands.Sequence.MSG_ERROR)).withPrefix().tag("name", sequenceName).send(sender)
                     return@playerExecutor
                 }
-                messageService.builder(configService.getString("commands.sequence.messages.success")).withPrefix().tag("name", sequenceName).send(sender)
+                messageService.builder(configService.getString(ConfigKeys.Commands.Sequence.MSG_SUCCESS)).withPrefix().tag("name", sequenceName).send(sender)
             }
         }
     }

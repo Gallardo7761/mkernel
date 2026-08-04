@@ -2,6 +2,7 @@ package net.miarma.mkernel.common.service.impl
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.annotation.LoaderPriority
 import net.miarma.mkernel.common.integration.impl.MinepacksHook
 import net.miarma.mkernel.common.service.IService
 import org.bukkit.Material
@@ -10,6 +11,7 @@ import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.inventory.ItemStack
 
 @Singleton
+@LoaderPriority(LoaderPriority.LOW)
 class InventoryService @Inject constructor(private val hookService: HookService) : IService {
 
     fun refillItem(player: Player, material: Material, hand: EquipmentSlot) {

@@ -2,6 +2,7 @@ package net.miarma.mkernel.common.inventory
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import org.bukkit.entity.Player
@@ -25,7 +26,7 @@ class DisposalInventory @Inject constructor(
             }
         }
 
-        val title = messageService.builder(configService.getString("language.inventories.disposal.title")).build()
+        val title = messageService.builder(configService.getString(ConfigKeys.Messages.Inventories.DISPOSAL_TITLE)).build()
 
         val gui = Gui.builder()
             .setStructure(

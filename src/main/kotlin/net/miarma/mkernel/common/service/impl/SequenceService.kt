@@ -3,6 +3,8 @@ package net.miarma.mkernel.common.service.impl
 import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.annotation.LoaderPriority
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.model.Sequence
 import net.miarma.mkernel.common.service.IService
 import net.miarma.mkernel.util.delayTicks
@@ -10,6 +12,7 @@ import org.bukkit.Bukkit
 import java.util.*
 
 @Singleton
+@LoaderPriority(LoaderPriority.LOW)
 class SequenceService @Inject constructor(
     private val configService: ConfigService,
     private val plugin: MKernel
@@ -23,7 +26,7 @@ class SequenceService @Inject constructor(
 
     fun loadSequences() {
         sequenceMap.clear()
-        val section = configService.getConfig("config.yml")?.getSection("config.sequentialCommands") ?: run {
+        val section = configService.getSection(ConfigKeys.Settings.SEQUENCES) ?: run {
             MKernel.LOGGER.warning("'sequentialCommands' section not found")
             return
         }
@@ -40,7 +43,7 @@ class SequenceService @Inject constructor(
             sequenceMap[seqName.lowercase()] = Sequence(seqName, steps)
         }
 
-        MKernel.LOGGER.info("Loaded ${sequenceMap.size} command sequences")
+        MKernel.LOGGER.info("Loaded ${sequenceMap.size} command sequences!")
     }
 
     fun executeSequence(name: String): Boolean {

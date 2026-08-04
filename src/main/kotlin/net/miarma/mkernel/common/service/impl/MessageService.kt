@@ -9,12 +9,15 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
+import net.miarma.mkernel.common.annotation.LoaderPriority
+import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.IService
 import org.bukkit.OfflinePlayer
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 @Singleton
+@LoaderPriority(LoaderPriority.HIGH)
 class MessageService @Inject constructor(private val configService: ConfigService) : IService {
 
     companion object {
@@ -45,7 +48,7 @@ class MessageService @Inject constructor(private val configService: ConfigServic
             if (text.isNullOrEmpty()) return Component.empty()
 
             var fullText = if (usePrefix) {
-                "${configService.getString("config.chat.prefix")} $text"
+                "${configService.getString(ConfigKeys.Settings.Chat.PREFIX)} $text"
             } else {
                 text
             }
