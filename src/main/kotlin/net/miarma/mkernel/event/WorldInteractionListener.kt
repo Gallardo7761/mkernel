@@ -42,7 +42,7 @@ class WorldInteractionListener @Inject constructor(
 
     @EventHandler
     fun onRightClick(event: PlayerInteractEvent) {
-        if (!configService.isModuleEnabled(ConfigKeys.Modules.HARVEST_ON_RIGHT_CLICK) || event.action != Action.RIGHT_CLICK_BLOCK) return
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.World.HARVEST_RIGHT_CLICK) || event.action != Action.RIGHT_CLICK_BLOCK) return
         val hasAccess = hookService.getHook(GriefPreventionHook::class.java).map { it.hasAccess(event.player, event.player.location) }.orElse(true)
         if (hasAccess) {
             event.clickedBlock?.let { block ->
@@ -110,7 +110,7 @@ class WorldInteractionListener @Inject constructor(
 
     @EventHandler
     fun onBlockPlace(event: BlockPlaceEvent) {
-        if (!configService.isModuleEnabled(ConfigKeys.Modules.AUTO_ITEM_REFILL) || event.itemInHand.amount != 1) return
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.World.AUTO_ITEM_REFILL) || event.itemInHand.amount != 1) return
         plugin.launchSync {
             delayTicks(plugin, 1L)
             handleRefill(event.player, event.blockPlaced.type, event.hand)
@@ -119,7 +119,7 @@ class WorldInteractionListener @Inject constructor(
 
     @EventHandler
     fun onItemBreak(event: PlayerItemBreakEvent) {
-        if (!configService.isModuleEnabled(ConfigKeys.Modules.AUTO_ITEM_REFILL)) return
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.World.AUTO_ITEM_REFILL)) return
         val player = event.player
         val brokenItem = event.brokenItem
         val hand = if (player.inventory.itemInMainHand.type.isAir || player.inventory.itemInMainHand.type != brokenItem.type) EquipmentSlot.OFF_HAND else EquipmentSlot.HAND
@@ -147,7 +147,7 @@ class WorldInteractionListener @Inject constructor(
 
     @EventHandler
     fun onPortalLight(event: PortalCreateEvent) {
-        if (configService.isModuleEnabled(ConfigKeys.Modules.NO_NETHER_PORTALS)) {
+        if (configService.isModuleEnabled(ConfigKeys.Modules.World.NO_NETHER_PORTALS)) {
             event.isCancelled = true
             (event.entity as? Player)?.let {
                 messageService.builder(configService.getString(ConfigKeys.Messages.Misc.ILLEGAL_PORTAL)).withPrefix().send(it)

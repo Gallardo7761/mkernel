@@ -8,23 +8,29 @@ import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.annotation.RequiresModule
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.task.LocationTrackerTask
+import net.miarma.mkernel.util.CommandUtil.checkModule
 import org.bukkit.Bukkit
 
 @Singleton
+@RequiresModule(ConfigKeys.Modules.World.MAIN)
 class BlockWorldCommand @Inject constructor(
     private val plugin: MKernel,
     private val configService: ConfigService,
     private val messageService: MessageService,
     private val databaseService: DatabaseService,
-    private val locationTrackerTask: LocationTrackerTask
+    private val locationTrackerTask: LocationTrackerTask,
+    private val moduleLoader: ModuleLoader
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.BlockWorld.NAME)) {
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.World.MAIN)
             withArguments(
                 StringArgument(configService.getString(ConfigKeys.Arguments.WORLD))
                     .replaceSuggestions(ArgumentSuggestions.strings { _ ->

@@ -35,12 +35,12 @@ class PlayerConnectionListener @Inject constructor(
 
         databaseService.loadPlayerData(player)
 
-        if (configService.isModuleEnabled(ConfigKeys.Modules.SPAWN_AT_LOBBY)) {
+        if (configService.isModuleEnabled(ConfigKeys.Modules.Teleport.SPAWN_AT_LOBBY)) {
             val lobby = configService.getLobbyWorld()
             lobby.toLocation().world?.let { player.teleportAsync(lobby.toLocation()) }
         }
 
-        if (configService.isModuleEnabled(ConfigKeys.Modules.JOIN_TITLE)) {
+        if (configService.isModuleEnabled(ConfigKeys.Modules.Player.JOIN_TITLE)) {
             val rawTitleTemplate = configService.getString(ConfigKeys.Messages.General.Titles.FORMAT)
             val rawSubtitle = configService.getString(ConfigKeys.Messages.General.Titles.JOIN)
             val times = Title.Times.times(Duration.ofMillis(1500), Duration.ofMillis(1500), Duration.ofMillis(1500))
@@ -69,7 +69,7 @@ class PlayerConnectionListener @Inject constructor(
 
         databaseService.unloadPlayerData(player)
 
-        if (configService.isModuleEnabled(ConfigKeys.Modules.LEAVE_TITLE)) {
+        if (configService.isModuleEnabled(ConfigKeys.Modules.Player.LEAVE_TITLE)) {
             val rawTitleTemplate = configService.getString(ConfigKeys.Messages.General.Titles.FORMAT)
             val rawSubtitle = configService.getString(ConfigKeys.Messages.General.Titles.LEAVE)
             val times = Title.Times.times(Duration.ofMillis(1500), Duration.ofMillis(1500), Duration.ofMillis(1500))

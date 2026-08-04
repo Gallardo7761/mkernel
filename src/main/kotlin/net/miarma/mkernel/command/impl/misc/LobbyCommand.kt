@@ -1,25 +1,30 @@
 package net.miarma.mkernel.command.impl.misc
 
+import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.annotation.RequiresModule
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
+import net.miarma.mkernel.util.CommandUtil.checkModule
 import net.miarma.mkernel.util.PlayerUtil
-import java.util.logging.Logger
 
 @Singleton
+@RequiresModule(ConfigKeys.Modules.Teleport.MAIN)
 class LobbyCommand @Inject constructor(
     private val configService: ConfigService,
     private val messageService: MessageService,
-    private val logger: Logger
+    private val moduleLoader: ModuleLoader
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Lobby.NAME)) {
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Teleport.MAIN)
             withFullDescription(configService.getString(ConfigKeys.Commands.Lobby.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.Lobby.PERM_BASE))
             withOptionalArguments(
@@ -32,7 +37,7 @@ class LobbyCommand @Inject constructor(
 
                 if (lobbyCoords.world == null) {
                     messageService.builder(configService.getString(ConfigKeys.Messages.Teleport.Errors.LOBBY_NOT_EXIST)).withPrefix().send(sender)
-                    logger.warning("The lobby defined in config does not exist!")
+                    MKernel.LOGGER.warning("The lobby defined in config does not exist!")
                     return@playerExecutor
                 }
 

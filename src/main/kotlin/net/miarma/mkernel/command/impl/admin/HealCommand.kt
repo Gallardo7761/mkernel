@@ -6,18 +6,24 @@ import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.annotation.RequiresModule
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
+import net.miarma.mkernel.util.CommandUtil.checkModule
 import net.miarma.mkernel.util.PlayerUtil
 
 @Singleton
+@RequiresModule(ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.HEAL)
 class HealCommand @Inject constructor(
     private val configService: ConfigService,
-    private val messageService: MessageService
+    private val messageService: MessageService,
+    private val moduleLoader: ModuleLoader
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Heal.NAME)) {
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Admin.MAIN, ConfigKeys.Modules.Admin.Commands.HEAL)
             withPermission(configService.getString(ConfigKeys.Commands.Heal.PERM_BASE))
             withOptionalArguments(
                 PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER))

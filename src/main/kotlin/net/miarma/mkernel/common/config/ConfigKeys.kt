@@ -3,18 +3,72 @@ package net.miarma.mkernel.common.config
 object ConfigKeys {
 
     object Modules {
-        const val JOIN_TITLE = "modules.joinTitle"
-        const val LEAVE_TITLE = "modules.leaveTitle"
-        const val DEATH_TITLE = "modules.deathTitle"
-        const val HARVEST_ON_RIGHT_CLICK = "modules.harvestOnRightClick"
-        const val AUTO_ITEM_REFILL = "modules.autoItemRefill"
-        const val ADMIN_CHAT = "modules.adminChat"
-        const val CHAT_FORMAT = "modules.chatFormat"
-        const val MENTIONS = "modules.mentions"
-        const val SPAWN_AT_LOBBY = "modules.spawnAtLobby"
-        const val RECOVER_INVENTORY = "modules.recoverInventory"
-        const val ENDERMAN_NWORD_ANGER = "modules.endermanNWordAnger"
-        const val NO_NETHER_PORTALS = "modules.noNetherPortals"
+        object Core {
+            const val MAIN = "modules.core"
+
+            object Commands {
+                const val DISPOSAL = "modules.core.commands.disposal"
+                const val GLOBAL_CHEST = "modules.core.commands.globalchest"
+                const val PAY_XP = "modules.core.commands.payxp"
+                const val SEND_COORDS = "modules.core.commands.sendcoords"
+                const val NICK = "modules.core.commands.nick"
+            }
+        }
+
+        object Admin {
+            const val MAIN = "modules.admin"
+            const val CHAT = "modules.admin.chat"
+
+            object Commands {
+                const val SPECIAL_ITEM = "modules.admin.commands.specialItem"
+                const val INVSEE = "modules.admin.commands.invsee"
+                const val GMA = "modules.admin.commands.gma"
+                const val GMSP = "modules.admin.commands.gmsp"
+                const val GMC = "modules.admin.commands.gmc"
+                const val GMS = "modules.admin.commands.gms"
+                const val HEAL = "modules.admin.commands.heal"
+                const val OPME = "modules.admin.commands.opme"
+                const val DEOPME = "modules.admin.commands.deopme"
+                const val SPY = "modules.admin.commands.spy"
+                const val VANISH = "modules.admin.commands.vanish"
+                const val SEQUENCE = "modules.admin.commands.sequence"
+                const val FLYSPEED = "modules.admin.commands.flyspeed"
+                const val FREEZE = "modules.admin.commands.freeze"
+            }
+        }
+
+        object Chat {
+            const val MAIN = "modules.chat"
+            const val FORMAT = "modules.chat.format"
+            const val MENTIONS = "modules.chat.mentions"
+            const val ROLEPLAY = "modules.chat.roleplay"
+            const val ENDERMAN_ANGER = "modules.chat.endermanAnger"
+        }
+
+        object Shop {
+            const val MAIN = "modules.shop"
+        }
+
+        object Teleport {
+            const val MAIN = "modules.teleport"
+            const val SPAWN_AT_LOBBY = "modules.teleport.spawnAtLobby"
+        }
+
+        object Player {
+            const val MAIN = "modules.player"
+            const val JOIN_TITLE = "modules.player.joinTitle"
+            const val LEAVE_TITLE = "modules.player.leaveTitle"
+            const val DEATH_TITLE = "modules.player.deathTitle"
+            const val RECOVER_INVENTORY = "modules.player.recoverInventory"
+        }
+
+        object World {
+            const val MAIN = "modules.world"
+            const val HARVEST_RIGHT_CLICK = "modules.world.harvestRightClick"
+            const val AUTO_ITEM_REFILL = "modules.world.autoItemRefill"
+            const val NO_NETHER_PORTALS = "modules.world.noNetherPortals"
+            const val TIME_WEATHER_CONTROL = "modules.world.timeWeatherControl"
+        }
     }
 
     object Settings {
@@ -108,9 +162,30 @@ object ConfigKeys {
             const val GLOBAL_CHEST_TITLE = "inventories.globalChestTitle"
             const val DISPOSAL_TITLE = "inventories.disposalTitle"
             const val INVSEE_TITLE = "inventories.invseeTitle"
+
             const val CONFIG_TITLE = "inventories.configMenu.title"
+            const val CONFIG_SUBTITLE = "inventories.configMenu.subTitle"
             const val CONFIG_VAL_NAME = "inventories.configMenu.valueName"
             const val CONFIG_VAL_LORE = "inventories.configMenu.valueLore"
+
+            const val CONFIG_MODULE_NAME = "inventories.configMenu.moduleName"
+            const val CONFIG_MODULE_LORE_STATE = "inventories.configMenu.moduleLoreState"
+            const val CONFIG_MODULE_LORE_HINT = "inventories.configMenu.moduleLoreHint"
+
+            const val CONFIG_STATE_ENABLED_COLOR = "inventories.configMenu.stateEnabledColor"
+            const val CONFIG_STATE_DISABLED_COLOR = "inventories.configMenu.stateDisabledColor"
+            const val CONFIG_STATE_ENABLED_TEXT = "inventories.configMenu.stateEnabledText"
+            const val CONFIG_STATE_DISABLED_TEXT = "inventories.configMenu.stateDisabledText"
+
+            const val CONFIG_TOGGLE_NAME = "inventories.configMenu.toggleName"
+            const val CONFIG_TOGGLE_STATE_ENABLED = "inventories.configMenu.toggleStateEnabled"
+            const val CONFIG_TOGGLE_STATE_DISABLED = "inventories.configMenu.toggleStateDisabled"
+            const val CONFIG_TOGGLE_LORE = "inventories.configMenu.toggleLore"
+
+            const val CONFIG_ACTION_ENABLE = "inventories.configMenu.actionEnable"
+            const val CONFIG_ACTION_DISABLE = "inventories.configMenu.actionDisable"
+
+            const val CONFIG_BACK_NAME = "inventories.configMenu.backName"
         }
 
         object Connection {

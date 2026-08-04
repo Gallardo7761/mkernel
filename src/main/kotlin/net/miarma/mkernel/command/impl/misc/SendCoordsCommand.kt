@@ -6,18 +6,24 @@ import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.annotation.RequiresModule
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
+import net.miarma.mkernel.util.CommandUtil.checkModule
 import net.miarma.mkernel.util.PlayerUtil
 
 @Singleton
+@RequiresModule(ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.SEND_COORDS)
 class SendCoordsCommand @Inject constructor(
     private val configService: ConfigService,
-    private val messageService: MessageService
+    private val messageService: MessageService,
+    private val moduleLoader: ModuleLoader
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.SendCoords.NAME)) {
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Core.MAIN, ConfigKeys.Modules.Core.Commands.SEND_COORDS)
             withArguments(PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER)))
             withFullDescription(configService.getString(ConfigKeys.Commands.SendCoords.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.SendCoords.PERM))

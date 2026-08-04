@@ -27,8 +27,28 @@ inventories:
   invseeTitle: "Inventario de <player>"
   configMenu:
     title: "Configuración"
+    subTitle: "<gray>Configuración <dark_gray>» <module>"
     valueName: "<color:#d30000><bold>"
     valueLore: "<gray>Valor: <color:#d30000>"
+
+    moduleName: "<italic:false><state_color><bold><module>"
+    moduleLoreState: "<italic:false><gray>Estado: <state>"
+    moduleLoreHint: "<italic:false><yellow>Click para gestionar »"
+
+    stateEnabledColor: "<green>"
+    stateDisabledColor: "<red>"
+    stateEnabledText: "<green>Activado"
+    stateDisabledText: "<red>Desactivado"
+
+    toggleName: "<italic:false><bold>Módulo <state>"
+    toggleStateEnabled: "<green><bold>ACTIVADO"
+    toggleStateDisabled: "<red><bold>DESACTIVADO"
+    toggleLore: "<italic:false><gray>Click para <action> todo el módulo"
+
+    actionEnable: "activar"
+    actionDisable: "desactivar"
+
+    backName: "<italic:false><yellow>« Volver"
 
 modules:
   connection:
@@ -109,4 +129,4 @@ modules:
     errors:
       itemNotFound: "<red>No se ha encontrado el item</red>"
 
-file-version: 1
+file-version: 2

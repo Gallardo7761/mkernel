@@ -3,18 +3,62 @@
 # -----------------------------------------------------------
 
 modules:
-  joinTitle: true
-  leaveTitle: true
-  deathTitle: true
-  harvestOnRightClick: true
-  autoItemRefill: true
-  adminChat: true
-  chatFormat: true
-  mentions: true
-  spawnAtLobby: true
-  recoverInventory: true
-  endermanNWordAnger: true
-  noNetherPortals: true
+  core:
+    enabled: true
+    commands:
+      disposal: true
+      globalchest: true
+      payxp: true
+      sendcoords: true
+      nick: true
+
+  admin:
+    enabled: true
+    chat: true
+    commands:
+      specialItem: true
+      invsee: true
+      gma: true
+      gmsp: true
+      gmc: true
+      gms: true
+      heal: true
+      opme: true
+      deopme: true
+      spy: true
+      vanish: true
+      sequence: true
+      flyspeed: true
+      freeze: true
+
+  chat:
+    enabled: true
+    format: true
+    mentions: true
+    adminChat: true
+    roleplay: true
+    endermanAnger: true
+
+  shop:
+    enabled: true
+
+  teleport:
+    enabled: true
+    spawnAtLobby: true
+
+  player:
+    enabled: true
+    joinTitle: true
+    leaveTitle: true
+    deathTitle: true
+    recoverInventory: true
+
+  world:
+    enabled: true
+    harvestRightClick: true
+    autoItemRefill: true
+    noNetherPortals: true
+    timeWeatherControl: true
 
 settings:
   permissions:
@@ -74,4 +118,4 @@ blacklist:
     - /minecraft:me
   recipes: []
 
-file-version: 1
+file-version: 2

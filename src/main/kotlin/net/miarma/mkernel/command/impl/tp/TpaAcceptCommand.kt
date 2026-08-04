@@ -7,23 +7,29 @@ import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.annotation.RequiresModule
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.TeleportService
 import net.miarma.mkernel.common.teleport.TpaRequest
 import net.miarma.mkernel.common.teleport.TpaType
+import net.miarma.mkernel.util.CommandUtil.checkModule
 import net.miarma.mkernel.util.PlayerUtil
 
 @Singleton
+@RequiresModule(ConfigKeys.Modules.Teleport.MAIN)
 class TpaAcceptCommand @Inject constructor(
     private val plugin: MKernel,
     private val configService: ConfigService,
     private val messageService: MessageService,
-    private val teleportService: TeleportService
+    private val teleportService: TeleportService,
+    private val moduleLoader: ModuleLoader
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.TpAccept.NAME)) {
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Teleport.MAIN)
             withOptionalArguments(PlayerProfileArgument(configService.getString(ConfigKeys.Arguments.PLAYER)))
             withPermission(configService.getString(ConfigKeys.Commands.TpAccept.PERM))
             withFullDescription(configService.getString(ConfigKeys.Commands.TpAccept.DESC))

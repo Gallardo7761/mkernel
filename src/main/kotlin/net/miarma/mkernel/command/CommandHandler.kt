@@ -4,6 +4,8 @@ import MKernel
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
+import net.miarma.mkernel.common.annotation.RequiresModule
+import net.miarma.mkernel.common.service.impl.ConfigService
 import org.reflections.Reflections
 import org.reflections.scanners.Scanners
 import java.lang.reflect.Modifier
@@ -18,6 +20,7 @@ class CommandHandler @Inject constructor(private val injector: Injector) {
 
         for (commandClass in commandClasses) {
             if (commandClass.isInterface || Modifier.isAbstract(commandClass.modifiers)) continue
+            if (!checkModuleAccess(commandClass)) continue
 
             try {
                 val commandInstance = injector.getInstance(commandClass)
@@ -29,5 +32,21 @@ class CommandHandler @Inject constructor(private val injector: Injector) {
             }
         }
         MKernel.LOGGER.info("Loaded $commands commands!")
+    }
+
+    private fun checkModuleAccess(commandClass: Class<*>): Boolean {
+        val annotation = commandClass.getAnnotation(RequiresModule::class.java) ?: return true
+        val configService = injector.getInstance(ConfigService::class.java)
+
+        val isModuleEnabled = configService.getBoolean("${annotation.module}.enabled", true)
+                || configService.getBoolean(annotation.module, true)
+
+        if (!isModuleEnabled) return false
+
+        if (annotation.feature.isNotEmpty()) {
+            return configService.getBoolean(annotation.feature, true)
+        }
+
+        return true
     }
 }

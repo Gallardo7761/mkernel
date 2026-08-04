@@ -6,18 +6,24 @@ import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.command.MCommand
+import net.miarma.mkernel.common.annotation.RequiresModule
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
+import net.miarma.mkernel.util.CommandUtil.checkModule
 import org.bukkit.Bukkit
 
 @Singleton
+@RequiresModule(ConfigKeys.Modules.Chat.MAIN, ConfigKeys.Modules.Chat.ROLEPLAY)
 class DoCommand @Inject constructor(
     private val configService: ConfigService,
-    private val messageService: MessageService
+    private val messageService: MessageService,
+    private val moduleLoader: ModuleLoader
 ) : MCommand {
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Do.NAME)) {
+            checkModule(moduleLoader, configService, ConfigKeys.Modules.Chat.MAIN, ConfigKeys.Modules.Chat.ROLEPLAY)
             withArguments(GreedyStringArgument(configService.getString(ConfigKeys.Arguments.MESSAGE)))
             withFullDescription(configService.getString(ConfigKeys.Commands.Do.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.Do.PERM))

@@ -30,7 +30,7 @@ class ModuleLoader @Inject constructor(
                 val instance = injector.getInstance(clazz)
                 allModules[instance.id] = instance
 
-                val isEnabledInConfig = configService.getBoolean("modules.${instance.id}", true)
+                val isEnabledInConfig = configService.getBoolean("modules.${instance.id}.enabled", true)
                 if (isEnabledInConfig) {
                     enableModule(instance)
                     loadedCount++
@@ -41,6 +41,11 @@ class ModuleLoader @Inject constructor(
             }
         }
         MKernel.LOGGER.info("Loaded $loadedCount modules!")
+    }
+
+    fun isModuleEnabled(id: String): Boolean {
+        return allModules[id]?.isEnabled
+            ?: (configService.getBoolean("modules.$id.enabled", true) || configService.getBoolean("modules.$id", true))
     }
 
     fun toggleModule(id: String, enable: Boolean) {
