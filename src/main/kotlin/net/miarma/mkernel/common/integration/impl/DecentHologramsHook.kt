@@ -10,9 +10,8 @@ import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import org.bukkit.Bukkit
 import org.bukkit.Location
-import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
-import java.util.UUID
+import java.util.*
 
 @Singleton
 class DecentHologramsHook @Inject constructor(

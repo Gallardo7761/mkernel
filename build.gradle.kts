@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "net.miarma"
-version = "26.8.5"
+version = "26.8.6"
 
 repositories {
     mavenCentral()
@@ -63,7 +63,6 @@ tasks {
 
     named("shadowJar", com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
         archiveFileName.set("mkernel-${project.version}.jar")
-        destinationDirectory.set(file("/home/jomaa/Escritorio/server/plugins"))
         duplicatesStrategy = DuplicatesStrategy.INCLUDE
         mergeServiceFiles()
     }

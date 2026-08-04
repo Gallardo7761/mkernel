@@ -6,10 +6,10 @@ import com.google.inject.Singleton
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
+import net.miarma.mkernel.common.annotation.LoaderPriority
 import net.miarma.mkernel.common.model.Shop
 import net.miarma.mkernel.common.model.Warp
 import net.miarma.mkernel.common.service.IService
-import net.miarma.mkernel.common.annotation.LoaderPriority
 import net.miarma.mkernel.common.teleport.TpaRequest
 import net.miarma.mkernel.common.teleport.TpaType
 import org.bukkit.Bukkit

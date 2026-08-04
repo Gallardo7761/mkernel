@@ -9,18 +9,15 @@ import kotlinx.coroutines.launch
 import net.miarma.mkernel.command.CommandHandler
 import net.miarma.mkernel.common.inject.MKernelModule
 import net.miarma.mkernel.common.integration.HookLoader
-import net.miarma.mkernel.common.integration.impl.*
+import net.miarma.mkernel.common.integration.impl.WorldGuardHook
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.recipe.RecipeLoader
-import net.miarma.mkernel.common.service.IService
 import net.miarma.mkernel.common.service.ServiceLoader
-import net.miarma.mkernel.common.service.impl.*
 import net.miarma.mkernel.event.*
 import net.miarma.mkernel.task.LocationTrackerTask
 import net.miarma.mkernel.util.BukkitDispatcher
 import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
-import ovh.mythmc.banco.api.Banco
 import java.util.logging.Logger
 import kotlin.coroutines.CoroutineContext
 
@@ -64,12 +61,9 @@ class MKernel : JavaPlugin(), CoroutineScope {
         injector.getInstance(ServiceLoader::class.java).loadAll()
         injector.getInstance(HookLoader::class.java).loadAll()
         injector.getInstance(ModuleLoader::class.java).loadAll()
-
-        injector.getInstance(RecipeLoader::class.java).loadAll()
         injector.getInstance(CommandHandler::class.java).registerCommands()
+        injector.getInstance(RecipeLoader::class.java).loadAll()
         injector.getInstance(LocationTrackerTask::class.java).start()
-
-        registerListeners()
 
         LOGGER.info("I've been enabled! :)")
     }
@@ -77,16 +71,6 @@ class MKernel : JavaPlugin(), CoroutineScope {
     override fun onDisable() {
         job.cancel()
         LOGGER.info("I've been disabled! :(")
-    }
-
-    private fun registerListeners() {
-        val pm = Bukkit.getPluginManager()
-        pm.registerEvents(injector.getInstance(ChatListener::class.java), this)
-        pm.registerEvents(injector.getInstance(PlayerAdvancementListener::class.java), this)
-        pm.registerEvents(injector.getInstance(PlayerConnectionListener::class.java), this)
-        pm.registerEvents(injector.getInstance(PlayerStatusListener::class.java), this)
-        pm.registerEvents(injector.getInstance(WorldInteractionListener::class.java), this)
-        pm.registerEvents(injector.getInstance(ShopListener::class.java), this)
     }
 
     fun launchAsync(block: suspend CoroutineScope.() -> Unit) {

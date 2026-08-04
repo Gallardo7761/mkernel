@@ -8,7 +8,6 @@ import net.kyori.adventure.text.minimessage.MiniMessage
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
 import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.miarma.mkernel.common.annotation.LoaderPriority
 import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.service.IService
@@ -26,8 +25,20 @@ class MessageService @Inject constructor(private val configService: ConfigServic
             TagResolver.builder()
                 .resolver(StandardTags.color())
                 .resolver(StandardTags.decorations())
-                .resolver(StandardTags.gradient())
+                .resolver(StandardTags.reset())
+                .resolver(StandardTags.hoverEvent())
+                .resolver(StandardTags.keybind())
+                .resolver(StandardTags.translatable())
+                .resolver(StandardTags.insertion())
                 .resolver(StandardTags.rainbow())
+                .resolver(StandardTags.gradient())
+                .resolver(StandardTags.transition())
+                .resolver(StandardTags.font())
+                .resolver(StandardTags.newline())
+                .resolver(StandardTags.pride())
+                .resolver(StandardTags.sprite())
+                .resolver(StandardTags.sequentialHead())
+                .resolver(StandardTags.shadowColor())
                 .build()
         ).build()
     }

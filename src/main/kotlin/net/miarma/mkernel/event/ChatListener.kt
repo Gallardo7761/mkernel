@@ -33,7 +33,7 @@ class ChatListener @Inject constructor(
         val player = event.player
         val plainMessage = PlainTextComponentSerializer.plainText().serialize(event.message())
 
-        if (configService.isModuleEnabled(ConfigKeys.Modules.ADMIN_CHAT)) {
+        if (configService.isModuleEnabled(ConfigKeys.Modules.Admin.CHAT)) {
             val adminPerm = configService.getString(ConfigKeys.Settings.Chat.Admin.PERM)
             val trigger = configService.getString(ConfigKeys.Settings.Chat.Admin.TRIGGER)
             if (!trigger.isNullOrEmpty() && plainMessage.startsWith(trigger)) {
@@ -50,7 +50,7 @@ class ChatListener @Inject constructor(
             }
         }
 
-        if (configService.isModuleEnabled(ConfigKeys.Modules.ENDERMAN_NWORD_ANGER) &&
+        if (configService.isModuleEnabled(ConfigKeys.Modules.Chat.ENDERMAN_ANGER) &&
                 SLUR_REGEX.containsMatchIn(plainMessage) &&
                 PlayerUtil.isEntityNear(player, Enderman::class.java, 5)) {
             player.location.chunk.entities.filterIsInstance<Enderman>().forEach { enderman ->
@@ -60,7 +60,7 @@ class ChatListener @Inject constructor(
             }
         }
 
-        if (configService.isModuleEnabled(ConfigKeys.Modules.MENTIONS) &&
+        if (configService.isModuleEnabled(ConfigKeys.Modules.Chat.MENTIONS) &&
                 player.hasPermission(configService.getString(ConfigKeys.Settings.Chat.PERM_MENTIONS))) {
             Bukkit.getOnlinePlayers().forEach { target ->
                 val targetNick = target.getNickName(playerService)
@@ -97,7 +97,7 @@ class ChatListener @Inject constructor(
             }
         }
 
-        if (configService.isModuleEnabled(ConfigKeys.Modules.CHAT_FORMAT) &&
+        if (configService.isModuleEnabled(ConfigKeys.Modules.Chat.FORMAT) &&
                 player.hasPermission(configService.getString(ConfigKeys.Settings.Chat.PERM_FORMAT))) {
             configService.getString(ConfigKeys.Settings.Chat.PUBLIC_FORMAT).takeIf { !it.isNullOrEmpty() }?.let { chatFormat ->
                 event.renderer { source, _, message, _ ->

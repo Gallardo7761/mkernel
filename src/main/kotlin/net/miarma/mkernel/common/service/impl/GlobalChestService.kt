@@ -3,8 +3,8 @@ package net.miarma.mkernel.common.service.impl
 import MKernel
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import net.miarma.mkernel.common.service.IService
 import net.miarma.mkernel.common.annotation.LoaderPriority
+import net.miarma.mkernel.common.service.IService
 import xyz.xenondevs.invui.inventory.VirtualInventory
 
 @Singleton

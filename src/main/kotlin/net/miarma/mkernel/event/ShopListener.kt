@@ -22,13 +22,7 @@ import org.bukkit.entity.Enderman
 import org.bukkit.event.EventHandler
 import org.bukkit.event.EventPriority
 import org.bukkit.event.Listener
-import org.bukkit.event.block.Action
-import org.bukkit.event.block.BlockBreakEvent
-import org.bukkit.event.block.BlockBurnEvent
-import org.bukkit.event.block.BlockExplodeEvent
-import org.bukkit.event.block.BlockPistonExtendEvent
-import org.bukkit.event.block.BlockPistonRetractEvent
-import org.bukkit.event.block.BlockPlaceEvent
+import org.bukkit.event.block.*
 import org.bukkit.event.entity.EntityChangeBlockEvent
 import org.bukkit.event.entity.EntityExplodeEvent
 import org.bukkit.event.inventory.InventoryCloseEvent
@@ -51,6 +45,8 @@ class ShopListener @Inject constructor(
 
     @EventHandler
     fun onPlace(event: BlockPlaceEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
+
         val block = event.block
         val item = event.itemInHand
         val player = event.player
@@ -108,6 +104,8 @@ class ShopListener @Inject constructor(
 
     @EventHandler
     fun onChat(event: AsyncChatEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
+
         val player = event.player
         val loc = pendingShops[player.uniqueId] ?: return
 
@@ -136,6 +134,8 @@ class ShopListener @Inject constructor(
 
     @EventHandler
     fun onShopClick(event: PlayerInteractEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
+
         if (event.action != Action.RIGHT_CLICK_BLOCK) return
         val block = event.clickedBlock ?: return
         if (block.type != Material.CHEST) return
@@ -160,6 +160,8 @@ class ShopListener @Inject constructor(
 
     @EventHandler
     fun onChestClose(event: InventoryCloseEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
+
         val chest = event.inventory.holder as? Chest ?: return
         val shop = shopService.getShopAt(chest.location) ?: return
 
@@ -186,6 +188,8 @@ class ShopListener @Inject constructor(
 
     @EventHandler
     fun onShopDestroy(event: BlockBreakEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
+
         val block = event.block
         if (block.type != Material.CHEST && block.type != Material.TRAPPED_CHEST && block.type != Material.BARREL) return
 
@@ -215,16 +219,20 @@ class ShopListener @Inject constructor(
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onEntityExplode(event: EntityExplodeEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
         event.blockList().removeIf { block -> isShopBlock(block) }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onBlockExplode(event: BlockExplodeEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
         event.blockList().removeIf { block -> isShopBlock(block) }
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onEntityChangeBlock(event: EntityChangeBlockEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
+
         if (isShopBlock(event.block)) {
             event.isCancelled = true
 
@@ -236,6 +244,8 @@ class ShopListener @Inject constructor(
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onBlockBurn(event: BlockBurnEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
+
         if (isShopBlock(event.block)) {
             event.isCancelled = true
         }
@@ -243,6 +253,8 @@ class ShopListener @Inject constructor(
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onPistonExtend(event: BlockPistonExtendEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
+
         if (event.blocks.any { isShopBlock(it) }) {
             event.isCancelled = true
         }
@@ -250,6 +262,8 @@ class ShopListener @Inject constructor(
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onPistonRetract(event: BlockPistonRetractEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
+
         if (event.blocks.any { isShopBlock(it) }) {
             event.isCancelled = true
         }
@@ -259,6 +273,7 @@ class ShopListener @Inject constructor(
         if (block.type != Material.CHEST && block.type != Material.TRAPPED_CHEST && block.type != Material.BARREL) {
             return false
         }
+
         return shopService.getShopAt(block.location) != null
     }
 }

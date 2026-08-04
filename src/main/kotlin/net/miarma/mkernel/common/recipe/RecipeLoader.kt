@@ -47,12 +47,14 @@ class RecipeLoader @Inject constructor(
             saveDefaultRecipe("shop_chest.yml")
         }
 
-        folder.listFiles { _, name -> name.endsWith(".yml") }?.forEach { file ->
+        val currentFiles = folder.listFiles { _, name -> name.endsWith(".yml") } ?: return
+
+        for (file in currentFiles) {
             val id = file.nameWithoutExtension
             val lastModified = file.lastModified()
 
             if (recipeHashes[id] == lastModified && loadedRecipes.containsKey(id)) {
-                return@forEach
+                continue
             }
 
             try {
@@ -62,15 +64,18 @@ class RecipeLoader @Inject constructor(
                 if (recipe != null) {
                     (loadedRecipes[id] as? Keyed)?.let { Bukkit.getServer().removeRecipe(it.key) }
                     Bukkit.getServer().addRecipe(recipe)
+
                     loadedRecipes[id] = recipe
                     recipeHashes[id] = lastModified
-                    MKernel.LOGGER.info("Custom recipe loaded: ${config.getString("id")}")
+                    MKernel.LOGGER.info("Custom recipe updated: $id")
                 }
             } catch (e: Exception) {
                 MKernel.LOGGER.severe("Error loading recipe: ${file.name}")
                 e.printStackTrace()
             }
         }
+
+        Bukkit.getServer().updateRecipes()
     }
 
     private fun saveDefaultRecipe(fileName: String) {

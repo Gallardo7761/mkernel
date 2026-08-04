@@ -32,7 +32,7 @@ class PlayerStatusListener @Inject constructor(
         val playerLevel = player.level
         val playerExp = player.exp
 
-        if (configService.isModuleEnabled(ConfigKeys.Modules.DEATH_TITLE)) {
+        if (configService.isModuleEnabled(ConfigKeys.Modules.Player.DEATH_TITLE)) {
             val rawSubtitle = configService.getString(ConfigKeys.Messages.General.Titles.DEATH)
             val times = Title.Times.times(Duration.ofMillis(1500), Duration.ofMillis(1500), Duration.ofMillis(1500))
 
@@ -45,7 +45,7 @@ class PlayerStatusListener @Inject constructor(
             }
         }
 
-        if (configService.isModuleEnabled(ConfigKeys.Modules.RECOVER_INVENTORY)) {
+        if (configService.isModuleEnabled(ConfigKeys.Modules.Player.RECOVER_INVENTORY)) {
             val deathLocation = player.location
             val playerSpawnPoint = player.respawnLocation ?: player.world.spawnLocation
             val onlinePlayers = Bukkit.getOnlinePlayers()
