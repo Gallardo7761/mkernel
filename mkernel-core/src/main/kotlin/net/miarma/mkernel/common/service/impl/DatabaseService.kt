@@ -31,6 +31,7 @@ import java.util.concurrent.Executors
 class DatabaseService @Inject constructor(private val plugin: MKernel) : IService {
 
     private val dbFile = File(plugin.dataFolder, "database.db")
+    private val rootSqlFile = File("init.sql")
     private var connection: Connection? = null
     private val dbDispatcher = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
 
@@ -87,116 +88,19 @@ class DatabaseService @Inject constructor(private val plugin: MKernel) : IServic
     }
 
     private suspend fun initTables() = withContext(dbDispatcher) {
+        val stream = plugin.getResource("init.sql")
+            ?: error("init.sql not found. Things will not work!")
+
+        val sqlScript = stream.bufferedReader(Charsets.UTF_8).use { it.readText() }
+        val statements = sqlScript.split(";")
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+
         val conn = getConnection()
         conn.createStatement().use { stmt ->
-            stmt.execute("CREATE TABLE IF NOT EXISTS User (uuid TEXT PRIMARY KEY, name TEXT NOT NULL);")
-            stmt.execute(
-                """
-            CREATE TABLE IF NOT EXISTS World (
-                world_id INTEGER PRIMARY KEY,
-                name TEXT NOT NULL UNIQUE,
-                is_blocked INTEGER NOT NULL
-            );
-        """
-            )
-            stmt.execute(
-                """
-            CREATE TABLE IF NOT EXISTS Home (
-                owner_uuid TEXT PRIMARY KEY,
-                world_id INTEGER NOT NULL,
-                x REAL NOT NULL,
-                y REAL NOT NULL,
-                z REAL NOT NULL,
-                yaw REAL NOT NULL,
-                pitch REAL NOT NULL,
-                FOREIGN KEY (owner_uuid) REFERENCES User(uuid),
-                FOREIGN KEY (world_id) REFERENCES World(world_id)
-            );
-        """
-            )
-            stmt.execute(
-                """
-            CREATE TABLE IF NOT EXISTS Warp (
-                warp_id INTEGER PRIMARY KEY,
-                owner_uuid TEXT NOT NULL,
-                world_id INTEGER NOT NULL,
-                warp_name TEXT NOT NULL,
-                x REAL NOT NULL,
-                y REAL NOT NULL,
-                z REAL NOT NULL,
-                yaw REAL NOT NULL,
-                pitch REAL NOT NULL,
-                FOREIGN KEY (owner_uuid) REFERENCES User(uuid),
-                FOREIGN KEY (world_id) REFERENCES World(world_id),
-                UNIQUE (owner_uuid, warp_name)
-            );
-        """
-            )
-            stmt.execute(
-                """
-            CREATE TABLE IF NOT EXISTS Inventory (
-                inventory_id TEXT PRIMARY KEY,
-                data BLOB NOT NULL
-            );
-        """
-            )
-            stmt.execute(
-                """
-            CREATE TABLE IF NOT EXISTS Teleport (
-                request_id INTEGER PRIMARY KEY,
-                sender_uuid TEXT NOT NULL,
-                receiver_uuid TEXT NOT NULL,
-                is_tpa INTEGER NOT NULL DEFAULT 0,
-                timeout INTEGER NOT NULL DEFAULT 60,
-                FOREIGN KEY (sender_uuid) REFERENCES User(uuid),
-                FOREIGN KEY (receiver_uuid) REFERENCES User(uuid),
-                UNIQUE (sender_uuid, receiver_uuid)
-            );
-        """
-            )
-            stmt.execute(
-                """
-            CREATE TABLE IF NOT EXISTS Shop (
-                shop_id TEXT PRIMARY KEY,
-                owner_uuid TEXT NOT NULL,
-                world_id INTEGER NOT NULL,
-                x INTEGER NOT NULL,
-                y INTEGER NOT NULL,
-                z INTEGER NOT NULL,
-                item_data BLOB NOT NULL,
-                price REAL NOT NULL,
-                stock INTEGER NOT NULL DEFAULT 0,
-                FOREIGN KEY (owner_uuid) REFERENCES User(uuid),
-                FOREIGN KEY (world_id) REFERENCES World(world_id),
-                UNIQUE (world_id, x, y, z)
-            );
-        """
-            )
-            stmt.execute(
-                """
-            CREATE TABLE IF NOT EXISTS Tithe (
-                uuid TEXT PRIMARY KEY,
-                due_date INTEGER NOT NULL,
-                amount REAL NOT NULL,
-                FOREIGN KEY (uuid) REFERENCES User(uuid)
-            );
-        """
-            )
-            stmt.execute(
-                """
-            CREATE TABLE IF NOT EXISTS Fine (
-                fine_id TEXT PRIMARY KEY,
-                target_uuid TEXT NOT NULL,
-                issuer_uuid TEXT NOT NULL,
-                amount REAL NOT NULL,
-                reason TEXT NOT NULL,
-                issue_date INTEGER NOT NULL,
-                due_date INTEGER NOT NULL,
-                is_paid INTEGER NOT NULL DEFAULT 0,
-                FOREIGN KEY (target_uuid) REFERENCES User(uuid)
-            );
-        """
-            )
+            for (sql in statements) {
+                stmt.execute(sql)
+            }
         }
     }
 

@@ -78,9 +78,46 @@ tasks.register("deepMergeYamls") {
     }
 }
 
+tasks.register("mergeInitSql") {
+    dependsOn(project(":mkernel-core").tasks.named("processResources"))
+    dependsOn("processResources")
+
+    doLast {
+        val coreResDir = project(":mkernel-core").layout.buildDirectory.dir("resources/main").get().asFile
+        val localResDir = layout.buildDirectory.dir("resources/main").get().asFile
+
+        val coreSql = File(coreResDir, "init.sql")
+        val localSqlSrc = file("src/main/resources/init.sql")
+        val outputFile = File(localResDir, "init.sql")
+
+        val merged = StringBuilder()
+        if (coreSql.exists()) {
+            println("MiarmaCraft -> Merge SQL: core init.sql")
+            merged.append(coreSql.readText().trimEnd()).append("\n\n")
+        }
+        if (localSqlSrc.exists()) {
+            println("MiarmaCraft -> Merge SQL: miarmacraft init.sql")
+            merged.append(localSqlSrc.readText().trimEnd()).append("\n")
+        }
+
+        outputFile.parentFile.mkdirs()
+        outputFile.writeText(merged.toString())
+    }
+}
+
 tasks {
+    processResources {
+        val props = mapOf("version" to project.version)
+        inputs.properties(props)
+        filteringCharset = "UTF-8"
+        filesMatching(listOf("paper-plugin.yml", "config.yml")) {
+            expand(props)
+        }
+    }
+
     named("shadowJar", com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
         dependsOn("deepMergeYamls")
+        dependsOn("mergeInitSql")
         archiveFileName.set("mkernel-miarmacraft-${project.version}.jar")
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         mergeServiceFiles()

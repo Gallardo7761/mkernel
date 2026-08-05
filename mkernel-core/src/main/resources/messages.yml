@@ -27,7 +27,7 @@ inventories:
   invseeTitle: "Inventario de <player>"
   configMenu:
     title: "Configuración"
-    subTitle: "<gray>Configuración <dark_gray>» <module>"
+    subTitle: "<dark_gray>Configuración <dark_gray>» <module>"
     valueName: "<color:#d30000><bold>"
     valueLore: "<gray>Valor: <color:#d30000>"
 
@@ -77,7 +77,7 @@ modules:
         - "<italic:false><green>  ► Q / Soltar: <white>Comprar TODO"
     chat:
       placed: "<yellow>Escribe el precio por unidad en el chat (ej: 10.5):"
-      created: "<gray>Tienda <green>creada</green>! Para introducir stock, <green>ábrela</green></gray>"
+      created: "<gray>Tienda de <green><item> creada</green>! Para introducir stock, <green>ábrela</green></gray>"
       buy: "<gray>Has comprado <green><amount>x</green> por <green><total_price> <green>%banco_suffix%</green> <dark_gray>(<tax_percent>% IVA incl.)</dark_gray></gray>"
       sold: "<gray><green><buyer></green> te ha comprado <aqua><amount>x <item></aqua> por <yellow><total_price> %banco_suffix%</yellow> <dark_gray>(Impuestos: <red>-<tax></red> | Neto: <green>+<profit></green>)</dark_gray></gray>"
       destroy: "<gray>Has destruido la tienda. Los items se han soltado.</gray>"

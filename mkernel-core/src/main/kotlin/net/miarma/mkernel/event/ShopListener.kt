@@ -8,14 +8,18 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer
 import net.miarma.mkernel.MKernel
 import net.miarma.mkernel.api.model.Shop
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.integration.impl.GriefPreventionHook
 import net.miarma.mkernel.common.integration.impl.WorldGuardHook
 import net.miarma.mkernel.common.inventory.ShopBuyInventory
+import net.miarma.mkernel.common.recipe.RecipeLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.HookService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.ShopService
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
+import org.bukkit.NamespacedKey
 import org.bukkit.block.Block
 import org.bukkit.block.Chest
 import org.bukkit.entity.Enderman
@@ -57,7 +61,10 @@ class ShopListener @Inject constructor(
 
         if (tag == "shop_chest") {
             val wgHook = hookService.getHook(WorldGuardHook::class.java).orElse(null)
-            if (wgHook != null && !wgHook.canCreateShop(player, block.location)) {
+            val gpHook = hookService.getHook(GriefPreventionHook::class.java).orElse(null)
+
+            if (wgHook != null && gpHook != null && !wgHook.canCreateShop(player, block.location) &&
+                    !gpHook.hasAccess(player, block.location)) {
                 event.isCancelled = true
                 pendingShops.remove(player.uniqueId)
                 messageService.builder(configService.getString(ConfigKeys.Messages.General.Errors.NO_PERMISSION))
@@ -123,8 +130,31 @@ class ShopListener @Inject constructor(
         pendingShops.remove(player.uniqueId)
 
         plugin.launchSync {
-            val shop = Shop(shopService.generateShopId(loc), player.uniqueId, loc, ItemStack(Material.AIR), price, 0)
+            val block = loc.block
+            if (block.type != Material.CHEST && block.type != Material.TRAPPED_CHEST && block.type != Material.BARREL) {
+                messageService.builder(ConfigKeys.Messages.Shops.Errors.SHOP_NOT_ACCESSIBLE)
+                    .withPrefix()
+                    .send(player)
+                return@launchSync
+            }
+
+            val shopId = shopService.generateShopId(loc)
+
+            val chest = block.state as? Chest
+            val firstItem = chest?.blockInventory?.contents?.firstOrNull { it != null && !it.type.isAir }?.clone()?.apply { amount = 1 } ?: ItemStack(Material.DIAMOND) // O un fallback seguro
+            val totalStock = chest?.blockInventory?.contents?.filterNotNull()?.sumOf { if (it.isSimilar(firstItem)) it.amount else 0 } ?: 0
+
+            val shop = Shop(
+                id = shopId,
+                ownerUuid = player.uniqueId,
+                location = loc,
+                item = firstItem,
+                price = price,
+                stock = totalStock
+            )
+
             shopService.syncShop(shop)
+
             messageService.builder(configService.getString(ConfigKeys.Messages.Shops.Chat.CREATED))
                 .withPrefix()
                 .tag("item", shop.item.type.name)
@@ -186,7 +216,7 @@ class ShopListener @Inject constructor(
         }
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     fun onShopDestroy(event: BlockBreakEvent) {
         if (!configService.isModuleEnabled(ConfigKeys.Modules.Shop.MAIN)) return
 
@@ -196,7 +226,25 @@ class ShopListener @Inject constructor(
         val player = event.player
 
         if (pendingShops[player.uniqueId] == block.location) {
+            event.isCancelled = true
+
+            val chest = block.state as? Chest
+            chest?.blockInventory?.contents?.forEach { item ->
+                if (item != null && !item.type.isAir) {
+                    block.world.dropItemNaturally(block.location, item)
+                }
+            }
+            chest?.blockInventory?.clear()
+
+            val recipe = Bukkit.getRecipe(NamespacedKey(plugin, "shop_chest"))
+            val shopChest = recipe?.result?.clone() ?: ItemStack(Material.CHEST)
+
+            block.world.dropItemNaturally(block.location, shopChest)
+
+            block.type = Material.AIR
             pendingShops.remove(player.uniqueId)
+
+            return
         }
 
         val shop = shopService.getShopAt(block.location) ?: return
@@ -209,6 +257,22 @@ class ShopListener @Inject constructor(
             return
         }
 
+        event.isCancelled = true
+
+        val chestState = block.state as? Chest
+        chestState?.blockInventory?.contents?.filterNotNull()?.forEach { stack ->
+            if (!stack.type.isAir) {
+                block.world.dropItemNaturally(block.location, stack)
+            }
+        }
+        chestState?.blockInventory?.clear()
+
+        val recipeKey = NamespacedKey(plugin, "shop_chest")
+        val recipe = Bukkit.getRecipe(recipeKey)
+        val shopChestItem = recipe?.result?.clone() ?: ItemStack(Material.CHEST)
+        block.world.dropItemNaturally(block.location, shopChestItem)
+
+        block.type = Material.AIR
         shopService.deleteShop(shop.id)
         pendingShops.remove(player.uniqueId)
 

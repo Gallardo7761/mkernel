@@ -129,7 +129,11 @@ class ConfigService @Inject constructor(private val plugin: MKernel) : IService,
     }
 
     fun isModuleEnabled(moduleName: String): Boolean {
-        return getBoolean(moduleName, true)
+        if (configs.values.any { it.contains(moduleName) && it.isBoolean(moduleName) }) {
+            return getBoolean(moduleName, true)
+        }
+        val enabledPath = "$moduleName.enabled"
+        return getBoolean(enabledPath, true)
     }
 
     fun getLobbyWorld(): World {
