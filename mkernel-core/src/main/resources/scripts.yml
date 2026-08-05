@@ -1,0 +1,8 @@
+scripts:
+  admin_stick:
+    events:
+      LEFT_CLICK_ENTITY:
+        - condition: "always"
+          actions:
+            - "cancel_event"
+            - "kill_entity"

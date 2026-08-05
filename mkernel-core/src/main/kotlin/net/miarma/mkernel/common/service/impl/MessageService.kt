@@ -1,0 +1,87 @@
+package net.miarma.mkernel.common.service.impl
+
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import me.clip.placeholderapi.PlaceholderAPI
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.minimessage.MiniMessage
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver
+import net.kyori.adventure.text.minimessage.tag.standard.StandardTags
+import net.miarma.mkernel.api.annotation.LoaderPriority
+import net.miarma.mkernel.api.common.IService
+import net.miarma.mkernel.common.config.ConfigKeys
+import org.bukkit.OfflinePlayer
+import org.bukkit.command.CommandSender
+import org.bukkit.entity.Player
+
+@Singleton
+@LoaderPriority(LoaderPriority.HIGH)
+class MessageService @Inject constructor(private val configService: ConfigService) : IService {
+
+    companion object {
+        private val MINI_MESSAGE = MiniMessage.miniMessage()
+        private val SAFE_MINI_MESSAGE = MiniMessage.builder().tags(
+            TagResolver.builder()
+                .resolver(StandardTags.color())
+                .resolver(StandardTags.decorations())
+                .resolver(StandardTags.reset())
+                .resolver(StandardTags.hoverEvent())
+                .resolver(StandardTags.keybind())
+                .resolver(StandardTags.translatable())
+                .resolver(StandardTags.insertion())
+                .resolver(StandardTags.rainbow())
+                .resolver(StandardTags.gradient())
+                .resolver(StandardTags.transition())
+                .resolver(StandardTags.font())
+                .resolver(StandardTags.newline())
+                .resolver(StandardTags.pride())
+                .resolver(StandardTags.sprite())
+                .resolver(StandardTags.sequentialHead())
+                .resolver(StandardTags.shadowColor())
+                .build()
+        ).build()
+    }
+
+    fun builder(text: String) = Builder(text)
+
+    inner class Builder(private val text: String?) {
+        private var player: OfflinePlayer? = null
+        private var usePrefix = false
+        private val resolvers = mutableListOf<TagResolver>()
+
+        fun withPrefix() = apply { usePrefix = true }
+        fun forPlayer(player: OfflinePlayer?) = apply { this.player = player }
+        fun tag(name: String, value: String) = apply { resolvers.add(Placeholder.parsed(name, value)) }
+        fun componentTag(name: String, component: Component) = apply { resolvers.add(Placeholder.component(name, component)) }
+
+        fun build(): Component {
+            if (text.isNullOrEmpty()) return Component.empty()
+
+            var fullText = if (usePrefix) {
+                "${configService.getString(ConfigKeys.Settings.Chat.PREFIX)} $text"
+            } else {
+                text
+            }
+
+            player?.let {
+                fullText = PlaceholderAPI.setPlaceholders(it, fullText)
+            }
+
+            return MINI_MESSAGE.deserialize(fullText, TagResolver.resolver(resolvers))
+        }
+
+        fun send(sender: CommandSender?) {
+            sender ?: return
+            if (player == null && sender is Player) {
+                player = sender
+            }
+            sender.sendMessage(build())
+        }
+    }
+
+    fun parsePlayerMessage(text: String, player: Player?): Component {
+        val placeholderText = player?.let { PlaceholderAPI.setPlaceholders(it, text) } ?: text
+        return SAFE_MINI_MESSAGE.deserialize(placeholderText)
+    }
+}
