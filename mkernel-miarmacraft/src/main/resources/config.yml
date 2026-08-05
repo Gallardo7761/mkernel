@@ -3,6 +3,10 @@
 # -----------------------------------------------------------
 
 modules:
+  dictatorship:
+    enabled: true
+    tithe: true
+    fines: true
 
 settings:
   permissions:
