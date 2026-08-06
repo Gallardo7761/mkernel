@@ -12,7 +12,10 @@ import org.reflections.scanners.Scanners
 import java.lang.reflect.Modifier
 
 @Singleton
-class CommandHandler @Inject constructor(private val injector: Injector) {
+class CommandHandler @Inject constructor(
+    private val plugin: MKernel,
+    private val injector: Injector
+) {
     fun registerCommands() {
         val reflections = Reflections("net.miarma.mkernel", Scanners.SubTypes.filterResultsBy { true })
         val commandClasses = reflections.getSubTypesOf(ICommand::class.java)
@@ -27,11 +30,11 @@ class CommandHandler @Inject constructor(private val injector: Injector) {
                 commandInstance.register()
                 commands++
             } catch (e: Exception) {
-                MKernel.LOGGER.severe("Failed to register command from class: ${commandClass.name}")
+                plugin.logger.severe("Failed to register command from class: ${commandClass.name}")
                 e.printStackTrace()
             }
         }
-        MKernel.LOGGER.info("Loaded $commands commands!")
+        plugin.logger.info("Loaded $commands commands!")
     }
 
     private fun checkModuleAccess(commandClass: Class<*>): Boolean {

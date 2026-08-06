@@ -5,12 +5,12 @@ import com.google.inject.Singleton
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.MKernel
-import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.api.annotation.RequiresModule
+import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.dao.InventoryDao
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
-import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.util.CommandUtil.checkModule
 import org.bukkit.Material
@@ -20,7 +20,7 @@ import org.bukkit.Material
 class InventoryRecoveryCommand @Inject constructor(
     private val plugin: MKernel,
     private val configService: ConfigService,
-    private val databaseService: DatabaseService,
+    private val inventoryDao: InventoryDao,
     private val messageService: MessageService,
     private val moduleLoader: ModuleLoader
 ) : ICommand {
@@ -41,7 +41,7 @@ class InventoryRecoveryCommand @Inject constructor(
                 val inventoryId = sender.uniqueId.toString()
 
                 plugin.launchSync {
-                    val items = databaseService.loadInventory(inventoryId)
+                    val items = inventoryDao.loadInventory(inventoryId)
 
                     if (items.isEmpty()) {
                         messageService.builder(configService.getString(ConfigKeys.Messages.Death.Errors.NO_ITEMS)).withPrefix().send(sender)
@@ -56,7 +56,7 @@ class InventoryRecoveryCommand @Inject constructor(
 
                     messageService.builder(configService.getString(ConfigKeys.Commands.RecInv.MSG_RECOVERED)).withPrefix().tag("items", totalItems.toString()).send(sender)
                     sender.level = xpLevels - requiredLevels
-                    databaseService.deleteInventory(inventoryId)
+                    inventoryDao.deleteInventory(inventoryId)
                 }
             }
         }

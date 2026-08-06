@@ -2,6 +2,7 @@ package net.miarma.mkernel
 
 import com.google.inject.Guice
 import com.google.inject.Injector
+import com.google.inject.Singleton
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPIPaperConfig
 import kotlinx.coroutines.CoroutineScope
@@ -18,27 +19,16 @@ import net.miarma.mkernel.common.service.ServiceLoader
 import net.miarma.mkernel.task.LocationTrackerTask
 import net.miarma.mkernel.util.BukkitDispatcher
 import org.bukkit.plugin.java.JavaPlugin
-import java.util.logging.Logger
 import kotlin.coroutines.CoroutineContext
 
+@Singleton
 class MKernel : JavaPlugin(), CoroutineScope {
-
-    companion object {
-        lateinit var PLUGIN: MKernel
-            private set
-
-        lateinit var LOGGER: Logger
-            private set
-    }
-
     private lateinit var job: Job
+    private lateinit var syncDispatcher: BukkitDispatcher
+    private lateinit var injector: Injector
+
     override val coroutineContext: CoroutineContext
         get() = job + Dispatchers.Default
-
-    lateinit var syncDispatcher: BukkitDispatcher
-        private set
-
-    private lateinit var injector: Injector
 
     override fun onLoad() {
         CommandAPI.onLoad(
@@ -51,9 +41,6 @@ class MKernel : JavaPlugin(), CoroutineScope {
     }
 
     override fun onEnable() {
-        PLUGIN = this
-        LOGGER = logger
-
         job = Job()
         syncDispatcher = BukkitDispatcher(this)
         injector = Guice.createInjector(MKernelModule(this))
@@ -65,12 +52,12 @@ class MKernel : JavaPlugin(), CoroutineScope {
         injector.getInstance(RecipeLoader::class.java).loadAll()
         injector.getInstance(LocationTrackerTask::class.java).start()
 
-        LOGGER.info("I've been enabled! :)")
+        logger.info("I've been enabled! :)")
     }
 
     override fun onDisable() {
         job.cancel()
-        LOGGER.info("I've been disabled! :(")
+        logger.info("I've been disabled! :(")
     }
 
     fun launchAsync(block: suspend CoroutineScope.() -> Unit) {

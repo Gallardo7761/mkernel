@@ -14,6 +14,7 @@ import java.lang.reflect.Modifier
 
 @Singleton
 class ModuleLoader @Inject constructor(
+    private val plugin: MKernel,
     private val injector: Injector,
     private val configService: ConfigService
 ) {
@@ -37,11 +38,11 @@ class ModuleLoader @Inject constructor(
                     loadedCount++
                 }
             }.onFailure { e ->
-                MKernel.LOGGER.severe("Error instantiating module ${clazz.simpleName}: ${e.message}")
+                plugin.logger.severe("Error instantiating module ${clazz.simpleName}: ${e.message}")
                 e.printStackTrace()
             }
         }
-        MKernel.LOGGER.info("Loaded $loadedCount modules!")
+        plugin.logger.info("Loaded $loadedCount modules!")
     }
 
     fun isModuleEnabled(id: String): Boolean {
@@ -66,11 +67,11 @@ class ModuleLoader @Inject constructor(
             module.isEnabled = true
 
             if (module is Listener) {
-                Bukkit.getPluginManager().registerEvents(module, MKernel.PLUGIN)
+                Bukkit.getPluginManager().registerEvents(module, plugin)
             }
-            MKernel.LOGGER.info("Enabled module: ${module.id}")
+            plugin.logger.info("Enabled module: ${module.id}")
         }.onFailure { e ->
-            MKernel.LOGGER.severe("Error enabling module ${module.id}: ${e.message}")
+            plugin.logger.severe("Error enabling module ${module.id}: ${e.message}")
         }
     }
 
@@ -83,9 +84,9 @@ class ModuleLoader @Inject constructor(
             if (module is Listener) {
                 HandlerList.unregisterAll(module)
             }
-            MKernel.LOGGER.info("Disabled module: ${module.id}")
+            plugin.logger.info("Disabled module: ${module.id}")
         }.onFailure { e ->
-            MKernel.LOGGER.severe("Error disabling module ${module.id}: ${e.message}")
+            plugin.logger.severe("Error disabling module ${module.id}: ${e.message}")
         }
     }
 

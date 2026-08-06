@@ -11,6 +11,7 @@ import java.lang.reflect.Modifier
 
 @Singleton
 class ServiceLoader @Inject constructor(
+    private val plugin: MKernel,
     private val injector: Injector
 ) {
     private val services = mutableListOf<IService>()
@@ -23,7 +24,7 @@ class ServiceLoader @Inject constructor(
             .filter { !it.isInterface && !Modifier.isAbstract(it.modifiers) }
             .mapNotNull { clazz ->
                 runCatching { injector.getInstance(clazz) }.getOrElse { e ->
-                    MKernel.LOGGER.severe("Error instantiating service ${clazz.simpleName}: ${e.message}")
+                    plugin.logger.severe("Error instantiating service ${clazz.simpleName}: ${e.message}")
                     null
                 }
             }
@@ -38,12 +39,12 @@ class ServiceLoader @Inject constructor(
                 service.onEnable()
                 services.add(service)
             }.onFailure { e ->
-                MKernel.LOGGER.severe("Error starting service ${service.javaClass.simpleName}: ${e.message}")
+                plugin.logger.severe("Error starting service ${service.javaClass.simpleName}: ${e.message}")
                 e.printStackTrace()
             }
         }
 
-        MKernel.LOGGER.info("Loaded ${services.size} services!")
+        plugin.logger.info("Loaded ${services.size} services!")
     }
 
     fun disableAll() {

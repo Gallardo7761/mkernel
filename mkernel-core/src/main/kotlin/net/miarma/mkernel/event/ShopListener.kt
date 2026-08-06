@@ -11,7 +11,6 @@ import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.integration.impl.GriefPreventionHook
 import net.miarma.mkernel.common.integration.impl.WorldGuardHook
 import net.miarma.mkernel.common.inventory.ShopBuyInventory
-import net.miarma.mkernel.common.recipe.RecipeLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.HookService
 import net.miarma.mkernel.common.service.impl.MessageService

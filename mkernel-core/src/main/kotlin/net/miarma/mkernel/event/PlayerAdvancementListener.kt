@@ -3,7 +3,7 @@ package net.miarma.mkernel.event
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.miarma.mkernel.MKernel
-import net.miarma.mkernel.common.service.impl.DatabaseService
+import net.miarma.mkernel.common.dao.WorldDao
 import org.bukkit.World
 import org.bukkit.advancement.Advancement
 import org.bukkit.entity.Player
@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerAdvancementDoneEvent
 @Singleton
 class PlayerAdvancementListener @Inject constructor(
     private val plugin: MKernel,
-    private val databaseService: DatabaseService
+    private val worldDao: WorldDao
 ) : Listener {
 
     @EventHandler
@@ -30,7 +30,7 @@ class PlayerAdvancementListener @Inject constructor(
         if (!isNether && !isEnd) return
 
         plugin.launchSync {
-            val isBlocked = databaseService.isWorldBlocked(world.name)
+            val isBlocked = worldDao.isWorldBlocked(world.name)
 
             if (isBlocked) {
                 revokeAdvancement(player, advancement)

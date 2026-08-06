@@ -5,8 +5,8 @@ import com.google.inject.Singleton
 import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.api.annotation.RequiresModule
+import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.inventory.GlobalChestInventory
 import net.miarma.mkernel.common.module.ModuleLoader

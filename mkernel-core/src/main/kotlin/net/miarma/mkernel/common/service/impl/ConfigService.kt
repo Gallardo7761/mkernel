@@ -40,7 +40,7 @@ class ConfigService @Inject constructor(private val plugin: MKernel) : IService,
         try {
             val file = File(plugin.dataFolder, fileName)
             val resource = plugin.getResource(fileName) ?: run {
-                MKernel.LOGGER.severe("Error finding internal resource: $fileName")
+                plugin.logger.severe("Error finding internal resource: $fileName")
                 return
             }
 
@@ -56,9 +56,9 @@ class ConfigService @Inject constructor(private val plugin: MKernel) : IService,
                     .build()
             )
             configs[fileName] = document
-            MKernel.LOGGER.info("Configuration loaded/updated: $fileName")
+            plugin.logger.info("Configuration loaded/updated: $fileName")
         } catch (e: IOException) {
-            MKernel.LOGGER.severe("Error reloading file: $fileName")
+            plugin.logger.severe("Error reloading file: $fileName")
             e.printStackTrace()
         }
     }
@@ -68,7 +68,7 @@ class ConfigService @Inject constructor(private val plugin: MKernel) : IService,
             try {
                 config.reload()
             } catch (e: IOException) {
-                MKernel.LOGGER.severe("Error reloading file: ${config.file?.name}")
+                plugin.logger.severe("Error reloading file: ${config.file?.name}")
                 e.printStackTrace()
             }
         }

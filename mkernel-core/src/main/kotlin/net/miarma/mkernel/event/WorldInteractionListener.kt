@@ -4,6 +4,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.miarma.mkernel.MKernel
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.dao.WorldDao
 import net.miarma.mkernel.common.integration.impl.GriefPreventionHook
 import net.miarma.mkernel.common.integration.impl.MinepacksHook
 import net.miarma.mkernel.common.service.impl.*
@@ -34,7 +35,7 @@ class WorldInteractionListener @Inject constructor(
     private val hookService: HookService,
     private val playerService: PlayerService,
     private val lastPositionService: LastPositionService,
-    private val databaseService: DatabaseService,
+    private val worldDao: WorldDao,
     private val messageService: MessageService,
     private val inventoryService: InventoryService,
     private val locationTrackerTask: LocationTrackerTask
@@ -90,7 +91,7 @@ class WorldInteractionListener @Inject constructor(
         event.isCancelled = true
 
         plugin.launchSync {
-            val blockedWorlds = databaseService.getBlockedWorlds()
+            val blockedWorlds = worldDao.getBlockedWorlds()
 
             if (!player.isOnline) return@launchSync
 

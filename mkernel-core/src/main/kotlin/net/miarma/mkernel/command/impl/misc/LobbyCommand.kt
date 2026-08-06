@@ -6,8 +6,8 @@ import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.MKernel
-import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.api.annotation.RequiresModule
+import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
@@ -18,6 +18,7 @@ import net.miarma.mkernel.util.PlayerUtil
 @Singleton
 @RequiresModule(ConfigKeys.Modules.Teleport.MAIN)
 class LobbyCommand @Inject constructor(
+    private val plugin: MKernel,
     private val configService: ConfigService,
     private val messageService: MessageService,
     private val moduleLoader: ModuleLoader
@@ -37,7 +38,7 @@ class LobbyCommand @Inject constructor(
 
                 if (lobbyCoords.world == null) {
                     messageService.builder(configService.getString(ConfigKeys.Messages.Teleport.Errors.LOBBY_NOT_EXIST)).withPrefix().send(sender)
-                    MKernel.LOGGER.warning("The lobby defined in config does not exist!")
+                    plugin.logger.warning("The lobby defined in config does not exist!")
                     return@playerExecutor
                 }
 

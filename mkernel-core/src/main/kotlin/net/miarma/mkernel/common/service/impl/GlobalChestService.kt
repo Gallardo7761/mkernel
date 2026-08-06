@@ -5,13 +5,14 @@ import com.google.inject.Singleton
 import net.miarma.mkernel.MKernel
 import net.miarma.mkernel.api.annotation.LoaderPriority
 import net.miarma.mkernel.api.common.IService
+import net.miarma.mkernel.common.dao.InventoryDao
 import xyz.xenondevs.invui.inventory.VirtualInventory
 
 @Singleton
 @LoaderPriority(LoaderPriority.LOWEST)
 class GlobalChestService @Inject constructor(
     private val plugin: MKernel,
-    private val databaseService: DatabaseService
+    private val inventoryDao: InventoryDao
 ) : IService {
 
     lateinit var inventory: VirtualInventory
@@ -23,15 +24,15 @@ class GlobalChestService @Inject constructor(
 
     override fun onEnable() {
         plugin.launchSync {
-            val bin = databaseService.loadInventoryBytes(INVENTORY_ID)
+            val bin = inventoryDao.loadInventoryBytes(INVENTORY_ID)
 
             inventory = if (bin != null && bin.isNotEmpty()) {
                 try {
                     VirtualInventory.deserialize(bin).also {
-                        MKernel.LOGGER.info("Global chest loaded from database successfully!")
+                        plugin.logger.info("Global chest loaded from database successfully!")
                     }
                 } catch (e: Exception) {
-                    MKernel.LOGGER.warning("Global chest data corrupted, creating a fresh inventory.")
+                    plugin.logger.warning("Global chest data corrupted, creating a fresh inventory.")
                     VirtualInventory(54)
                 }
             } else {
@@ -42,8 +43,10 @@ class GlobalChestService @Inject constructor(
 
     override fun onDisable() {
         if (::inventory.isInitialized) {
-            databaseService.saveInventoryBytesSync(INVENTORY_ID, inventory.serialize())
-            MKernel.LOGGER.info("Global chest saved to database successfully.")
+            plugin.launchAsync {
+                inventoryDao.saveInventoryBytes(INVENTORY_ID, inventory.serialize())
+                plugin.logger.info("Global chest saved to database successfully.")
+            }
         }
     }
 }
