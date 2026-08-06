@@ -7,12 +7,12 @@ import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.MKernel
-import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.api.annotation.RequiresModule
+import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.dao.WorldDao
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
-import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.task.LocationTrackerTask
 import net.miarma.mkernel.util.CommandUtil.checkModule
@@ -24,7 +24,7 @@ class BlockWorldCommand @Inject constructor(
     private val plugin: MKernel,
     private val configService: ConfigService,
     private val messageService: MessageService,
-    private val databaseService: DatabaseService,
+    private val worldDao: WorldDao,
     private val locationTrackerTask: LocationTrackerTask,
     private val moduleLoader: ModuleLoader
 ) : ICommand {
@@ -49,13 +49,13 @@ class BlockWorldCommand @Inject constructor(
                 }
 
                 plugin.launchSync {
-                    val isBlocked = databaseService.isWorldBlocked(worldName)
+                    val isBlocked = worldDao.isWorldBlocked(worldName)
 
                     if (isBlocked) {
-                        databaseService.setWorldBlocked(worldName, false)
+                        worldDao.setWorldBlocked(worldName, false)
                         messageService.builder(configService.getString(ConfigKeys.Commands.BlockWorld.MSG_UNBLOCKED)).withPrefix().tag("world", worldName).send(sender)
                     } else {
-                        databaseService.setWorldBlocked(worldName, true)
+                        worldDao.setWorldBlocked(worldName, true)
 
                         Bukkit.getWorld(worldName)?.players?.forEach { p ->
                             locationTrackerTask.getPlayerRealTimeLocation(p)?.let { loc ->

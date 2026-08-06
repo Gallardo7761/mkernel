@@ -5,8 +5,8 @@ import com.google.inject.Singleton
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.dao.InventoryDao
 import net.miarma.mkernel.common.service.impl.ConfigService
-import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.PlayerService
 import net.miarma.mkernel.util.PlayerUtil
@@ -20,8 +20,9 @@ import java.time.Duration
 
 @Singleton
 class PlayerStatusListener @Inject constructor(
+    private val plugin: net.miarma.mkernel.MKernel,
     private val configService: ConfigService,
-    private val databaseService: DatabaseService,
+    private val inventoryDao: InventoryDao,
     private val messageService: MessageService,
     private val playerService: PlayerService
 ) : Listener {
@@ -60,7 +61,9 @@ class PlayerStatusListener @Inject constructor(
                     .tag("z", deathLocation.blockZ.toString())
                     .send(player)
             } else {
-                databaseService.saveInventory(player.uniqueId.toString(), player.inventory.contents)
+                plugin.launchAsync {
+                    inventoryDao.saveInventory(player.uniqueId.toString(), player.inventory.contents)
+                }
                 event.drops.clear()
                 event.droppedExp = 0
                 event.keepInventory = true

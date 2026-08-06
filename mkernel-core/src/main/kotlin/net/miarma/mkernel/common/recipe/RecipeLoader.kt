@@ -38,7 +38,7 @@ class RecipeLoader @Inject constructor(
         val folder = File(plugin.dataFolder, "recipes").apply { mkdirs() }
 
         if (folder.listFiles().isNullOrEmpty()) {
-            MKernel.LOGGER.info("Recipes folder is empty. Copying default recipes...")
+            plugin.logger.info("Recipes folder is empty. Copying default recipes...")
             saveDefaultRecipe("admin_stick.yml")
             saveDefaultRecipe("scissors.yml")
             saveDefaultRecipe("spawner_breaker.yml")
@@ -67,10 +67,10 @@ class RecipeLoader @Inject constructor(
 
                     loadedRecipes[id] = recipe
                     recipeHashes[id] = lastModified
-                    MKernel.LOGGER.info("Custom recipe updated: $id")
+                    plugin.logger.info("Custom recipe updated: $id")
                 }
             } catch (e: Exception) {
-                MKernel.LOGGER.severe("Error loading recipe: ${file.name}")
+                plugin.logger.severe("Error loading recipe: ${file.name}")
                 e.printStackTrace()
             }
         }
@@ -152,7 +152,7 @@ class RecipeLoader @Inject constructor(
                             runCatching {
                                 category = CookingBookCategory.valueOf(catStr.uppercase())
                             }.onFailure {
-                                MKernel.LOGGER.warning("Invalid cooking category '$catStr' in recipe $id")
+                                plugin.logger.warning("Invalid cooking category '$catStr' in recipe $id")
                             }
                         }
                     }
@@ -160,7 +160,7 @@ class RecipeLoader @Inject constructor(
                 else -> throw IllegalArgumentException("Unknown recipe type: ${config.getString("type")}")
             }
         }.onFailure { e ->
-            MKernel.LOGGER.warning("Error parsing recipe '$id': ${e.message}")
+            plugin.logger.warning("Error parsing recipe '$id': ${e.message}")
         }.getOrNull()
     }
 }

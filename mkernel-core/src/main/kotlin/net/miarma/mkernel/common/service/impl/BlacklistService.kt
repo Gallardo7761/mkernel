@@ -13,7 +13,10 @@ import org.bukkit.command.SimpleCommandMap
 
 @Singleton
 @LoaderPriority(LoaderPriority.LOWEST)
-class BlacklistService @Inject constructor(private val configService: ConfigService) : IService {
+class BlacklistService @Inject constructor(
+    private val plugin: MKernel,
+    private val configService: ConfigService
+) : IService {
 
     override fun onEnable() {
         unregisterCommands()
@@ -38,9 +41,9 @@ class BlacklistService @Inject constructor(private val configService: ConfigServ
                 knownCommands.remove(cmdName)
                 knownCommands.keys.removeIf { it.endsWith(":$cmdName") }
             }
-            MKernel.LOGGER.info("Unregistered commands in blacklist")
+            plugin.logger.info("Unregistered commands in blacklist")
         } catch (e: Exception) {
-            MKernel.LOGGER.severe("Error unregistering commands in blacklist: ${e.message}")
+            plugin.logger.severe("Error unregistering commands in blacklist: ${e.message}")
         }
     }
 
@@ -51,6 +54,6 @@ class BlacklistService @Inject constructor(private val configService: ConfigServ
             val key = NamespacedKey.fromString(recipeStr) ?: NamespacedKey.minecraft(recipeStr.lowercase())
             Bukkit.removeRecipe(key)
         }
-        MKernel.LOGGER.info("Unregistered recipes in blacklist")
+        plugin.logger.info("Unregistered recipes in blacklist")
     }
 }
