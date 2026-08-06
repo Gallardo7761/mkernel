@@ -2,6 +2,7 @@ package net.miarma.mkernel.common.inventory
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.api.model.ModuleDef
 import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
@@ -29,9 +30,6 @@ class ConfigInventory @Inject constructor(
     private val messageService: MessageService,
     private val moduleLoader: ModuleLoader
 ) {
-
-    private data class ModuleDef(val id: String, val icon: Material, val features: List<String>)
-
     private val moduleDefs = listOf(
         ModuleDef(
             "core", Material.ENDER_CHEST, listOf(

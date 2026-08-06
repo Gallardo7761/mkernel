@@ -1,8 +1,10 @@
 package net.miarma.mkernel
 
+import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.google.inject.Injector
 import com.google.inject.Singleton
+import com.google.inject.Module
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPIPaperConfig
 import kotlinx.coroutines.CoroutineScope
@@ -43,7 +45,7 @@ class MKernel : JavaPlugin(), CoroutineScope {
     override fun onEnable() {
         job = Job()
         syncDispatcher = BukkitDispatcher(this)
-        injector = Guice.createInjector(MKernelModule(this))
+        injector = initInjector()
 
         injector.getInstance(ServiceLoader::class.java).loadAll()
         injector.getInstance(HookLoader::class.java).loadAll()
@@ -58,6 +60,26 @@ class MKernel : JavaPlugin(), CoroutineScope {
     override fun onDisable() {
         job.cancel()
         logger.info("I've been disabled! :(")
+    }
+
+    private fun initInjector(): Injector {
+        val modules = mutableListOf<Module>(MKernelModule(this))
+
+        val reflections = org.reflections.Reflections("net.miarma.mkernel")
+        val subModuleClasses = reflections.getSubTypesOf(AbstractModule::class.java)
+
+        for (clazz in subModuleClasses) {
+            if (clazz == MKernelModule::class.java) continue
+
+            runCatching {
+                val instance = clazz.getDeclaredConstructor().newInstance()
+                modules.add(instance)
+            }.onFailure { e ->
+                logger.severe("Error instantiating Guice Module ${clazz.simpleName}: ${e.message}")
+            }
+        }
+
+        return Guice.createInjector(modules)
     }
 
     fun launchAsync(block: suspend CoroutineScope.() -> Unit) {
