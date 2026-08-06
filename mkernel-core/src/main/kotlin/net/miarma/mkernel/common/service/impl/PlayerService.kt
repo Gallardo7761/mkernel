@@ -7,6 +7,8 @@ import net.miarma.mkernel.MKernel
 import net.miarma.mkernel.api.annotation.LoaderPriority
 import net.miarma.mkernel.api.common.IService
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.dao.HomeDao
+import net.miarma.mkernel.common.dao.WarpDao
 import org.bukkit.NamespacedKey
 import org.bukkit.entity.Player
 import org.bukkit.persistence.PersistentDataType
@@ -16,7 +18,9 @@ import org.bukkit.persistence.PersistentDataType
 class PlayerService @Inject constructor(
     private val plugin: MKernel,
     private val messageService: MessageService,
-    private val configService: ConfigService
+    private val configService: ConfigService,
+    private val homeDao: HomeDao,
+    private val warpDao: WarpDao
 ) : IService {
 
     private val vanishKey = NamespacedKey(plugin, "vanish")
@@ -78,5 +82,17 @@ class PlayerService @Inject constructor(
         player.isCustomNameVisible = true
 
         return true
+    }
+
+    fun loadPlayerData(player: Player) {
+        plugin.launchAsync {
+            homeDao.loadHome(player)
+            warpDao.loadWarps(player)
+        }
+    }
+
+    fun unloadPlayerData(player: Player) {
+        homeDao.unloadHome(player)
+        warpDao.unloadWarps(player)
     }
 }

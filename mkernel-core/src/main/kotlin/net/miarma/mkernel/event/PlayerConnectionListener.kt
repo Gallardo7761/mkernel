@@ -22,8 +22,6 @@ import java.time.Duration
 @Singleton
 class PlayerConnectionListener @Inject constructor(
     private val configService: ConfigService,
-    private val userDao: UserDao,
-    private val databaseService: DatabaseService,
     private val messageService: MessageService,
     private val playerService: PlayerService,
     private val lastPositionService: LastPositionService
@@ -40,7 +38,7 @@ class PlayerConnectionListener @Inject constructor(
             .build()
         event.joinMessage(customJoinMessage)
 
-        databaseService.loadPlayerData(player)
+        playerService.loadPlayerData(player)
 
         if (configService.isModuleEnabled(ConfigKeys.Modules.Teleport.SPAWN_AT_LOBBY)) {
             val lobby = configService.getLobbyWorld()
@@ -74,7 +72,7 @@ class PlayerConnectionListener @Inject constructor(
             .build()
         event.quitMessage(customLeaveMessage)
 
-        databaseService.unloadPlayerData(player)
+        playerService.unloadPlayerData(player)
 
         if (configService.isModuleEnabled(ConfigKeys.Modules.Player.LEAVE_TITLE)) {
             val rawTitleTemplate = configService.getString(ConfigKeys.Messages.General.Titles.FORMAT)

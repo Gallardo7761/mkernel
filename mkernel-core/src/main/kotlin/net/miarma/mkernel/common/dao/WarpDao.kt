@@ -30,10 +30,10 @@ class WarpDao @Inject constructor(
         return warpCache[player.uniqueId] ?: emptySet()
     }
 
-    fun loadWarps(player: Player) {
-        val warps = warpCache[player.uniqueId]
-        if (warps != null) {
-            warpCache[player.uniqueId] = warps
+    suspend fun loadWarps(player: Player) {
+        val warps = fetchWarpsFromDb(player)
+        if (warps.isNotEmpty()) {
+            warpCache[player.uniqueId] = warps.toMutableSet()
         }
     }
 

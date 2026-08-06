@@ -22,11 +22,9 @@ class HomeDao @Inject constructor(
         return homeCache[player.uniqueId]
     }
 
-    fun loadHome(player: Player) {
-        val home = homeCache[player.uniqueId]
-        if (home != null) {
-            homeCache[player.uniqueId] = home
-        }
+    suspend fun loadHome(player: Player) {
+        val home = fetchHomeFromDb(player) ?: return
+        homeCache[player.uniqueId] = home
     }
 
     fun unloadHome(player: Player) {

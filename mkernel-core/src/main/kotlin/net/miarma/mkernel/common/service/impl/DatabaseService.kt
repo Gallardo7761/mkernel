@@ -24,8 +24,6 @@ import java.util.concurrent.Executors
 @LoaderPriority(LoaderPriority.HIGHEST)
 class DatabaseService @Inject constructor(
     private val plugin: MKernel,
-    private val homeDaoProvider: Provider<HomeDao>,
-    private val warpDaoProvider: Provider<WarpDao>,
     private val worldDaoProvider: Provider<WorldDao>
 ) : IService {
 
@@ -97,16 +95,6 @@ class DatabaseService @Inject constructor(
                 stmt.execute(sql)
             }
         }
-    }
-
-    fun loadPlayerData(player: Player) {
-        homeDaoProvider.get().loadHome(player)
-        warpDaoProvider.get().loadWarps(player)
-    }
-
-    fun unloadPlayerData(player: Player) {
-        homeDaoProvider.get().unloadHome(player)
-        warpDaoProvider.get().unloadWarps(player)
     }
 
     suspend fun <T> withConnection(block: suspend (Connection) -> T): T = withContext(dbDispatcher) {
