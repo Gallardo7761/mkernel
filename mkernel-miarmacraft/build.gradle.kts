@@ -1,6 +1,5 @@
-import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.DumperOptions
-import java.io.File
+import org.yaml.snakeyaml.Yaml
 
 buildscript {
     repositories { mavenCentral() }

@@ -7,21 +7,22 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.api.annotation.RequiresModule
+import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.dao.WarpDao
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
-import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.util.CommandUtil.checkModule
 
 @Singleton
 @RequiresModule(ConfigKeys.Modules.Teleport.MAIN)
 class WarpCommand @Inject constructor(
+    private val plugin: net.miarma.mkernel.MKernel,
     private val configService: ConfigService,
     private val messageService: MessageService,
-    private val databaseService: DatabaseService,
+    private val warpDao: WarpDao,
     private val moduleLoader: ModuleLoader
 ) : ICommand {
     override fun register() {
@@ -31,7 +32,7 @@ class WarpCommand @Inject constructor(
             withFullDescription(configService.getString(ConfigKeys.Commands.Warp.DESC))
             withUsage(configService.getString(ConfigKeys.Commands.Warp.USAGE))
             playerExecutor { sender, _ ->
-                val warps = databaseService.getWarpObjects(sender)
+                val warps = warpDao.getWarpObjects(sender)
 
                 if (warps.isEmpty()) {
                     messageService.builder(configService.getString(ConfigKeys.Commands.Warp.MSG_NO_WARPS)).withPrefix().send(sender)
@@ -46,21 +47,24 @@ class WarpCommand @Inject constructor(
                 withUsage(configService.getString(ConfigKeys.Commands.Warp.Add.USAGE))
                 playerExecutor { sender, args ->
                     val warpName = args[0] as String
-                    val count = databaseService.getWarpCount(sender)
+                    val count = warpDao.getWarpCount(sender)
 
                     if (count >= configService.getInt(ConfigKeys.Settings.Teleport.MAX_WARPS)) {
                         messageService.builder(configService.getString(ConfigKeys.Messages.Teleport.Errors.MAX_WARPS)).withPrefix().send(sender)
                         return@playerExecutor
                     }
 
-                    val exists = databaseService.warpExists(sender, warpName)
+                    val exists = warpDao.warpExists(sender, warpName)
                     if (exists) {
                         messageService.builder(configService.getString(ConfigKeys.Commands.Warp.Add.MSG_EXISTS))
                             .withPrefix().tag("warp", warpName).send(sender)
                         return@playerExecutor
                     }
 
-                    databaseService.createWarp(sender, warpName, sender.location)
+                    plugin.launchAsync {
+                        warpDao.createWarp(sender, warpName, sender.location)
+                    }
+
                     messageService.builder(configService.getString(ConfigKeys.Commands.Warp.Add.MSG_ADDED))
                         .withPrefix().tag("warp", warpName).send(sender)
                 }
@@ -71,16 +75,19 @@ class WarpCommand @Inject constructor(
                     StringArgument(configService.getString(ConfigKeys.Arguments.WARP_NAME))
                         .replaceSuggestions(ArgumentSuggestions.strings { info ->
                             val player = info.sender as? org.bukkit.entity.Player ?: return@strings arrayOf()
-                            databaseService.getWarpObjects(player).map { it.alias }.toTypedArray()
+                            warpDao.getWarpObjects(player).map { it.alias }.toTypedArray()
                         })
                 )
                 withUsage(configService.getString(ConfigKeys.Commands.Warp.Remove.USAGE))
                 playerExecutor { sender, args ->
                     val warpName = args[0] as String
-                    val exists = databaseService.warpExists(sender, warpName)
+                    val exists = warpDao.warpExists(sender, warpName)
 
                     if (exists) {
-                        databaseService.deleteWarp(sender, warpName)
+                        plugin.launchAsync {
+                            warpDao.deleteWarp(sender, warpName)
+                        }
+
                         messageService.builder(configService.getString(ConfigKeys.Commands.Warp.Remove.MSG_REMOVED))
                             .withPrefix().tag("warp", warpName).send(sender)
                     } else {

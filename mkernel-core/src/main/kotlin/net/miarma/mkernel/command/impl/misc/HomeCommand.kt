@@ -4,12 +4,12 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
-import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.api.annotation.RequiresModule
+import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.dao.HomeDao
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
-import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.util.CommandUtil.checkModule
 
@@ -17,7 +17,7 @@ import net.miarma.mkernel.util.CommandUtil.checkModule
 @RequiresModule(ConfigKeys.Modules.Teleport.MAIN)
 class HomeCommand @Inject constructor(
     private val configService: ConfigService,
-    private val databaseService: DatabaseService,
+    private val homeDao: HomeDao,
     private val messageService: MessageService,
     private val moduleLoader: ModuleLoader
 ) : ICommand {
@@ -27,7 +27,7 @@ class HomeCommand @Inject constructor(
             withPermission(configService.getString(ConfigKeys.Commands.Home.PERM))
             withFullDescription(configService.getString(ConfigKeys.Commands.Home.DESC))
             playerExecutor { sender, _ ->
-                val loc = databaseService.getHome(sender)
+                val loc = homeDao.getHome(sender)
 
                 if (loc != null) {
                     sender.teleportAsync(loc).thenAccept { success ->

@@ -4,8 +4,13 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.kyori.adventure.title.Title
 import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.dao.UserDao
 import net.miarma.mkernel.common.inventory.ShopBuyInventory
-import net.miarma.mkernel.common.service.impl.*
+import net.miarma.mkernel.common.service.impl.ConfigService
+import net.miarma.mkernel.common.service.impl.DatabaseService
+import net.miarma.mkernel.common.service.impl.LastPositionService
+import net.miarma.mkernel.common.service.impl.MessageService
+import net.miarma.mkernel.common.service.impl.PlayerService
 import net.miarma.mkernel.util.PlayerUtil.getNickName
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
@@ -17,6 +22,7 @@ import java.time.Duration
 @Singleton
 class PlayerConnectionListener @Inject constructor(
     private val configService: ConfigService,
+    private val userDao: UserDao,
     private val databaseService: DatabaseService,
     private val messageService: MessageService,
     private val playerService: PlayerService,

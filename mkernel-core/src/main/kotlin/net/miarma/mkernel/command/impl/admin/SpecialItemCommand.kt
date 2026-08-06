@@ -7,8 +7,8 @@ import dev.jorel.commandapi.arguments.StringArgument
 import dev.jorel.commandapi.kotlindsl.commandAPICommand
 import dev.jorel.commandapi.kotlindsl.playerExecutor
 import net.miarma.mkernel.MKernel
-import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.api.annotation.RequiresModule
+import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.recipe.RecipeLoader

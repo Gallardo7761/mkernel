@@ -27,7 +27,7 @@ class SequenceService @Inject constructor(
     fun loadSequences() {
         sequenceMap.clear()
         val section = configService.getSection(ConfigKeys.Settings.SEQUENCES) ?: run {
-            MKernel.LOGGER.warning("'sequentialCommands' section not found")
+            plugin.logger.warning("'sequentialCommands' section not found")
             return
         }
 
@@ -43,12 +43,12 @@ class SequenceService @Inject constructor(
             sequenceMap[seqName.lowercase()] = Sequence(seqName, steps)
         }
 
-        MKernel.LOGGER.info("Loaded ${sequenceMap.size} command sequences!")
+        plugin.logger.info("Loaded ${sequenceMap.size} command sequences!")
     }
 
     fun executeSequence(name: String): Boolean {
         val sequence = sequenceMap[name.lowercase()] ?: run {
-            MKernel.LOGGER.warning("The sequence '$name' is not registered")
+            plugin.logger.warning("The sequence '$name' is not registered")
             return false
         }
 

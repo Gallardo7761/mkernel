@@ -10,7 +10,9 @@ import java.util.*
 
 @Singleton
 @LoaderPriority(LoaderPriority.HIGH)
-class HookService @Inject constructor() : IService {
+class HookService @Inject constructor(
+    private val plugin: MKernel
+) : IService {
 
     private val hooks = mutableMapOf<Class<out IHook>, IHook>()
 
@@ -24,13 +26,13 @@ class HookService @Inject constructor() : IService {
                 try {
                     hook.register()
                     hooks[hook.javaClass] = hook
-                    MKernel.LOGGER.info("Hook loaded: ${hook.pluginName}")
+                    plugin.logger.info("Hook loaded: ${hook.pluginName}")
                 } catch (e: Exception) {
-                    MKernel.LOGGER.severe("Error initializing hook ${hook.pluginName}")
+                    plugin.logger.severe("Error initializing hook ${hook.pluginName}")
                     e.printStackTrace()
                 }
             } else {
-                MKernel.LOGGER.info("Plugin ${hook.pluginName} not found. Skipping hook.")
+                plugin.logger.info("Plugin ${hook.pluginName} not found. Skipping hook.")
             }
         }
     }

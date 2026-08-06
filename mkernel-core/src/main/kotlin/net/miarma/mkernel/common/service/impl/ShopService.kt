@@ -6,6 +6,7 @@ import net.miarma.mkernel.MKernel
 import net.miarma.mkernel.api.annotation.LoaderPriority
 import net.miarma.mkernel.api.common.IService
 import net.miarma.mkernel.api.model.Shop
+import net.miarma.mkernel.common.dao.ShopDao
 import net.miarma.mkernel.common.integration.impl.DecentHologramsHook
 import org.bukkit.Location
 import java.util.concurrent.ConcurrentHashMap
@@ -14,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap
 @LoaderPriority(LoaderPriority.LOWEST)
 class ShopService @Inject constructor(
     private val plugin: MKernel,
-    private val databaseService: DatabaseService,
+    private val shopDao: ShopDao,
     private val hookService: HookService
 ) : IService {
 
@@ -33,7 +34,7 @@ class ShopService @Inject constructor(
 
     suspend fun loadShops() {
         shops.clear()
-        val loadedShops = databaseService.getAllShops()
+        val loadedShops = shopDao.getAllShops()
         plugin.launchSync {
             for (shop in loadedShops) {
                 shops[shop.id] = shop
@@ -49,7 +50,7 @@ class ShopService @Inject constructor(
                     )
                 }
             }
-            MKernel.LOGGER.info("Loaded ${loadedShops.size} shops!")
+            plugin.logger.info("Loaded ${loadedShops.size} shops!")
         }
     }
 
@@ -70,7 +71,7 @@ class ShopService @Inject constructor(
         }
 
         plugin.launchAsync {
-            databaseService.insertShop(shop)
+            shopDao.insertShop(shop)
         }
     }
 
@@ -82,7 +83,7 @@ class ShopService @Inject constructor(
         }
 
         plugin.launchAsync {
-            databaseService.deleteShop(shopId)
+            shopDao.deleteShop(shopId)
         }
     }
 }
