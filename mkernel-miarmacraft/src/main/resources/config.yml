@@ -8,8 +8,17 @@ modules:
     tithe: true
     fines: true
 
+  blindGod:
+    enabled: true
+
 settings:
   permissions:
+
+  blindGod:
+    yThreshold: -20
+    first: 50
+    second: 100
+    third: 150
 
   tithe:
     interval: "7d"

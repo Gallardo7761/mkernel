@@ -7,5 +7,9 @@ general:
 inventories:
 
 modules:
+  blindGod:
+    first: "<dark_aqua><i>Sientes que algo te observa desde la oscuridad...</i></dark_aqua>"
+    second: "<dark_aqua><bold>El suelo tiembla bajo tus pies...</bold></dark_aqua>"
+    third: "<dark_red><bold>El Dios ciego ha despertado</bold></dark_red>"
 
 file-version: 2

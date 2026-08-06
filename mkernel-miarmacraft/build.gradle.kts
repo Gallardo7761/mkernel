@@ -16,7 +16,11 @@ dependencies {
     implementation(project(":mkernel-api"))
     implementation(project(":mkernel-core"))
 
+    compileOnly("com.google.inject:guice:7.0.0:classes")
+    compileOnly("xyz.xenondevs.invui:invui:2.1.1")
     compileOnly("io.papermc.paper:paper-api:[26.1.2.build.1, 26.1.2.build.9999)")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.0")
 }
 
 tasks.register("deepMergeYamls") {
