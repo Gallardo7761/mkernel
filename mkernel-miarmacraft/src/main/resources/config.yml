@@ -11,6 +11,9 @@ modules:
   blindGod:
     enabled: true
 
+  lawEnforcement:
+    enabled: true
+
 settings:
   permissions:
 
@@ -19,6 +22,14 @@ settings:
     first: 50
     second: 100
     third: 150
+
+  lawEnforcement:
+    region: "pueblo"
+    immunityPermission: "mkernel.dictatorship.immunity"
+    aggroTimeSeconds: 30
+    despawnTimeSeconds: 45
+    spawnDelaySeconds: 3
+    maxGolems: 6
 
   tithe:
     interval: "7d"
@@ -34,4 +45,4 @@ settings:
       pages:
         - "<black><b>MULTA Nº:</b> #<id>\n\n<b>Infractor:</b> <player>\n<b>Motivo:</b> <reason>\n<b>Importe:</b> <amount> <dark_green>♦</dark_green>\n\n<b>Caduca:</b> <date>\n\n<dark_red>Deberás entregar este documento junto con el pago en el ayuntamiento</dark_red>"
 
-file-version: 2
+file-version: 3

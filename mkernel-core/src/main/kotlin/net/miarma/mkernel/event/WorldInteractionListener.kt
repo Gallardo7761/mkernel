@@ -151,7 +151,7 @@ class WorldInteractionListener @Inject constructor(
         if (configService.isModuleEnabled(ConfigKeys.Modules.World.NO_NETHER_PORTALS)) {
             event.isCancelled = true
             (event.entity as? Player)?.let {
-                messageService.builder(configService.getString(ConfigKeys.Messages.Misc.ILLEGAL_PORTAL)).withPrefix().send(it)
+                messageService.builder(configService.getString(ConfigKeys.Messages.World.ILLEGAL_PORTAL)).withPrefix().send(it)
             }
         }
     }

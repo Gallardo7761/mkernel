@@ -4,7 +4,6 @@ import com.google.inject.AbstractModule
 import com.google.inject.multibindings.Multibinder
 import net.miarma.mkernel.api.model.ModuleDef
 import net.miarma.mkernel.miarmacraft.common.config.ConfigKeys
-import org.bukkit.Material
 
 class MiarmacraftModule : AbstractModule() {
     override fun configure() {
@@ -12,9 +11,31 @@ class MiarmacraftModule : AbstractModule() {
 
         moduleBinder.addBinding().toInstance(
             ModuleDef(
-                ConfigKeys.Modules.BlindGod.MAIN,
-                Material.SCULK,
-                listOf()
+                "blindGod",
+                ConfigKeys.Messages.BlindGod._Meta.NAME,
+                ConfigKeys.Messages.BlindGod._Meta.ICON,
+                emptyList()
+            )
+        )
+
+        moduleBinder.addBinding().toInstance(
+            ModuleDef(
+                "lawEnforcement",
+                ConfigKeys.Messages.LawEnforcement._Meta.NAME,
+                ConfigKeys.Messages.LawEnforcement._Meta.ICON,
+                emptyList()
+            )
+        )
+
+        moduleBinder.addBinding().toInstance(
+            ModuleDef(
+                "dictatorship",
+                ConfigKeys.Messages.Dictatorship._Meta.NAME,
+                ConfigKeys.Messages.Dictatorship._Meta.ICON,
+                listOf(
+                    ConfigKeys.Modules.Dictatorship.TITHE,
+                    ConfigKeys.Modules.Dictatorship.FINES
+                )
             )
         )
     }

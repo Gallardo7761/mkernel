@@ -8,8 +8,23 @@ inventories:
 
 modules:
   blindGod:
+    _meta:
+      name: "Dios Ciego"
+      icon: "SCULK_SHRIEKER"
     first: "<dark_aqua><i>Sientes que algo te observa desde la oscuridad...</i></dark_aqua>"
     second: "<dark_aqua><bold>El suelo tiembla bajo tus pies...</bold></dark_aqua>"
     third: "<dark_red><bold>El Dios ciego ha despertado</bold></dark_red>"
 
-file-version: 2
+  lawEnforcement:
+    _meta:
+      name: "FFSSE"
+      icon: "IRON_GOLEM_SPAWN_EGG"
+    warning: "<red><bold>¡ALTO AHÍ!</bold> Se te acusa de: <yellow><crime></yellow>. ¡La Legión va a por ti!</red>"
+    golemName: "<gradient:#7fd81e:#888f21:#7fd81e><bold>Guardia Civil</bold></gradient>"
+
+  dictatorship:
+    _meta:
+      name: "Dictadura"
+      icon: "IRON_BARS"
+
+file-version: 3

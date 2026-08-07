@@ -21,6 +21,8 @@ dependencies {
     compileOnly("io.papermc.paper:paper-api:[26.1.2.build.1, 26.1.2.build.9999)")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.0")
+    compileOnly("ovh.mythmc:banco-api:1.2.1")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.17")
 }
 
 tasks.register("deepMergeYamls") {

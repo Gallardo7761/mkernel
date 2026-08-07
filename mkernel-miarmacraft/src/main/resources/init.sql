@@ -16,3 +16,11 @@ CREATE TABLE IF NOT EXISTS Fine (
     is_paid INTEGER NOT NULL DEFAULT 0,
     FOREIGN KEY (target_uuid) REFERENCES User(uuid)
 );
+
+CREATE TABLE IF NOT EXISTS CrimeHistory (
+    crime_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    uuid TEXT NOT NULL,
+    crime TEXT NOT NULL,
+    timestamp INTEGER NOT NULL,
+    FOREIGN KEY (uuid) REFERENCES User(uuid)
+);
