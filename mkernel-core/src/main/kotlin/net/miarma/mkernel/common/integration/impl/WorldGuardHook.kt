@@ -35,7 +35,6 @@ class WorldGuardHook : IHook {
     }
 
     override fun register() {
-
     }
 
     fun canCreateShop(player: Player, location: Location): Boolean {

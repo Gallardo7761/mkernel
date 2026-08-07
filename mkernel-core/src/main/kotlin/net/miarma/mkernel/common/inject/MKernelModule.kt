@@ -6,7 +6,6 @@ import net.miarma.mkernel.MKernel
 import net.miarma.mkernel.api.model.ModuleDef
 import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.dao.*
-import org.bukkit.Material
 
 class MKernelModule(private val plugin: MKernel) : AbstractModule() {
 
@@ -24,7 +23,10 @@ class MKernelModule(private val plugin: MKernel) : AbstractModule() {
 
         moduleBinder.addBinding().toInstance(
             ModuleDef(
-                "core", Material.ENDER_CHEST, listOf(
+                "core",
+                ConfigKeys.Messages.Core._Meta.NAME,
+                ConfigKeys.Messages.Core._Meta.ICON,
+                listOf(
                     ConfigKeys.Modules.Core.Commands.DISPOSAL,
                     ConfigKeys.Modules.Core.Commands.GLOBAL_CHEST,
                     ConfigKeys.Modules.Core.Commands.PAY_XP,
@@ -33,9 +35,13 @@ class MKernelModule(private val plugin: MKernel) : AbstractModule() {
                 )
             )
         )
+
         moduleBinder.addBinding().toInstance(
             ModuleDef(
-                "admin", Material.NETHERITE_SWORD, listOf(
+                "admin",
+                ConfigKeys.Messages.Admin._Meta.NAME,
+                ConfigKeys.Messages.Admin._Meta.ICON,
+                listOf(
                     ConfigKeys.Modules.Admin.CHAT,
                     ConfigKeys.Modules.Admin.Commands.SPECIAL_ITEM,
                     ConfigKeys.Modules.Admin.Commands.INVSEE,
@@ -54,9 +60,13 @@ class MKernelModule(private val plugin: MKernel) : AbstractModule() {
                 )
             )
         )
+
         moduleBinder.addBinding().toInstance(
             ModuleDef(
-                "chat", Material.WRITABLE_BOOK, listOf(
+                "chat",
+                ConfigKeys.Messages.Chat._Meta.NAME,
+                ConfigKeys.Messages.Chat._Meta.ICON,
+                listOf(
                     ConfigKeys.Modules.Chat.FORMAT,
                     ConfigKeys.Modules.Chat.MENTIONS,
                     ConfigKeys.Modules.Chat.ROLEPLAY,
@@ -64,17 +74,33 @@ class MKernelModule(private val plugin: MKernel) : AbstractModule() {
                 )
             )
         )
-        moduleBinder.addBinding().toInstance(ModuleDef("shop", Material.EMERALD, emptyList()))
+
         moduleBinder.addBinding().toInstance(
             ModuleDef(
-                "teleport", Material.ENDER_PEARL, listOf(
+                "shop",
+                ConfigKeys.Messages.Shops._Meta.NAME,
+                ConfigKeys.Messages.Shops._Meta.ICON,
+                emptyList()
+            )
+        )
+
+        moduleBinder.addBinding().toInstance(
+            ModuleDef(
+                "teleport",
+                ConfigKeys.Messages.Teleport._Meta.NAME,
+                ConfigKeys.Messages.Teleport._Meta.ICON,
+                listOf(
                     ConfigKeys.Modules.Teleport.SPAWN_AT_LOBBY
                 )
             )
         )
+
         moduleBinder.addBinding().toInstance(
             ModuleDef(
-                "player", Material.PLAYER_HEAD, listOf(
+                "player",
+                ConfigKeys.Messages.Player._Meta.NAME,
+                ConfigKeys.Messages.Player._Meta.ICON,
+                listOf(
                     ConfigKeys.Modules.Player.JOIN_TITLE,
                     ConfigKeys.Modules.Player.LEAVE_TITLE,
                     ConfigKeys.Modules.Player.DEATH_TITLE,
@@ -82,9 +108,13 @@ class MKernelModule(private val plugin: MKernel) : AbstractModule() {
                 )
             )
         )
+
         moduleBinder.addBinding().toInstance(
             ModuleDef(
-                "world", Material.GRASS_BLOCK, listOf(
+                "world",
+                ConfigKeys.Messages.World._Meta.NAME,
+                ConfigKeys.Messages.World._Meta.ICON,
+                listOf(
                     ConfigKeys.Modules.World.HARVEST_RIGHT_CLICK,
                     ConfigKeys.Modules.World.AUTO_ITEM_REFILL,
                     ConfigKeys.Modules.World.NO_NETHER_PORTALS,

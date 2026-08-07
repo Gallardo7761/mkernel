@@ -35,7 +35,6 @@ modules:
     enabled: true
     format: true
     mentions: true
-    adminChat: true
     roleplay: true
     endermanAnger: true
 

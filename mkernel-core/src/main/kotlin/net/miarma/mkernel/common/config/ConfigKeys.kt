@@ -5,7 +5,6 @@ object ConfigKeys {
     object Modules {
         object Core {
             const val MAIN = "modules.core"
-
             object Commands {
                 const val DISPOSAL = "modules.core.commands.disposal"
                 const val GLOBAL_CHEST = "modules.core.commands.globalchest"
@@ -18,7 +17,6 @@ object ConfigKeys {
         object Admin {
             const val MAIN = "modules.admin"
             const val CHAT = "modules.admin.chat"
-
             object Commands {
                 const val SPECIAL_ITEM = "modules.admin.commands.specialItem"
                 const val INVSEE = "modules.admin.commands.invsee"
@@ -188,17 +186,36 @@ object ConfigKeys {
             const val CONFIG_BACK_NAME = "inventories.configMenu.backName"
         }
 
+        object Core {
+            object _Meta {
+                const val NAME = "modules.core._meta.name"
+                const val ICON = "modules.core._meta.icon"
+            }
+        }
+
         object Connection {
+            object _Meta {
+                const val NAME = "modules.connection._meta.name"
+                const val ICON = "modules.connection._meta.icon"
+            }
             const val JOIN = "modules.connection.joinMessage"
             const val LEAVE = "modules.connection.leaveMessage"
         }
 
         object Chat {
+            object _Meta {
+                const val NAME = "modules.chat._meta.name"
+                const val ICON = "modules.chat._meta.icon"
+            }
             const val MENTIONS_FORMAT = "modules.chat.mentionFormat"
             const val YOU_WERE_MENTIONED = "modules.chat.youWereMentioned"
         }
 
         object Shops {
+            object _Meta {
+                const val NAME = "modules.shops._meta.name"
+                const val ICON = "modules.shops._meta.icon"
+            }
             object Hologram {
                 const val TITLE = "modules.shops.hologram.title"
                 const val PRICE = "modules.shops.hologram.price"
@@ -227,6 +244,10 @@ object ConfigKeys {
         }
 
         object Teleport {
+            object _Meta {
+                const val NAME = "modules.teleport._meta.name"
+                const val ICON = "modules.teleport._meta.icon"
+            }
             object Errors {
                 const val CANT_TP_SELF = "modules.teleport.errors.cantTeleportToYourself"
                 const val REQ_ALREADY_SENT = "modules.teleport.errors.requestAlreadySent"
@@ -239,6 +260,10 @@ object ConfigKeys {
         }
 
         object Death {
+            object _Meta {
+                const val NAME = "modules.death._meta.name"
+                const val ICON = "modules.death._meta.icon"
+            }
             const val LOST_LEVELS_ITEMS = "modules.death.chat.lostLevelsItems"
             const val ITEMS_NOT_RECOVERED = "modules.death.chat.itemsNotRecovered"
             object Errors {
@@ -248,6 +273,10 @@ object ConfigKeys {
         }
 
         object Admin {
+            object _Meta {
+                const val NAME = "modules.admin._meta.name"
+                const val ICON = "modules.admin._meta.icon"
+            }
             const val SPY_MESSAGE = "modules.admin.spyMessage"
             const val WHILE_FROZEN = "modules.admin.whileFrozen"
             object Errors {
@@ -256,12 +285,26 @@ object ConfigKeys {
             }
         }
 
+        object Player {
+            object _Meta {
+                const val NAME = "modules.player._meta.name"
+                const val ICON = "modules.player._meta.icon"
+            }
+        }
+
         object Misc {
-            const val ILLEGAL_PORTAL = "modules.misc.illegalPortal"
             object Errors {
                 const val ITEM_NOT_FOUND = "modules.misc.errors.itemNotFound"
                 const val NICK_BLACKLISTED = "modules.misc.errors.nickBlacklisted"
             }
+        }
+
+        object World {
+            object _Meta {
+                const val NAME = "modules.world._meta.name"
+                const val ICON = "modules.world._meta.icon"
+            }
+            const val ILLEGAL_PORTAL = "modules.world.illegalPortal"
         }
     }
 
