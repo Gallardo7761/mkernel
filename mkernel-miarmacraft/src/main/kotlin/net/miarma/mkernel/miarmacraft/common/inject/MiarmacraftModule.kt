@@ -1,4 +1,4 @@
-package net.miarma.mkernel.miarmacraft.inject
+package net.miarma.mkernel.miarmacraft.common.inject
 
 import com.google.inject.AbstractModule
 import com.google.inject.multibindings.Multibinder
@@ -24,18 +24,6 @@ class MiarmacraftModule : AbstractModule() {
                 ConfigKeys.Messages.LawEnforcement._Meta.NAME,
                 ConfigKeys.Messages.LawEnforcement._Meta.ICON,
                 emptyList()
-            )
-        )
-
-        moduleBinder.addBinding().toInstance(
-            ModuleDef(
-                "dictatorship",
-                ConfigKeys.Messages.Dictatorship._Meta.NAME,
-                ConfigKeys.Messages.Dictatorship._Meta.ICON,
-                listOf(
-                    ConfigKeys.Modules.Dictatorship.TITHE,
-                    ConfigKeys.Modules.Dictatorship.FINES
-                )
             )
         )
     }

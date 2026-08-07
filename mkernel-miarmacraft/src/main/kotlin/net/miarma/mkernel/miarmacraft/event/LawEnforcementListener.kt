@@ -30,7 +30,8 @@ import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.persistence.PersistentDataType
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
-import org.bukkit.scheduler.BukkitRunnable
+import java.util.UUID
+import java.util.concurrent.ConcurrentHashMap
 
 @Singleton
 class LawEnforcementListener @Inject constructor(
@@ -42,6 +43,7 @@ class LawEnforcementListener @Inject constructor(
 ) : Listener {
 
     private val policeKey = NamespacedKey(plugin, "is_police")
+    private val policeCooldowns = ConcurrentHashMap<UUID, Long>()
 
     private fun isTownZone(loc: org.bukkit.Location): Boolean {
         val wgContainer = WorldGuard.getInstance().platform.regionContainer
@@ -80,7 +82,15 @@ class LawEnforcementListener @Inject constructor(
     }
 
     private fun dispatchPolice(player: Player, crime: String) {
-        plugin.logger.info("[Dictadura] Desplegando legión contra ${player.name} por: $crime")
+        val now = System.currentTimeMillis()
+        val lastDispatch = policeCooldowns[player.uniqueId] ?: 0L
+
+        if (now - lastDispatch < 1000) {
+            return
+        }
+
+        policeCooldowns[player.uniqueId] = now
+
         plugin.launchAsync {
             crimeDao.insertCrime(player, crime)
         }
@@ -125,21 +135,19 @@ class LawEnforcementListener @Inject constructor(
                     golem.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 9999, 1))
                     golem.addPotionEffect(PotionEffect(PotionEffectType.STRENGTH, 9999, 0))
                     golem.addPotionEffect(PotionEffect(PotionEffectType.HEALTH_BOOST, 9999, 2))
+
                     golem.damage(0.0, player)
 
-                    object : BukkitRunnable() {
+                    plugin.launchSync {
                         var ticksPassed = 0
-                        override fun run() {
-                            if (golem.isDead || ticksPassed >= (aggroTime * 20)) {
-                                cancel()
-                                return
-                            }
+                        while (!golem.isDead && ticksPassed < (aggroTime * 20)) {
                             if (golem.target != player) {
                                 golem.target = player
                             }
+                            delayTicks(plugin, 20L)
                             ticksPassed += 20
                         }
-                    }.runTaskTimer(plugin, 0L, 20L)
+                    }
 
                     plugin.launchSync {
                         delayTicks(plugin, despawnTime * 20L)
@@ -158,6 +166,45 @@ class LawEnforcementListener @Inject constructor(
         if (isPolice(event.entity)) {
             event.drops.clear()
             event.droppedExp = 0
+        }
+    }
+
+    @EventHandler
+    fun onAssault(event: EntityDamageByEntityEvent) {
+        if (event.damage <= 0.0) return
+
+        val victim = event.entity
+        val attacker = getRealAttacker(event.damager) ?: return
+
+        if (isImmune(attacker)) return
+
+        if (victim is Player) {
+            if (isTownZone(victim.location)) {
+                event.isCancelled = true
+                dispatchPolice(attacker, "Art. I — Homicidio / Agresión en zona segura")
+            }
+        } else if (victim is Villager || victim is WanderingTrader || victim is IronGolem) {
+            if (isPolice(victim)) return
+
+            if (isProtectedZone(attacker, victim.location)) {
+                event.isCancelled = true
+                dispatchPolice(attacker, "Art. III — Atentado a la autoridad / Civil")
+            }
+        } else if (victim is Tameable && victim.isTamed) {
+            if (isProtectedZone(attacker, victim.location)) {
+                event.isCancelled = true
+                dispatchPolice(attacker, "Art. V — Daño a bienes ganaderos (Mascotas)")
+            }
+        } else if (victim is Animals || victim is WaterMob) {
+            if (isProtectedZone(attacker, victim.location)) {
+                event.isCancelled = true
+                dispatchPolice(attacker, "Art. V — Daño a bienes ganaderos")
+            }
+        } else if (victim is Vehicle) {
+            if (isProtectedZone(attacker, victim.location)) {
+                event.isCancelled = true
+                dispatchPolice(attacker, "Art. IV — Daños a propiedad (Vehículos)")
+            }
         }
     }
 
@@ -257,45 +304,6 @@ class LawEnforcementListener @Inject constructor(
         if (isProtectedZone(attacker, event.entity.location)) {
             event.isCancelled = true
             dispatchPolice(attacker, "Art. IV — Daños a propiedad (Decoración)")
-        }
-    }
-
-    @EventHandler
-    fun onAssault(event: EntityDamageByEntityEvent) {
-        if (event.damage <= 0.0) return
-
-        val victim = event.entity
-        val attacker = getRealAttacker(event.damager) ?: return
-
-        if (isImmune(attacker)) return
-
-        if (victim is Player) {
-            if (isTownZone(victim.location)) {
-                event.isCancelled = true
-                dispatchPolice(attacker, "Art. I — Homicidio / Agresión en zona segura")
-            }
-        } else if (victim is Villager || victim is WanderingTrader || victim is IronGolem) {
-            if (isPolice(victim)) return
-
-            if (isProtectedZone(attacker, victim.location)) {
-                event.isCancelled = true
-                dispatchPolice(attacker, "Art. III — Atentado a la autoridad / Civil")
-            }
-        } else if (victim is Tameable && victim.isTamed) {
-            if (isProtectedZone(attacker, victim.location)) {
-                event.isCancelled = true
-                dispatchPolice(attacker, "Art. V — Daño a bienes ganaderos (Mascotas)")
-            }
-        } else if (victim is Animals || victim is WaterMob) {
-            if (isProtectedZone(attacker, victim.location)) {
-                event.isCancelled = true
-                dispatchPolice(attacker, "Art. V — Daño a bienes ganaderos")
-            }
-        } else if (victim is Vehicle) {
-            if (isProtectedZone(attacker, victim.location)) {
-                event.isCancelled = true
-                dispatchPolice(attacker, "Art. IV — Daños a propiedad (Vehículos)")
-            }
         }
     }
 }

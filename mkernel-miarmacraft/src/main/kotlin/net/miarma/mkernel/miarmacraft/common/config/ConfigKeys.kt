@@ -10,10 +10,8 @@ object ConfigKeys {
             const val MAIN = "modules.lawEnforcement"
         }
 
-        object Dictatorship {
-            const val MAIN = "modules.dictatorship"
-            const val TITHE = "modules.dictatorship.tithe"
-            const val FINES = "modules.dictatorship.fines"
+        object Shit {
+            const val MAIN = "modules.shit"
         }
     }
 
@@ -33,12 +31,23 @@ object ConfigKeys {
             const val DESPAWN_TIME = "settings.lawEnforcement.despawnTimeSeconds"
             const val MAX_GOLEMS = "settings.lawEnforcement.maxGolems"
         }
+    }
 
-        object Dictatorship {
-            const val TITHE_INTERVAL = "settings.tithe.interval"
-            const val TITHE_AMOUNT = "settings.tithe.amount"
-            const val FINES_AUTHOR = "settings.fines.author"
-            const val FINES_EXPIRATION = "settings.fines.expirationTime"
+    object Commands {
+        object Antecedentes {
+            const val NAME = "commands.antecedentes.name"
+            const val ALIASES = "commands.antecedentes.aliases"
+            const val DESC = "commands.antecedentes.description"
+            const val PERM = "commands.antecedentes.permission"
+            const val USAGE = "commands.antecedentes.usage"
+        }
+
+        object SixSeven {
+            const val NAME = "commands.sixseven.name"
+            const val DESC = "commands.sixseven.description"
+            const val PERM = "commands.sixseven.permission"
+            const val USAGE = "commands.sixseven.usage"
+            const val MSG = "commands.sixseven.message"
         }
     }
 
@@ -60,15 +69,15 @@ object ConfigKeys {
                 const val ICON = "modules.lawEnforcement._meta.icon"
             }
 
+            object Antecedentes {
+                const val HEADER = "modules.lawEnforcement.antecedentes.header"
+                const val ITEM = "modules.lawEnforcement.antecedentes.item"
+                const val FOOTER = "modules.lawEnforcement.antecedentes.footer"
+                const val EMPTY = "modules.lawEnforcement.antecedentes.empty"
+            }
+
             const val WARNING = "modules.lawEnforcement.warning"
             const val GOLEM_NAME = "modules.lawEnforcement.golemName"
-        }
-
-        object Dictatorship {
-            object _Meta {
-                const val NAME = "modules.dictatorship._meta.name"
-                const val ICON = "modules.dictatorship._meta.icon"
-            }
         }
     }
 }

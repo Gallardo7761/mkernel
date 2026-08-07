@@ -113,8 +113,9 @@ class ConfigInventory @Inject constructor(
             .setContent(featureItems)
             .build()
 
+        val moduleName = configService.getString("modules.${def.id}._meta.name")
         val title = messageService.builder(configService.getString(ConfigKeys.Messages.Inventories.CONFIG_SUBTITLE))
-            .tag("module", def.id.replaceFirstChar { it.uppercase() })
+            .tag("module", moduleName)
             .build()
 
         Window.builder()

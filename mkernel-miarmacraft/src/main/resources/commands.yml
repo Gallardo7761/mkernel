@@ -5,5 +5,18 @@
 arguments:
 
 commands:
+  antecedentes:
+    name: "antecedentes"
+    aliases: ["ant"]
+    description: "Mira los antecedentes de un jugador"
+    permission: "mkernel.commands.antecedentes"
+    usage: "/antecedentes <jugador>"
+
+  sixseven:
+    name: "67"
+    description: "Six seveeeeen"
+    permission: "mkernel.commands.sixseven"
+    usage: "/67"
+    message: "<light_purple><bold>SIX SEVEEEEEEEEN!!!!</bold></light_purple>"
 
 file-version: 1

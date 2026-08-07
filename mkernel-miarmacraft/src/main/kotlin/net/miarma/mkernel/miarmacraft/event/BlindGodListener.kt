@@ -16,8 +16,8 @@ import org.bukkit.event.Listener
 import org.bukkit.event.block.BlockBreakEvent
 import org.bukkit.potion.PotionEffect
 import org.bukkit.potion.PotionEffectType
+import java.util.*
 import java.util.concurrent.ConcurrentHashMap
-import java.util.UUID
 
 @Singleton
 class BlindGodListener @Inject constructor(

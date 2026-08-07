@@ -12,6 +12,20 @@ plugins {
     id("com.gradleup.shadow")
 }
 
+fun getGitHash(): String {
+    return runCatching {
+        val process = ProcessBuilder("git", "rev-parse", "--short", "HEAD")
+            .directory(rootDir)
+            .redirectOutput(ProcessBuilder.Redirect.PIPE)
+            .redirectError(ProcessBuilder.Redirect.DISCARD)
+            .start()
+
+        process.inputStream.bufferedReader().readText().trim()
+    }.getOrDefault("nogit")
+}
+
+val buildVersion = "${project.version}+${getGitHash()}"
+
 dependencies {
     implementation(project(":mkernel-api"))
     implementation(project(":mkernel-core"))
@@ -23,6 +37,8 @@ dependencies {
     compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.0")
     compileOnly("ovh.mythmc:banco-api:1.2.1")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.17")
+    compileOnly("dev.jorel:commandapi-paper-shade:11.2.0")
+    compileOnly("dev.jorel:commandapi-kotlin-paper:11.2.0")
 }
 
 tasks.register("deepMergeYamls") {
@@ -112,7 +128,7 @@ tasks.register("mergeInitSql") {
 
 tasks {
     processResources {
-        val props = mapOf("version" to project.version)
+        val props = mapOf("version" to buildVersion)
         inputs.properties(props)
         filteringCharset = "UTF-8"
         filesMatching(listOf("paper-plugin.yml", "config.yml")) {
@@ -123,7 +139,7 @@ tasks {
     named("shadowJar", com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
         dependsOn("deepMergeYamls")
         dependsOn("mergeInitSql")
-        archiveFileName.set("mkernel-miarmacraft-${project.version}.jar")
+        archiveFileName.set("mkernel-$buildVersion.jar")
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         mergeServiceFiles()
     }

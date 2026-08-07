@@ -4,10 +4,8 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.kyori.adventure.title.Title
 import net.miarma.mkernel.common.config.ConfigKeys
-import net.miarma.mkernel.common.dao.UserDao
 import net.miarma.mkernel.common.inventory.ShopBuyInventory
 import net.miarma.mkernel.common.service.impl.ConfigService
-import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.LastPositionService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.PlayerService

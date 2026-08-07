@@ -3,15 +3,13 @@
 # -----------------------------------------------------------
 
 modules:
-  dictatorship:
-    enabled: true
-    tithe: true
-    fines: true
-
   blindGod:
     enabled: true
 
   lawEnforcement:
+    enabled: true
+
+  shit:
     enabled: true
 
 settings:
@@ -30,19 +28,5 @@ settings:
     despawnTimeSeconds: 45
     spawnDelaySeconds: 3
     maxGolems: 6
-
-  tithe:
-    interval: "7d"
-    amount: 100
-    punishmentCommand: "sequence tithe_punishment <player>"
-
-  fines:
-    author: "Ministerio de la Verdad"
-    expirationTime: "3d"
-    punishmentCommand: "sequence fine_punishment <player>"
-    bookFormat:
-      title: "<red><bold>SANCIÓN MONETARIA</bold></red>"
-      pages:
-        - "<black><b>MULTA Nº:</b> #<id>\n\n<b>Infractor:</b> <player>\n<b>Motivo:</b> <reason>\n<b>Importe:</b> <amount> <dark_green>♦</dark_green>\n\n<b>Caduca:</b> <date>\n\n<dark_red>Deberás entregar este documento junto con el pago en el ayuntamiento</dark_red>"
 
 file-version: 3
