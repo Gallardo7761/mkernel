@@ -11,6 +11,7 @@ import net.miarma.mkernel.common.service.impl.HookService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.miarmacraft.common.config.ConfigKeys
 import net.miarma.mkernel.miarmacraft.common.dao.CrimeDao
+import net.miarma.mkernel.miarmacraft.common.integration.impl.LevelledMobsHook
 import net.miarma.mkernel.util.delayTicks
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -64,11 +65,7 @@ class LawEnforcementListener @Inject constructor(
 
     private fun isImmune(player: Player): Boolean {
         val perm = configService.getString(ConfigKeys.Settings.LawEnforcement.IMMUNITY_PERM)
-        val immune = player.hasPermission(perm)
-        if (immune) {
-            plugin.logger.info("[Dictadura] El jugador ${player.name} es inmune a la ley.")
-        }
-        return immune
+        return player.hasPermission(perm)
     }
 
     private fun getRealAttacker(damager: Entity): Player? {
@@ -92,68 +89,74 @@ class LawEnforcementListener @Inject constructor(
         policeCooldowns[player.uniqueId] = now
 
         plugin.launchAsync {
-            crimeDao.insertCrime(player, crime)
-        }
+            val count = crimeDao.insertCrime(player, crime)
 
-        val warningMsg = configService.getString(ConfigKeys.Messages.LawEnforcement.WARNING)
-        messageService.builder(warningMsg).tag("crime", crime).send(player)
-        player.playSound(player.location, Sound.BLOCK_BELL_USE, 1.0f, 0.8f)
+            plugin.launchSync {
+                val warningMsg = configService.getString(ConfigKeys.Messages.LawEnforcement.WARNING)
+                messageService.builder(warningMsg).tag("crime", crime).send(player)
+                player.playSound(player.location, Sound.BLOCK_BELL_USE, 1.0f, 0.8f)
 
-        val spawnDelay = configService.getInt(ConfigKeys.Settings.LawEnforcement.SPAWN_DELAY, 4)
-        val aggroTime = configService.getInt(ConfigKeys.Settings.LawEnforcement.AGGRO_TIME)
-        val despawnTime = configService.getInt(ConfigKeys.Settings.LawEnforcement.DESPAWN_TIME)
-        val maxGolems = configService.getInt(ConfigKeys.Settings.LawEnforcement.MAX_GOLEMS, 6)
+                val spawnDelay = configService.getInt(ConfigKeys.Settings.LawEnforcement.SPAWN_DELAY, 4)
+                val aggroTime = configService.getInt(ConfigKeys.Settings.LawEnforcement.AGGRO_TIME)
+                val despawnTime = configService.getInt(ConfigKeys.Settings.LawEnforcement.DESPAWN_TIME)
+                val maxGolems = configService.getInt(ConfigKeys.Settings.LawEnforcement.MAX_GOLEMS, 6)
 
-        plugin.launchSync {
-            delayTicks(plugin, spawnDelay * 20L)
+                delayTicks(plugin, spawnDelay * 20L)
 
-            if (!player.isOnline) return@launchSync
+                if (!player.isOnline) return@launchSync
 
-            player.playSound(player.location, Sound.ENTITY_IRON_GOLEM_DEATH, 1.0f, 0.5f)
+                player.playSound(player.location, Sound.ENTITY_IRON_GOLEM_DEATH, 1.0f, 0.5f)
 
-            var existingGolems = 0
-            player.location.chunk.entities.forEach { entity ->
-                if (isPolice(entity)) {
-                    existingGolems++
-                    (entity as IronGolem).target = player
-                }
-            }
-
-            val toSpawn = minOf(3, maxGolems - existingGolems)
-
-            if (toSpawn > 0) {
-                val golemNameComp = messageService.builder(configService.getString(ConfigKeys.Messages.LawEnforcement.GOLEM_NAME)).build()
-
-                repeat(toSpawn) {
-                    val golemLoc = player.location.clone().add((Math.random() * 4) - 2, 1.0, (Math.random() * 4) - 2)
-                    val golem = player.world.spawnEntity(golemLoc, EntityType.IRON_GOLEM) as IronGolem
-
-                    golem.persistentDataContainer.set(policeKey, PersistentDataType.BYTE, 1.toByte())
-                    golem.customName(golemNameComp)
-                    golem.isCustomNameVisible = true
-
-                    golem.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 9999, 1))
-                    golem.addPotionEffect(PotionEffect(PotionEffectType.STRENGTH, 9999, 0))
-                    golem.addPotionEffect(PotionEffect(PotionEffectType.HEALTH_BOOST, 9999, 2))
-
-                    golem.damage(0.0, player)
-
-                    plugin.launchSync {
-                        var ticksPassed = 0
-                        while (!golem.isDead && ticksPassed < (aggroTime * 20)) {
-                            if (golem.target != player) {
-                                golem.target = player
-                            }
-                            delayTicks(plugin, 20L)
-                            ticksPassed += 20
-                        }
+                var existingGolems = 0
+                player.location.chunk.entities.forEach { entity ->
+                    if (isPolice(entity)) {
+                        existingGolems++
+                        (entity as IronGolem).target = player
                     }
+                }
 
-                    plugin.launchSync {
-                        delayTicks(plugin, despawnTime * 20L)
-                        if (!golem.isDead) {
-                            golem.world.spawnParticle(org.bukkit.Particle.CLOUD, golem.location.clone().add(0.0, 1.0, 0.0), 30, 0.5, 0.5, 0.5, 0.1)
-                            golem.remove()
+                val toSpawn = minOf(3, maxGolems - existingGolems)
+
+                if (toSpawn > 0) {
+                    val golemNameComp = messageService.builder(configService.getString(ConfigKeys.Messages.LawEnforcement.GOLEM_NAME)).build()
+                    val baseLevel = configService.getInt(ConfigKeys.Settings.LawEnforcement.GOLEM_BASE_LEVEL, 20)
+                    val multiplier = configService.getDouble(ConfigKeys.Settings.LawEnforcement.GOLEM_LEVEL_MULTIPLIER, 1.12)
+                    val lmHook = hookService.getHook(LevelledMobsHook::class.java).orElse(null)
+
+                    repeat(toSpawn) {
+                        val golemLoc = player.location.clone().add((Math.random() * 4) - 2, 1.0, (Math.random() * 4) - 2)
+                        val golem = player.world.spawnEntity(golemLoc, EntityType.IRON_GOLEM) as IronGolem
+
+                        golem.persistentDataContainer.set(policeKey, PersistentDataType.BYTE, 1.toByte())
+                        golem.customName(golemNameComp)
+                        golem.isCustomNameVisible = true
+
+                        if (lmHook != null) {
+                            lmHook.applyPoliceLevel(golem, baseLevel, multiplier, count)
+                        } else {
+                            golem.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 9999, 1))
+                            golem.addPotionEffect(PotionEffect(PotionEffectType.STRENGTH, 9999, 3))
+                        }
+
+                        golem.damage(0.0, player)
+
+                        plugin.launchSync {
+                            var ticksPassed = 0
+                            while (!golem.isDead && ticksPassed < (aggroTime * 20)) {
+                                if (golem.target != player) {
+                                    golem.target = player
+                                }
+                                delayTicks(plugin, 20L)
+                                ticksPassed += 20
+                            }
+                        }
+
+                        plugin.launchSync {
+                            delayTicks(plugin, despawnTime * 20L)
+                            if (!golem.isDead) {
+                                golem.world.spawnParticle(org.bukkit.Particle.CLOUD, golem.location.clone().add(0.0, 1.0, 0.0), 30, 0.5, 0.5, 0.5, 0.1)
+                                golem.remove()
+                            }
                         }
                     }
                 }

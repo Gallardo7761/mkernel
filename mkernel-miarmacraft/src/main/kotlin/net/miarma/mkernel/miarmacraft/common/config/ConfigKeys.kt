@@ -30,6 +30,8 @@ object ConfigKeys {
             const val SPAWN_DELAY = "settings.lawEnforcement.spawnDelaySeconds"
             const val DESPAWN_TIME = "settings.lawEnforcement.despawnTimeSeconds"
             const val MAX_GOLEMS = "settings.lawEnforcement.maxGolems"
+            const val GOLEM_BASE_LEVEL = "settings.lawEnforcement.golemBaseLevel"
+            const val GOLEM_LEVEL_MULTIPLIER = "settings.lawEnforcement.golemLevelMultiplier"
         }
     }
 
