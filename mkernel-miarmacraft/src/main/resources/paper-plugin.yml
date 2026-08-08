@@ -29,6 +29,9 @@ dependencies:
     GriefPrevention:
       load: BEFORE
       required: false
+    GravesX:
+      load: BEFORE
+      required: false
 permissions:
     mkernel.command:
         description: Permite al usuario ejecutar comandos de MKernel

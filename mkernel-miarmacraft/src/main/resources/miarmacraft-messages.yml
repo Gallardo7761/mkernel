@@ -27,4 +27,4 @@ modules:
       footer: "\n<gray>Total de delitos registrados:</gray> <red><bold><total></bold></red>\n<color:#d30000><bold>=========================================</bold></color>\n"
       empty: "<green>El ciudadano <yellow><player></yellow> no tiene antecedentes penales registrados. Expediente limpio.</green>"
 
-file-version: 3
+file-version: 1

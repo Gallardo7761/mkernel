@@ -117,4 +117,4 @@ blacklist:
     - /minecraft:me
   recipes: []
 
-file-version: 2
+file-version: 1

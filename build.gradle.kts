@@ -21,6 +21,7 @@ allprojects {
         maven("https://raw.githubusercontent.com/JorelAli/1.13-Command-API/mvn-repo/1.13CommandAPI/")
         maven("https://repo.mythmc.ovh/releases")
         maven("https://maven.enginehub.org/repo/")
+        maven("https://repo.cwhead.dev/repository/maven-public/")
     }
 }
 

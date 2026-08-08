@@ -154,4 +154,4 @@ modules:
       icon: "GRASS_BLOCK"
     illegalPortal: "<red>No puedes crear portales, deberás usar el portal comunitario. Este intento ha sido registrado por el Ministerio de Portales.</red>"
 
-file-version: 3
+file-version: 1

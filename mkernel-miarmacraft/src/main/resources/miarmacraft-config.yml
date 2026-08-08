@@ -28,5 +28,7 @@ settings:
     despawnTimeSeconds: 45
     spawnDelaySeconds: 3
     maxGolems: 6
+    golemBaseLevel: 20
+    golemLevelMultiplier: 1.12
 
-file-version: 3
+file-version: 1
