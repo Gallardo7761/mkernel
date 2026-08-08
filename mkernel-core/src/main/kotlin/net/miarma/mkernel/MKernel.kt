@@ -14,7 +14,8 @@ import net.miarma.mkernel.common.integration.impl.WorldGuardHook
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.recipe.RecipeLoader
 import net.miarma.mkernel.common.service.ServiceLoader
-import net.miarma.mkernel.task.LocationTrackerTask
+import net.miarma.mkernel.common.task.TaskLoader
+import net.miarma.mkernel.common.task.impl.LocationTrackerTask
 import net.miarma.mkernel.util.BukkitDispatcher
 import org.bukkit.plugin.java.JavaPlugin
 import kotlin.coroutines.CoroutineContext
@@ -48,13 +49,16 @@ class MKernel : JavaPlugin(), CoroutineScope {
         injector.getInstance(ModuleLoader::class.java).loadAll()
         injector.getInstance(CommandHandler::class.java).registerCommands()
         injector.getInstance(RecipeLoader::class.java).loadAll()
-        injector.getInstance(LocationTrackerTask::class.java).start()
+        injector.getInstance(TaskLoader::class.java).loadAll()
+
+        injector.getInstance(TaskLoader::class.java).startAll()
 
         logger.info("I've been enabled! :)")
     }
 
     override fun onDisable() {
         job.cancel()
+        injector.getInstance(TaskLoader::class.java).stopAll()
         logger.info("I've been disabled! :(")
     }
 
