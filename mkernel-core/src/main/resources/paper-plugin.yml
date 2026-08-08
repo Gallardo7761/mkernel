@@ -168,10 +168,6 @@ permissions:
         description: Permiso de administrador para el sistema de tiendas
         default: op
 
-    mkernel.dictatorship.immunity:
-        description: Inmunidad para los miembros del gobierno
-        default: op
-
     mkernel.admin:
         description: Permite al usuario ejecutar comandos de administrador
         default: op
@@ -200,7 +196,6 @@ permissions:
             mkernel.command.sequence: true
             mkernel.command.nick.others: true
             mkernel.events.adminchat: true
-            mkernel.dictatorship.immunity: true
             mkernel.shop.admin: true
             mkernel.player: true
 

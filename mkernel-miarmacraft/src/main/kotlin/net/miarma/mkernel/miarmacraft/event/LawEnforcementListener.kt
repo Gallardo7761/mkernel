@@ -12,6 +12,7 @@ import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.miarmacraft.common.config.ConfigKeys
 import net.miarma.mkernel.miarmacraft.common.dao.CrimeDao
 import net.miarma.mkernel.miarmacraft.common.integration.impl.LevelledMobsHook
+import net.miarma.mkernel.miarmacraft.common.model.Crime
 import net.miarma.mkernel.util.delayTicks
 import org.bukkit.Material
 import org.bukkit.NamespacedKey
@@ -78,7 +79,7 @@ class LawEnforcementListener @Inject constructor(
         return entity is IronGolem && entity.persistentDataContainer.has(policeKey, PersistentDataType.BYTE)
     }
 
-    private fun dispatchPolice(player: Player, crime: String) {
+    fun dispatchPolice(player: Player, crime: String, sendWarning: Boolean = true) {
         val now = System.currentTimeMillis()
         val lastDispatch = policeCooldowns[player.uniqueId] ?: 0L
 
@@ -89,11 +90,19 @@ class LawEnforcementListener @Inject constructor(
         policeCooldowns[player.uniqueId] = now
 
         plugin.launchAsync {
-            val count = crimeDao.insertCrime(player, crime)
+            val count = if (sendWarning) {
+                crimeDao.insertCrime(player, crime)
+            } else {
+                val crimes = crimeDao.getCrimes(player.uniqueId)
+                crimes.filter { it.status == Crime.CrimeStatus.PENDING }.size.coerceAtLeast(1)
+            }
 
             plugin.launchSync {
-                val warningMsg = configService.getString(ConfigKeys.Messages.LawEnforcement.WARNING)
-                messageService.builder(warningMsg).tag("crime", crime).send(player)
+                if  (sendWarning) {
+                    val warningMsg = configService.getString(ConfigKeys.Messages.LawEnforcement.WARNING)
+                    messageService.builder(warningMsg).tag("crime", crime).send(player)
+                }
+
                 player.playSound(player.location, Sound.BLOCK_BELL_USE, 1.0f, 0.8f)
 
                 val spawnDelay = configService.getInt(ConfigKeys.Settings.LawEnforcement.SPAWN_DELAY, 4)
@@ -124,7 +133,7 @@ class LawEnforcementListener @Inject constructor(
                     val lmHook = hookService.getHook(LevelledMobsHook::class.java).orElse(null)
 
                     repeat(toSpawn) {
-                        val golemLoc = player.location.clone().add((Math.random() * 4) - 2, 1.0, (Math.random() * 4) - 2)
+                        val golemLoc = player.location.clone().add((Math.random() * 8) - 2, 1.0, (Math.random() * 8) - 2)
                         val golem = player.world.spawnEntity(golemLoc, EntityType.IRON_GOLEM) as IronGolem
 
                         golem.persistentDataContainer.set(policeKey, PersistentDataType.BYTE, 1.toByte())

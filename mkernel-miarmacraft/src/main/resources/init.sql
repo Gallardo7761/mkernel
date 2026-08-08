@@ -4,6 +4,7 @@ CREATE TABLE IF NOT EXISTS CrimeHistory (
     crime TEXT NOT NULL,
     timestamp INTEGER NOT NULL,
     count INTEGER NOT NULL DEFAULT 1,
+    status TEXT NOT NULL DEFAULT 'PENDING',
     FOREIGN KEY (uuid) REFERENCES User(uuid),
     UNIQUE (uuid, crime)
 );

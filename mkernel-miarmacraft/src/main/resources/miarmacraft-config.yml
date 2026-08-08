@@ -22,8 +22,8 @@ settings:
     third: 150
 
   lawEnforcement:
-    region: "pueblo"
-    immunityPermission: "mkernel.dictatorship.immunity"
+    region: "hispania"
+    immunityPermission: "mkernel.lawEnforcement.bypass"
     aggroTimeSeconds: 30
     despawnTimeSeconds: 45
     spawnDelaySeconds: 3

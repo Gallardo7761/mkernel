@@ -5,12 +5,43 @@
 arguments:
 
 commands:
-  antecedentes:
-    name: "antecedentes"
-    aliases: ["ant"]
+  record:
+    name: "record"
+    aliases: ["rec"]
     description: "Mira los antecedentes de un jugador"
-    permission: "mkernel.commands.antecedentes"
-    usage: "/antecedentes <jugador>"
+    permission: "mkernel.commands.record"
+    usage: "/record <jugador>"
+    subcommands:
+      add:
+        name: "add"
+        description: "Añade un antecedente a un jugador"
+        permission: "mkernel.commands.record.add"
+        usage: "record add <jugador> <delito>"
+        messages:
+          success: "<gray>Se ha añadido el antecedente <gold><crime></gold> a <yellow><player></yellow></gray>"
+      clear:
+        name: "clear"
+        description: "Limpia un antecedente de un jugador por ID"
+        permission: "mkernel.commands.record.clear"
+        usage: "/record clear <id>"
+        messages:
+          success: "<gray>El delito <red>#<id></red> ha sido marcado como <green>cumplido</green></gray>"
+          notFound: "<red>No se encontró ningún antecedente con ID #<id></red>"
+      clearall:
+        name: "clearall"
+        description: "Limpia todos los antecedentes de un jugador"
+        permission: "mkernel.commands.record.clearall"
+        usage: "/record clearall <jugador>"
+        messages:
+          success: "<gray>Se han marcado <green><count></green> <gray>delitos como</gray> <green>cumplidos</green> para <yellow><player></yellow></gray>"
+      pending:
+        name: "pending"
+        description: "Marca un antecedente como pendiente de nuevo"
+        permission: "mkernel.commands.record.pending"
+        usage: "/record pending <id>"
+        messages:
+          success: "<gray>El delito <red>#<id></red> ha sido devuelto a estado <yellow>pendiente</yellow></gray>"
+          notFound: "<red>No se encontró ningún antecedente con ID #<id></red>"
 
   sixseven:
     name: "67"

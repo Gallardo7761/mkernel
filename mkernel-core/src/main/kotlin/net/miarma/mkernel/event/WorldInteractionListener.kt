@@ -8,8 +8,8 @@ import net.miarma.mkernel.common.dao.WorldDao
 import net.miarma.mkernel.common.integration.impl.GriefPreventionHook
 import net.miarma.mkernel.common.integration.impl.MinepacksHook
 import net.miarma.mkernel.common.service.impl.*
+import net.miarma.mkernel.common.task.impl.LocationTrackerTask
 import net.miarma.mkernel.event.helper.BlockEventHelper
-import net.miarma.mkernel.task.LocationTrackerTask
 import net.miarma.mkernel.util.delayTicks
 import org.bukkit.EntityEffect
 import org.bukkit.Material

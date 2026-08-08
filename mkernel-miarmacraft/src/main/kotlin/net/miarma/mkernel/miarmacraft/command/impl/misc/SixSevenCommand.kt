@@ -14,8 +14,11 @@ import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.miarmacraft.common.config.ConfigKeys
 import net.miarma.mkernel.util.CommandUtil.checkModule
+import org.bukkit.Color
+import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemStack
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.util.EulerAngle
 import java.time.Duration
@@ -64,25 +67,28 @@ class SixSevenCommand @Inject constructor(
             armorStand.setGravity(false)
             armorStand.isSmall = false
             armorStand.setArms(true)
-            armorStand.customName(Component.text("SIX SEVEN GUY"))
-            armorStand.isCustomNameVisible = true
+            armorStand.isInvulnerable = true
+            armorStand.equipment.setHelmet(ItemStack(Material.PIGLIN_HEAD))
+            armorStand.equipment.setChestplate(ItemStack(Material.GOLDEN_CHESTPLATE))
+            armorStand.equipment.setLeggings(ItemStack(Material.GOLDEN_LEGGINGS))
+            armorStand.equipment.setBoots(ItemStack(Material.GOLDEN_BOOTS))
         }
+
+        val baseAngle = -Math.PI / 2
+        val swingHalf = Math.toRadians(20.0)
 
         object : BukkitRunnable() {
             var tick = 0
             val maxTicks = 60
-
             override fun run() {
                 if (tick >= maxTicks || stand.isDead) {
                     stand.remove()
                     cancel()
                     return
                 }
-
-                val angle = sin(tick * 0.5) * 1.2
-                stand.rightArmPose = EulerAngle(angle, 0.0, 0.0)
-                stand.leftArmPose = EulerAngle(-angle, 0.0, 0.0)
-
+                val swing = sin(tick * 0.5) * swingHalf
+                stand.rightArmPose = EulerAngle(baseAngle + swing, 0.0, 0.0)
+                stand.leftArmPose = EulerAngle(baseAngle - swing, 0.0, 0.0)
                 tick++
             }
         }.runTaskTimer(plugin, 0L, 1L)

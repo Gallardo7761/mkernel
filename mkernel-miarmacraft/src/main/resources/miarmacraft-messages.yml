@@ -17,14 +17,15 @@ modules:
 
   lawEnforcement:
     _meta:
-      name: "FFSSE"
+      name: "Legislación"
       icon: "IRON_GOLEM_SPAWN_EGG"
-    warning: "<red><bold>¡ALTO AHÍ!</bold> Se te acusa de: <yellow><crime></yellow>. ¡La Legión va a por ti!</red>"
+    warning: "<red><bold>ALTO AHÍ!</bold> Se te acusa de: <yellow><crime></yellow>. La Guardia Civil va a por ti!</red>"
     golemName: "<gradient:#7fd81e:#888f21:#7fd81e><bold>Guardia Civil</bold></gradient>"
-    antecedentes:
+    record:
       header: "\n<color:#d30000><bold>=== REGISTRO DE ANTECEDENTES PENALES ===</bold></color>\n<gray>Sujeto investigado:</gray> <yellow><player></yellow>\n"
-      item: "<dark_gray>»</dark_gray> <red>#<id></red> <white>[<date>]</white> <gold><crime></gold> <dark_gray>(x<count>)</dark_gray>"
-      footer: "\n<gray>Total de delitos registrados:</gray> <red><bold><total></bold></red>\n<color:#d30000><bold>=========================================</bold></color>\n"
-      empty: "<green>El ciudadano <yellow><player></yellow> no tiene antecedentes penales registrados. Expediente limpio.</green>"
+      itemPending: "<dark_gray>»</dark_gray> <click:run_command:'/record clear <id>'><hover:show_text:'<green>Haz click para marcar como cumplido</green>'><red>#<id> [PENDIENTE]</red></hover></click> <white>[<date>]</white> <gold><crime></gold> <dark_gray>(x<count>)</dark_gray>"
+      itemCleared: "<dark_gray>»</dark_gray> <click:run_command:'/record pending <id>'><hover:show_text:'<yellow>Haz click para marcar como pendiente</yellow>'><green>#<id> [JUZGADO]</green></hover></click> <white>[<date>]</white> <st><gray><crime></gray></st> <dark_gray>(x<count>)</dark_gray>"
+      footer: "\n<gray>Total delitos:</gray> <red><bold><total></bold></red> | <click:run_command:'/record clearall <player>'><hover:show_text:'<green>Indultar/Limpiar todas las condenas de <player></green>'><green><u>[JUZGAR TODO]</u></green></hover></click>\n<color:#d30000><bold>=========================================</bold></color>\n"
+      empty: "<green>El ciudadano <yellow><player></yellow> no tiene antecedentes penales registrados.</green>"
 
 file-version: 1
