@@ -174,6 +174,8 @@ class LawEnforcementListener @Inject constructor(
 
     @EventHandler
     fun onAssault(event: EntityDamageByEntityEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.LawEnforcement.MAIN)) return
+
         if (event.damage <= 0.0) return
 
         val victim = event.entity
@@ -213,6 +215,8 @@ class LawEnforcementListener @Inject constructor(
 
     @EventHandler
     fun onIllegalPlacement(event: BlockPlaceEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.LawEnforcement.MAIN)) return
+
         if (isImmune(event.player)) return
         val block = event.block
 
@@ -231,6 +235,8 @@ class LawEnforcementListener @Inject constructor(
 
     @EventHandler
     fun onIllegalBucket(event: PlayerBucketEmptyEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.LawEnforcement.MAIN)) return
+
         if (isImmune(event.player)) return
 
         if (event.bucket == Material.LAVA_BUCKET || event.bucket == Material.WATER_BUCKET) {
@@ -243,6 +249,8 @@ class LawEnforcementListener @Inject constructor(
 
     @EventHandler
     fun onIllegalInteract(event: PlayerInteractEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.LawEnforcement.MAIN)) return
+
         if (isImmune(event.player)) return
 
         if (event.action == Action.PHYSICAL && event.clickedBlock?.type == Material.FARMLAND) {
@@ -279,6 +287,8 @@ class LawEnforcementListener @Inject constructor(
 
     @EventHandler
     fun onInteractEntity(event: PlayerInteractEntityEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.LawEnforcement.MAIN)) return
+
         if (isImmune(event.player)) return
         val entity = event.rightClicked
 
@@ -292,6 +302,8 @@ class LawEnforcementListener @Inject constructor(
 
     @EventHandler
     fun onArmorStandInteract(event: PlayerArmorStandManipulateEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.LawEnforcement.MAIN)) return
+
         if (isImmune(event.player)) return
         if (isProtectedZone(event.player, event.rightClicked.location)) {
             event.isCancelled = true
@@ -301,6 +313,8 @@ class LawEnforcementListener @Inject constructor(
 
     @EventHandler
     fun onHangingBreak(event: HangingBreakByEntityEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.LawEnforcement.MAIN)) return
+
         val attacker = getRealAttacker(event.remover ?: return) ?: return
         if (isImmune(attacker)) return
 

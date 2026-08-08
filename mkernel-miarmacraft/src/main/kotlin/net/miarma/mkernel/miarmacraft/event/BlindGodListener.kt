@@ -29,6 +29,8 @@ class BlindGodListener @Inject constructor(
 
     @EventHandler
     fun onDeepMining(event: BlockBreakEvent) {
+        if (!configService.isModuleEnabled(ConfigKeys.Modules.BlindGod.MAIN)) return
+
         val player = event.player
         val block = event.block
 
