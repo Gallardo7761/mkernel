@@ -104,11 +104,6 @@ settings:
         yaw: 180.0
         pitch: 0.0
 
-  startupCommands:
-    onServerLoad: []
-    onWorldLoad: []
-    onWorldUnload: []
-
   sequentialCommands:
     _example:
       - command: "say example"
