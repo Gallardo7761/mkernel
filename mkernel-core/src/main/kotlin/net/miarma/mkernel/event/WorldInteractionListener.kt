@@ -48,7 +48,7 @@ class WorldInteractionListener @Inject constructor(
         if (!configService.isModuleEnabled(ConfigKeys.Modules.World.HARVEST_RIGHT_CLICK) || event.action != Action.RIGHT_CLICK_BLOCK) return
         val hasAccess = (hookService.getHook(GriefPreventionHook::class.java)
             .map { it.hasAccess(event.player, event.player.location) }
-            .orElse(true) == true) ||
+            .orElse(true) == true) &&
                 (hookService.getHook(WorldGuardHook::class.java)
                     .map { it.canRightClickHarvest(event.player, event.player.location) }
                     .orElse(true) == true)
