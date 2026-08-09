@@ -2,13 +2,13 @@ package net.miarma.mkernel.miarmacraft.command.impl.lawenforcement
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.GreedyStringArgument
-import dev.jorel.commandapi.arguments.IntegerArgument
+import dev.jorel.commandapi.StringTooltip
+import dev.jorel.commandapi.arguments.ArgumentSuggestions
 import dev.jorel.commandapi.arguments.PlayerProfileArgument
 import dev.jorel.commandapi.arguments.StringArgument
-import dev.jorel.commandapi.kotlindsl.commandAPICommand
-import dev.jorel.commandapi.kotlindsl.playerExecutor
+import dev.jorel.commandapi.arguments.TextArgument
+import dev.jorel.commandapi.kotlindsl.*
+import kotlinx.coroutines.future.future
 import net.miarma.mkernel.MKernel
 import net.miarma.mkernel.api.annotation.RequiresModule
 import net.miarma.mkernel.api.common.ICommand
@@ -17,12 +17,11 @@ import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.miarmacraft.common.config.ConfigKeys
 import net.miarma.mkernel.miarmacraft.common.dao.CrimeDao
-import net.miarma.mkernel.miarmacraft.common.model.Crime
+import net.miarma.mkernel.miarmacraft.common.model.CrimeHistory
 import net.miarma.mkernel.util.CommandUtil.checkModule
 import net.miarma.mkernel.util.PlayerUtil
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 import net.miarma.mkernel.common.config.ConfigKeys as CoreKeys
 
 @Singleton
@@ -34,7 +33,6 @@ class RecordCommand @Inject constructor(
     private val messageService: MessageService,
     private val crimeDao: CrimeDao
 ) : ICommand {
-
     override fun register() {
         commandAPICommand(configService.getString(ConfigKeys.Commands.Record.NAME)) {
             checkModule(moduleLoader, configService, ConfigKeys.Modules.LawEnforcement.MAIN)
@@ -42,14 +40,9 @@ class RecordCommand @Inject constructor(
             withFullDescription(configService.getString(ConfigKeys.Commands.Record.DESC))
             withPermission(configService.getString(ConfigKeys.Commands.Record.PERM))
             withUsage(configService.getString(ConfigKeys.Commands.Record.USAGE))
-
-            withOptionalArguments(
-                PlayerProfileArgument(configService.getString(CoreKeys.Arguments.PLAYER))
-            )
-
+            withArguments(PlayerProfileArgument(configService.getString(CoreKeys.Arguments.PLAYER)))
             playerExecutor { sender, args ->
-                val target = if (args[0] != null) PlayerUtil.fromArg(args[0]) else sender
-
+                val target = PlayerUtil.fromArg(args[0])
                 if (target == null) {
                     messageService.builder(configService.getString(CoreKeys.Messages.General.Errors.PLAYER_NOT_FOUND))
                         .withPrefix()
@@ -58,10 +51,10 @@ class RecordCommand @Inject constructor(
                 }
 
                 plugin.launchAsync {
-                    val crimes = crimeDao.getCrimes(target.uniqueId)
+                    val history = crimeDao.getCrimeHistory(target)
 
                     plugin.launchSync {
-                        if (crimes.isEmpty()) {
+                        if (history.isEmpty()) {
                             messageService.builder(configService.getString(ConfigKeys.Messages.LawEnforcement.Record.EMPTY))
                                 .withPrefix()
                                 .tag("player", target.name)
@@ -75,141 +68,163 @@ class RecordCommand @Inject constructor(
 
                         val dateFormat = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                         val pendingFormat = configService.getString(ConfigKeys.Messages.LawEnforcement.Record.ITEM_PENDING)
-                        val clearedFormat = configService.getString(ConfigKeys.Messages.LawEnforcement.Record.ITEM_CLEARED)
+                        val paidFormat = configService.getString(ConfigKeys.Messages.LawEnforcement.Record.ITEM_PAID)
+                        val forgivenFormat = configService.getString(ConfigKeys.Messages.LawEnforcement.Record.ITEM_FORGIVEN)
 
-                        for (crime in crimes) {
-                            val formattedDate = dateFormat.format(Date(crime.timestamp))
-                            val template = if (crime.status == Crime.CrimeStatus.PENDING) pendingFormat else clearedFormat
+                        history.forEach {
+                            val template = when (it.status) {
+                                CrimeHistory.CrimeStatus.PENDING -> pendingFormat
+                                CrimeHistory.CrimeStatus.PAID -> paidFormat
+                                CrimeHistory.CrimeStatus.FORGIVEN -> forgivenFormat
+                            }
 
                             messageService.builder(template)
-                                .tag("id", crime.id.toString())
-                                .tag("date", formattedDate)
-                                .tag("crime", crime.crime)
-                                .tag("count", crime.count.toString())
+                                .tag("id", it.id.toString())
+                                .tag("date", dateFormat.format(it.createdAt))
+                                .tag("article", it.crimeName)
+                                .tag("player", target.name)
                                 .send(sender)
                         }
 
                         messageService.builder(configService.getString(ConfigKeys.Messages.LawEnforcement.Record.FOOTER))
-                            .tag("total", crimes.size.toString())
-                            .tag("player", target.name)
+                            .tag("total", history.size.toString())
                             .send(sender)
                     }
                 }
             }
 
-            withSubcommand(CommandAPICommand(configService.getString(ConfigKeys.Commands.Record.Add.NAME)).apply {
-                withPermission(configService.getString(ConfigKeys.Commands.Record.Add.PERM))
-                withUsage(configService.getString(ConfigKeys.Commands.Record.Add.USAGE))
-                withFullDescription(configService.getString(ConfigKeys.Commands.Record.Add.DESC))
+            subcommand(configService.getString(ConfigKeys.Commands.Record.Add.NAME)) {
                 withArguments(
                     PlayerProfileArgument(configService.getString(CoreKeys.Arguments.PLAYER)),
-                    GreedyStringArgument("delito")
+
+                    TextArgument(configService.getString(ConfigKeys.Commands.Arguments.CATEGORY))
+                        .replaceSuggestions(ArgumentSuggestions.stringsAsync { info ->
+                            plugin.future {
+                                val input = info.currentArg.lowercase().replace("\"", "")
+                                crimeDao.getAllCategories()
+                                    .filter { it.name.lowercase().contains(input) }
+                                    .map { if (it.name.contains(" ")) "\"${it.name}\"" else it.name }
+                                    .toTypedArray()
+                            }
+                        }),
+
+                    TextArgument(configService.getString(ConfigKeys.Commands.Arguments.ARTICLE))
+                        .replaceSuggestions(ArgumentSuggestions.stringsWithTooltipsAsync { info ->
+                            plugin.future {
+                                val catName = (info.previousArgs.getOrDefault(1, null) as? String)?.replace("\"", "") ?: return@future emptyArray()
+                                val category = crimeDao.getCategoryByName(catName) ?: return@future emptyArray()
+
+                                val input = info.currentArg.lowercase().replace("\"", "")
+                                crimeDao.getAllArticles()
+                                    .filter { it.categoryId == category.id && it.name.lowercase().contains(input) }
+                                    .map {
+                                        val sug = if (it.name.contains(" ")) "\"${it.name}\"" else it.name
+                                        StringTooltip.ofString(sug, it.description)
+                                    }.toTypedArray()
+                            }
+                        })
                 )
+                withPermission(configService.getString(ConfigKeys.Commands.Record.Add.PERM))
+                withFullDescription(configService.getString(ConfigKeys.Commands.Record.Add.DESC))
+                withUsage(configService.getString(ConfigKeys.Commands.Record.Add.USAGE))
                 playerExecutor { sender, args ->
-                    val target = PlayerUtil.fromArg(args[0]) ?: run {
-                        messageService.builder(configService.getString(CoreKeys.Messages.General.Errors.PLAYER_NOT_FOUND))
-                            .withPrefix()
-                            .send(sender)
-                        return@playerExecutor
-                    }
-                    val crimeName = args[1] as String
-
-                    plugin.launchAsync {
-                        crimeDao.insertCrime(target, crimeName)
-
-                        plugin.launchSync {
-                            messageService.builder(configService.getString(ConfigKeys.Commands.Record.Add.MSG_SUCCESS))
-                                .withPrefix()
-                                .tag("player", target.name)
-                                .tag("crime", crimeName)
-                                .send(sender)
-                        }
-                    }
-                }
-            })
-
-            withSubcommand(CommandAPICommand(configService.getString(ConfigKeys.Commands.Record.Clear.NAME)).apply {
-                withPermission(configService.getString(ConfigKeys.Commands.Record.Clear.PERM))
-                withUsage(configService.getString(ConfigKeys.Commands.Record.Clear.USAGE))
-                withFullDescription(configService.getString(ConfigKeys.Commands.Record.Clear.DESC))
-                withArguments(IntegerArgument("id"))
-                playerExecutor { sender, args ->
-                    val crimeId = args[0] as Int
-
-                    plugin.launchAsync {
-                        val success = crimeDao.markAsCleared(crimeId, true)
-
-                        plugin.launchSync {
-                            if (success) {
-                                messageService.builder(configService.getString(ConfigKeys.Commands.Record.Clear.MSG_SUCCESS))
-                                    .withPrefix()
-                                    .tag("id", crimeId.toString())
-                                    .send(sender)
-                            } else {
-                                messageService.builder(configService.getString(ConfigKeys.Commands.Record.Clear.MSG_NOT_FOUND))
-                                    .withPrefix()
-                                    .tag("id", crimeId.toString())
-                                    .send(sender)
-                            }
-                        }
-                    }
-                }
-            })
-
-            withSubcommand(CommandAPICommand(configService.getString(ConfigKeys.Commands.Record.ClearAll.NAME)).apply {
-                withPermission(configService.getString(ConfigKeys.Commands.Record.ClearAll.PERM))
-                withUsage(configService.getString(ConfigKeys.Commands.Record.ClearAll.USAGE))
-                withFullDescription(configService.getString(ConfigKeys.Commands.Record.ClearAll.DESC))
-                withArguments(PlayerProfileArgument(configService.getString(CoreKeys.Arguments.PLAYER)))
-                playerExecutor { sender, args ->
-                    val target = PlayerUtil.fromArg(args[0]) ?: run {
+                    val target = PlayerUtil.fromArg(args[0])
+                    if (target == null) {
                         messageService.builder(configService.getString(CoreKeys.Messages.General.Errors.PLAYER_NOT_FOUND))
                             .withPrefix()
                             .send(sender)
                         return@playerExecutor
                     }
 
+                    val articleName = args[2] as String
+
                     plugin.launchAsync {
-                        val count = crimeDao.markAllAsCleared(target.uniqueId)
+                        val article = crimeDao.getArticleByName(articleName)
+                        if (article == null) {
+                            messageService.builder(configService.getString(ConfigKeys.Messages.LawEnforcement.Articles.NOT_FOUND))
+                                .withPrefix().tag("id", articleName).send(sender)
+                            return@launchAsync
+                        }
+                        crimeDao.addCrimeToHistory(target, article.id, sender)
+                        messageService.builder(configService.getString(ConfigKeys.Messages.LawEnforcement.Record.ADD_SUCCESS))
+                            .withPrefix()
+                            .tag("player", target.name)
+                            .tag("article", article.name)
+                            .send(sender)
+                    }
+                }
+            }
+
+            subcommand(configService.getString(ConfigKeys.Commands.Record.SetStatus.NAME)) {
+                withArguments(
+                    PlayerProfileArgument(configService.getString(CoreKeys.Arguments.PLAYER)),
+                    StringArgument(configService.getString(ConfigKeys.Commands.Arguments.ARTICLE_OR_ALL))
+                        .replaceSuggestions(ArgumentSuggestions.stringsWithTooltipsAsync { info ->
+                            plugin.future {
+                                val input = info.currentArg.lowercase()
+                                val suggestions = mutableListOf<StringTooltip>()
+
+                                if ("all".startsWith(input)) {
+                                    suggestions.add(StringTooltip.ofString("all", "Modificar todos los antecedentes"))
+                                }
+
+                                val target = PlayerUtil.fromArg(info.previousArgs.getOrDefault(0, null))
+                                if (target != null) {
+                                    crimeDao.getCrimeHistory(target)
+                                        .filter { it.id.toString().startsWith(input) }
+                                        .forEach {
+                                            val statusName = when (it.status) {
+                                                CrimeHistory.CrimeStatus.PENDING -> "PENDIENTE"
+                                                CrimeHistory.CrimeStatus.PAID -> "PAGADO"
+                                                CrimeHistory.CrimeStatus.FORGIVEN -> "INDULTADO"
+                                            }
+                                            suggestions.add(StringTooltip.ofString(it.id.toString(), "[$statusName] ${it.crimeName}"))
+                                        }
+                                }
+                                suggestions.toTypedArray()
+                            }
+                        }),
+                    StringArgument(configService.getString(ConfigKeys.Commands.Arguments.STATUS))
+                        .replaceSuggestions(ArgumentSuggestions.strings(CrimeHistory.CrimeStatus.entries.map { it.name }))
+                )
+                withPermission(configService.getString(ConfigKeys.Commands.Record.SetStatus.PERM))
+                withFullDescription(configService.getString(ConfigKeys.Commands.Record.SetStatus.DESC))
+                withUsage(configService.getString(ConfigKeys.Commands.Record.SetStatus.USAGE))
+                playerExecutor { sender, args ->
+                    val target = PlayerUtil.fromArg(args[0])
+                    if (target == null) {
+                        messageService.builder(configService.getString(CoreKeys.Messages.General.Errors.PLAYER_NOT_FOUND))
+                            .withPrefix()
+                            .send(sender)
+                        return@playerExecutor
+                    }
+                    val historyIdOrAll = args[1] as String
+                    val status = CrimeHistory.CrimeStatus.valueOf(args[2] as String)
+                    plugin.launchAsync {
+                        if (historyIdOrAll.equals("all", true)) {
+                            crimeDao.setAllCrimesStatus(target, status)
+                        } else {
+                            val historyId = historyIdOrAll.toIntOrNull()
+                            if (historyId == null) {
+                                messageService.builder(configService.getString(ConfigKeys.Messages.LawEnforcement.Record.INVALID_ARGUMENT))
+                                    .withPrefix()
+                                    .tag("argument", historyIdOrAll)
+                                    .send(sender)
+                                return@launchAsync
+                            }
+                            crimeDao.setCrimeStatus(historyId, status)
+                        }
 
                         plugin.launchSync {
-                            messageService.builder(configService.getString(ConfigKeys.Commands.Record.ClearAll.MSG_SUCCESS))
+                            messageService.builder(configService.getString(ConfigKeys.Messages.LawEnforcement.Record.SET_STATUS_SUCCESS))
                                 .withPrefix()
-                                .tag("count", count.toString())
                                 .tag("player", target.name)
+                                .tag("status", status.name)
                                 .send(sender)
                         }
                     }
                 }
-            })
-
-            withSubcommand(CommandAPICommand(configService.getString(ConfigKeys.Commands.Record.Pending.NAME)).apply {
-                withPermission(configService.getString(ConfigKeys.Commands.Record.Pending.PERM))
-                withUsage(configService.getString(ConfigKeys.Commands.Record.Pending.USAGE))
-                withFullDescription(configService.getString(ConfigKeys.Commands.Record.Pending.DESC))
-                withArguments(IntegerArgument("id"))
-                playerExecutor { sender, args ->
-                    val crimeId = args[0] as Int
-
-                    plugin.launchAsync {
-                        val success = crimeDao.markAsCleared(crimeId, false)
-
-                        plugin.launchSync {
-                            if (success) {
-                                messageService.builder(configService.getString(ConfigKeys.Commands.Record.Pending.MSG_SUCCESS))
-                                    .withPrefix()
-                                    .tag("id", crimeId.toString())
-                                    .send(sender)
-                            } else {
-                                messageService.builder(configService.getString(ConfigKeys.Commands.Record.Pending.MSG_NOT_FOUND))
-                                    .withPrefix()
-                                    .tag("id", crimeId.toString())
-                                    .send(sender)
-                            }
-                        }
-                    }
-                }
-            })
+            }
         }
     }
 }

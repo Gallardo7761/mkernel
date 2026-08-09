@@ -32,6 +32,9 @@ dependencies:
     GravesX:
       load: BEFORE
       required: false
+    InteractiveBooks:
+      load: BEFORE
+      required: false
 permissions:
     mkernel.command:
         description: Permite al usuario ejecutar comandos de MKernel

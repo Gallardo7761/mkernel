@@ -14,7 +14,6 @@ import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.miarmacraft.common.config.ConfigKeys
 import net.miarma.mkernel.util.CommandUtil.checkModule
-import org.bukkit.Color
 import org.bukkit.Material
 import org.bukkit.entity.ArmorStand
 import org.bukkit.entity.Player
@@ -61,6 +60,9 @@ class SixSevenCommand @Inject constructor(
         val loc = player.location.add(player.location.direction.multiply(2.0))
         loc.y = player.location.y
 
+        val directionToPlayer = player.eyeLocation.toVector().subtract(loc.toVector())
+        loc.setDirection(directionToPlayer)
+
         val stand = loc.world.spawn(loc, ArmorStand::class.java) { armorStand ->
             armorStand.isVisible = true
             armorStand.setBasePlate(false)
@@ -72,6 +74,7 @@ class SixSevenCommand @Inject constructor(
             armorStand.equipment.setChestplate(ItemStack(Material.GOLDEN_CHESTPLATE))
             armorStand.equipment.setLeggings(ItemStack(Material.GOLDEN_LEGGINGS))
             armorStand.equipment.setBoots(ItemStack(Material.GOLDEN_BOOTS))
+            armorStand.isMarker = true
         }
 
         val baseAngle = -Math.PI / 2

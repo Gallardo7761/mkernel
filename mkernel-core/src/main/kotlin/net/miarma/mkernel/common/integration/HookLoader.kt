@@ -13,7 +13,7 @@ class HookLoader @Inject constructor(
     private val hookService: HookService
 ) {
     fun loadAll() {
-        val reflections = Reflections("net.miarma.mkernel.common.integration.impl")
+        val reflections = Reflections("net.miarma.mkernel")
         val hookClasses = reflections.getSubTypesOf(IHook::class.java)
 
         val hooks = hookClasses.mapNotNull { clazz ->

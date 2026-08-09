@@ -3,9 +3,11 @@ package net.miarma.mkernel
 import com.google.inject.*
 import dev.jorel.commandapi.CommandAPI
 import dev.jorel.commandapi.CommandAPIPaperConfig
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.launch
 import net.miarma.mkernel.command.CommandHandler
 import net.miarma.mkernel.common.inject.MKernelModule
@@ -26,8 +28,13 @@ class MKernel : JavaPlugin(), CoroutineScope {
     private lateinit var syncDispatcher: BukkitDispatcher
     private lateinit var injector: Injector
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, exception ->
+        logger.severe("Catched error in coroutine: ${exception.message}")
+        exception.printStackTrace()
+    }
+
     override val coroutineContext: CoroutineContext
-        get() = job + Dispatchers.Default
+        get() = job + Dispatchers.Default + exceptionHandler
 
     override fun onLoad() {
         CommandAPI.onLoad(
@@ -40,7 +47,8 @@ class MKernel : JavaPlugin(), CoroutineScope {
     }
 
     override fun onEnable() {
-        job = Job()
+        job = SupervisorJob()
+
         syncDispatcher = BukkitDispatcher(this)
         injector = initInjector()
 

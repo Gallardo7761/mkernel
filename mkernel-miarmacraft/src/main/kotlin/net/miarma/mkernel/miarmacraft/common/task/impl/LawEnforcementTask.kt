@@ -5,8 +5,8 @@ import com.google.inject.Singleton
 import net.miarma.mkernel.MKernel
 import net.miarma.mkernel.api.common.ITask
 import net.miarma.mkernel.miarmacraft.common.dao.CrimeDao
-import net.miarma.mkernel.miarmacraft.common.model.Crime
-import net.miarma.mkernel.miarmacraft.event.LawEnforcementListener
+import net.miarma.mkernel.miarmacraft.common.model.CrimeHistory
+import net.miarma.mkernel.miarmacraft.common.service.impl.LawEnforcementService
 import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask
@@ -15,7 +15,7 @@ import org.bukkit.scheduler.BukkitTask
 class LawEnforcementTask @Inject constructor(
     private val plugin: MKernel,
     private val crimeDao: CrimeDao,
-    private val lawEnforcementListener: LawEnforcementListener
+    private val lawEnforcementService: LawEnforcementService
 ) : ITask {
 
     private var task: BukkitTask? = null
@@ -27,12 +27,13 @@ class LawEnforcementTask @Inject constructor(
 
                 Bukkit.getOnlinePlayers().forEach { player ->
                     plugin.launchAsync {
-                        val crimes = crimeDao.getCrimes(player.uniqueId)
-                        val hasPending = crimes.any { it.status == Crime.CrimeStatus.PENDING }
+                        val crimes = crimeDao.getCrimeHistory(player)
+                        val pendingCrimes = crimes.filter { it.status == CrimeHistory.CrimeStatus.PENDING }
 
-                        if (hasPending) {
+                        if (pendingCrimes.isNotEmpty()) {
                             plugin.launchSync {
-                                lawEnforcementListener.dispatchPolice(player, "", false)
+                                if (lawEnforcementService.isTownZone(player.location))
+                                    lawEnforcementService.dispatchPolice(player, pendingCrimes.size)
                             }
                         }
                     }

@@ -1,13 +1,12 @@
 package net.miarma.mkernel.miarmacraft.common.model
 
+import java.sql.Timestamp
+
 data class Crime(
     val id: Int,
-    val crime: String,
-    val timestamp: Long,
-    val count: Int,
-    val status: CrimeStatus = CrimeStatus.PENDING
-) {
-    enum class CrimeStatus {
-        PENDING, CLEARED
-    }
-}
+    val categoryId: Int,
+    val name: String,
+    val description: String,
+    val fineAmount: Double,
+    val createdAt: Timestamp
+)

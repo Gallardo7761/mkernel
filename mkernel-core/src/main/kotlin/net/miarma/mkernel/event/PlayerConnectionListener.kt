@@ -29,6 +29,18 @@ class PlayerConnectionListener @Inject constructor(
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
 
+        val joinedNick = "@${player.getNickName(playerService)}"
+
+        Bukkit.getOnlinePlayers().forEach { onlinePlayer ->
+            onlinePlayer.addCustomChatCompletions(listOf(joinedNick))
+        }
+
+        val allNicks = Bukkit.getOnlinePlayers().map { target ->
+            "@${target.getNickName(playerService)}"
+        }
+
+        player.addCustomChatCompletions(allNicks)
+
         player.playerListName(messageService.builder(player.getNickName(playerService)).build())
 
         val customJoinMessage = messageService.builder(configService.getString(ConfigKeys.Messages.Connection.JOIN))
@@ -64,6 +76,11 @@ class PlayerConnectionListener @Inject constructor(
     @EventHandler
     fun onPlayerLeave(event: PlayerQuitEvent) {
         val player = event.player
+        val quitNick = "@${player.getNickName(playerService)}"
+
+        Bukkit.getOnlinePlayers().forEach { onlinePlayer ->
+            onlinePlayer.removeCustomChatCompletions(listOf(quitNick))
+        }
 
         val customLeaveMessage = messageService.builder(configService.getString(ConfigKeys.Messages.Connection.LEAVE))
             .tag("player", player.getNickName(playerService))

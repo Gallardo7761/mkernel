@@ -1,10 +1,62 @@
 # -----------------------------------------------------------
-#  MKernel - Miarmacraft Commands Definitions
+#  MKernel - Miarmacraft Commands
 # -----------------------------------------------------------
 
 arguments:
+  category: "categoria"
+  article: "artículo"
+  articleOrAll: "artículo / all"
+  name: "nombre"
+  description: "descripción"
+  fine: "multa"
+  status: "estado"
 
 commands:
+  articles:
+    name: "articles"
+    aliases: [ "art" ]
+    description: "Gestiona los artículos del código penal"
+    permission: "mkernel.miarmacraft.law.articles"
+    usage: "/articles <add|remove|list|categories>"
+    subcommands:
+      add:
+        name: "add"
+        description: "Añade un nuevo artículo."
+        permission: "mkernel.miarmacraft.law.articles.add"
+        usage: "/articles add <id_categoria> <nombre> <descripción> [multa]"
+      remove:
+        name: "remove"
+        description: "Elimina un artículo existente."
+        permission: "mkernel.miarmacraft.law.articles.remove"
+        usage: "/articles remove <id>"
+      list:
+        name: "list"
+        description: "Muestra la lista de artículos."
+        permission: "mkernel.miarmacraft.law.articles.list"
+        usage: "/articles list"
+      categories:
+        name: "categories"
+        aliases: [ "cat" ]
+        description: "Gestiona las categorías del código penal"
+        permission: "mkernel.miarmacraft.law.categories"
+        usage: "/articles categories <add|remove|list>"
+        subcommands:
+          add:
+            name: "add"
+            description: "Añade una nueva categoría."
+            permission: "mkernel.miarmacraft.law.categories.add"
+            usage: "/articles categories add <nombre>"
+          remove:
+            name: "remove"
+            description: "Elimina una categoría existente."
+            permission: "mkernel.miarmacraft.law.categories.remove"
+            usage: "/articles categories remove <id>"
+          list:
+            name: "list"
+            description: "Muestra la lista de categorías."
+            permission: "mkernel.miarmacraft.law.categories.list"
+            usage: "/articles categories list"
+
   record:
     name: "record"
     aliases: ["rec"]
@@ -14,34 +66,14 @@ commands:
     subcommands:
       add:
         name: "add"
-        description: "Añade un antecedente a un jugador"
-        permission: "mkernel.commands.record.add"
-        usage: "record add <jugador> <delito>"
-        messages:
-          success: "<gray>Se ha añadido el antecedente <gold><crime></gold> a <yellow><player></yellow></gray>"
-      clear:
-        name: "clear"
-        description: "Limpia un antecedente de un jugador por ID"
-        permission: "mkernel.commands.record.clear"
-        usage: "/record clear <id>"
-        messages:
-          success: "<gray>El delito <red>#<id></red> ha sido marcado como <green>cumplido</green></gray>"
-          notFound: "<red>No se encontró ningún antecedente con ID #<id></red>"
-      clearall:
-        name: "clearall"
-        description: "Limpia todos los antecedentes de un jugador"
-        permission: "mkernel.commands.record.clearall"
-        usage: "/record clearall <jugador>"
-        messages:
-          success: "<gray>Se han marcado <green><count></green> <gray>delitos como</gray> <green>cumplidos</green> para <yellow><player></yellow></gray>"
-      pending:
-        name: "pending"
-        description: "Marca un antecedente como pendiente de nuevo"
-        permission: "mkernel.commands.record.pending"
-        usage: "/record pending <id>"
-        messages:
-          success: "<gray>El delito <red>#<id></red> ha sido devuelto a estado <yellow>pendiente</yellow></gray>"
-          notFound: "<red>No se encontró ningún antecedente con ID #<id></red>"
+        description: "Añade un antecedente a un jugador."
+        permission: "mkernel.miarmacraft.law.record.add"
+        usage: "/record add <jugador> <id_articulo>"
+      setstatus:
+        name: "setstatus"
+        description: "Cambia el estado de uno o más antecedentes."
+        permission: "mkernel.miarmacraft.law.record.setstatus"
+        usage: "/record setstatus <jugador> <id_articulo|all> <status>"
 
   sixseven:
     name: "67"
@@ -50,4 +82,4 @@ commands:
     usage: "/67"
     message: "<light_purple><bold>SIX SEVEEEEEEEEN!!!!</bold></light_purple>"
 
-file-version: 1
+file-version: 2

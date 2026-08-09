@@ -1,4 +1,3 @@
-import java.io.File
 import org.yaml.snakeyaml.DumperOptions
 import org.yaml.snakeyaml.Yaml
 
@@ -40,6 +39,7 @@ dependencies {
     compileOnly("dev.jorel:commandapi-paper-shade:11.2.0")
     compileOnly("dev.jorel:commandapi-kotlin-paper:11.2.0")
     compileOnly("io.github.arcaneplugins:levelledmobs-plugin:4.0.3.1")
+    compileOnly("net.leonardo_dgs:InteractiveBooks:1.7.2")
 }
 
 tasks.register("mergeScriptsYaml") {

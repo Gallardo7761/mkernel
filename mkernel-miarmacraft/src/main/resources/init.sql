@@ -1,10 +1,26 @@
+CREATE TABLE IF NOT EXISTS CrimeCategory (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE IF NOT EXISTS Crime (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category_id INTEGER NOT NULL,
+    name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL,
+    fine_amount DOUBLE DEFAULT 0.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES CrimeCategory(id)
+);
+
 CREATE TABLE IF NOT EXISTS CrimeHistory (
-    crime_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    uuid TEXT NOT NULL,
-    crime TEXT NOT NULL,
-    timestamp INTEGER NOT NULL,
-    count INTEGER NOT NULL DEFAULT 1,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_uuid TEXT NOT NULL,
+    crime_id INTEGER NOT NULL,
+    officer_uuid TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     status TEXT NOT NULL DEFAULT 'PENDING',
-    FOREIGN KEY (uuid) REFERENCES User(uuid),
-    UNIQUE (uuid, crime)
+    FOREIGN KEY (user_uuid) REFERENCES User(uuid),
+    FOREIGN KEY (crime_id) REFERENCES Crime(id),
+    FOREIGN KEY (officer_uuid) REFERENCES User(uuid)
 );
