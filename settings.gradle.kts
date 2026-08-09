@@ -6,6 +6,3 @@ rootProject.name = "mkernel"
 include("mkernel-api")
 include("mkernel-core")
 include("mkernel-miarmacraft")
-include("mkernel-api")
-include("mkernel-core")
-include("mkernel-miarmacraft")

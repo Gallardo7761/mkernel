@@ -17,16 +17,26 @@ class WorldGuardHook : IHook {
         lateinit var CAN_CREATE_SHOP_FLAG: StateFlag
             private set
 
-        fun registerFlag() {
+        lateinit var HARVEST_FLAG: StateFlag
+            private set
+
+        fun registerFlags() {
             val registry = WorldGuard.getInstance().flagRegistry
             try {
-                val flag = StateFlag("can-create-shop", true)
-                registry.register(flag)
-                CAN_CREATE_SHOP_FLAG = flag
+                val shopFlag = StateFlag("can-create-shop", true)
+                val harvestFlag = StateFlag("right-click-harvest", true)
+                registry.register(shopFlag)
+                registry.register(harvestFlag)
+                CAN_CREATE_SHOP_FLAG = shopFlag
+                HARVEST_FLAG = harvestFlag
             } catch (e: FlagConflictException) {
-                val existing = registry.get("can-create-shop")
+                var existing = registry.get("can-create-shop")
                 if (existing is StateFlag) {
                     CAN_CREATE_SHOP_FLAG = existing
+                }
+                existing = registry.get("right-click-harvest")
+                if (existing is StateFlag) {
+                    HARVEST_FLAG = existing
                 }
             } catch (e: Exception) {
                 e.printStackTrace()
@@ -35,7 +45,6 @@ class WorldGuardHook : IHook {
     }
 
     override fun register() {
-
     }
 
     fun canCreateShop(player: Player, location: Location): Boolean {
@@ -48,5 +57,16 @@ class WorldGuardHook : IHook {
 
         val loc = BukkitAdapter.adapt(location)
         return query.testState(loc, localPlayer, CAN_CREATE_SHOP_FLAG)
+    }
+
+    fun canRightClickHarvest(player: Player, location: Location): Boolean {
+        if (!isInstalled()) return true
+
+        val localPlayer = com.sk89q.worldguard.bukkit.WorldGuardPlugin.inst().wrapPlayer(player)
+        val container: RegionContainer = WorldGuard.getInstance().platform.regionContainer
+        val query = container.createQuery()
+
+        val loc = BukkitAdapter.adapt(location)
+        return query.testState(loc, localPlayer, HARVEST_FLAG)
     }
 }

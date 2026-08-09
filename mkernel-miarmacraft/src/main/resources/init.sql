@@ -1,18 +1,26 @@
-CREATE TABLE IF NOT EXISTS Tithe (
-    uuid TEXT PRIMARY KEY,
-    due_date INTEGER NOT NULL,
-    amount REAL NOT NULL,
-    FOREIGN KEY (uuid) REFERENCES User(uuid)
+CREATE TABLE IF NOT EXISTS CrimeCategory (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE IF NOT EXISTS Fine (
-    fine_id TEXT PRIMARY KEY,
-    target_uuid TEXT NOT NULL,
-    issuer_uuid TEXT NOT NULL,
-    amount REAL NOT NULL,
-    reason TEXT NOT NULL,
-    issue_date INTEGER NOT NULL,
-    due_date INTEGER NOT NULL,
-    is_paid INTEGER NOT NULL DEFAULT 0,
-    FOREIGN KEY (target_uuid) REFERENCES User(uuid)
+CREATE TABLE IF NOT EXISTS Crime (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    category_id INTEGER NOT NULL,
+    name TEXT NOT NULL UNIQUE,
+    description TEXT NOT NULL,
+    fine_amount DOUBLE DEFAULT 0.0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (category_id) REFERENCES CrimeCategory(id)
+);
+
+CREATE TABLE IF NOT EXISTS CrimeHistory (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_uuid TEXT NOT NULL,
+    crime_id INTEGER NOT NULL,
+    officer_uuid TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    status TEXT NOT NULL DEFAULT 'PENDING',
+    FOREIGN KEY (user_uuid) REFERENCES User(uuid),
+    FOREIGN KEY (crime_id) REFERENCES Crime(id),
+    FOREIGN KEY (officer_uuid) REFERENCES User(uuid)
 );

@@ -12,14 +12,37 @@ plugins {
     id("com.gradleup.shadow")
 }
 
+fun getGitHash(): String {
+    return runCatching {
+        val process = ProcessBuilder("git", "rev-parse", "--short", "HEAD")
+            .directory(rootDir)
+            .redirectOutput(ProcessBuilder.Redirect.PIPE)
+            .redirectError(ProcessBuilder.Redirect.DISCARD)
+            .start()
+        process.inputStream.bufferedReader().readText().trim()
+    }.getOrDefault("nogit")
+}
+
+val buildVersion = "${project.version}+${getGitHash()}"
+
 dependencies {
     implementation(project(":mkernel-api"))
     implementation(project(":mkernel-core"))
 
+    compileOnly("com.google.inject:guice:7.0.0:classes")
+    compileOnly("xyz.xenondevs.invui:invui:2.1.1")
     compileOnly("io.papermc.paper:paper-api:[26.1.2.build.1, 26.1.2.build.9999)")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.0")
+    compileOnly("ovh.mythmc:banco-api:1.2.1")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.17")
+    compileOnly("dev.jorel:commandapi-paper-shade:11.2.0")
+    compileOnly("dev.jorel:commandapi-kotlin-paper:11.2.0")
+    compileOnly("io.github.arcaneplugins:levelledmobs-plugin:4.0.3.1")
+    compileOnly("net.leonardo_dgs:InteractiveBooks:1.7.2")
 }
 
-tasks.register("deepMergeYamls") {
+tasks.register("mergeScriptsYaml") {
     dependsOn(project(":mkernel-core").tasks.named("processResources"))
     dependsOn("processResources")
 
@@ -32,47 +55,38 @@ tasks.register("deepMergeYamls") {
         })
 
         val coreResDir = project(":mkernel-core").layout.buildDirectory.dir("resources/main").get().asFile
-        val localResDir = layout.buildDirectory.dir("resources/main").get().asFile
-        val filesToMerge = listOf("config.yml", "commands.yml", "messages.yml", "paper-plugin.yml", "scripts.yml")
+        val localResSrcDir = file("src/main/resources")
+        val outDir = layout.buildDirectory.dir("resources/main").get().asFile
 
-        fun mergeMaps(target: MutableMap<String, Any>, source: Map<String, Any>) {
-            for ((key, value) in source) {
-                if (value == null) continue
+        val coreFile = File(coreResDir, "scripts.yml")
+        val localFile = File(localResSrcDir, "scripts.yml")
+        val outFile = File(outDir, "scripts.yml")
 
-                if (value is Map<*, *> && target[key] is MutableMap<*, *>) {
-                    @Suppress("UNCHECKED_CAST")
-                    mergeMaps(target[key] as MutableMap<String, Any>, value as Map<String, Any>)
-                } else if (value is List<*> && target[key] is MutableList<*>) {
-                    @Suppress("UNCHECKED_CAST")
-                    val targetList = target[key] as MutableList<Any>
-                    for (item in value as List<Any>) {
-                        if (item != null && !targetList.contains(item)) {
-                            targetList.add(item)
-                        }
-                    }
-                } else {
-                    target[key] = value
+        if (coreFile.exists() && localFile.exists()) {
+            println("MiarmaCraft -> SnakeYAML Merge: scripts.yml")
+
+            val coreData: MutableMap<String, Any> = yaml.load(coreFile.readText(Charsets.UTF_8)) ?: mutableMapOf()
+            val localData: Map<String, Any>? = yaml.load(localFile.readText(Charsets.UTF_8))
+
+            if (localData != null) {
+                @Suppress("UNCHECKED_CAST")
+                val coreScripts = coreData.getOrPut("scripts") { mutableMapOf<String, Any>() } as MutableMap<String, Any>
+                @Suppress("UNCHECKED_CAST")
+                val localScripts = localData["scripts"] as? Map<String, Any>
+
+                if (localScripts != null) {
+                    coreScripts.putAll(localScripts)
                 }
             }
-        }
 
-        for (fileName in filesToMerge) {
-            val coreFile = File(coreResDir, fileName)
-            val localFile = File(localResDir, fileName)
+            outFile.parentFile.mkdirs()
+            outFile.writeText(yaml.dump(coreData), Charsets.UTF_8)
+            println("MiarmaCraft -> scripts.yml merged successfully!")
 
-            if (coreFile.exists()) {
-                val coreData: MutableMap<String, Any> = yaml.load(coreFile.readText()) ?: mutableMapOf()
-
-                if (localFile.exists()) {
-                    println("MiarmaCraft -> Deep Merge: $fileName")
-                    val localData: Map<String, Any>? = yaml.load(localFile.readText())
-                    if (localData != null) {
-                        mergeMaps(coreData, localData)
-                    }
-                }
-
-                localFile.writeText(yaml.dump(coreData))
-            }
+        } else if (coreFile.exists()) {
+            coreFile.copyTo(outFile, overwrite = true)
+        } else if (localFile.exists()) {
+            localFile.copyTo(outFile, overwrite = true)
         }
     }
 }
@@ -92,32 +106,32 @@ tasks.register("mergeInitSql") {
         val merged = StringBuilder()
         if (coreSql.exists()) {
             println("MiarmaCraft -> Merge SQL: core init.sql")
-            merged.append(coreSql.readText().trimEnd()).append("\n\n")
+            merged.append(coreSql.readText(Charsets.UTF_8).trimEnd()).append("\n\n")
         }
         if (localSqlSrc.exists()) {
             println("MiarmaCraft -> Merge SQL: miarmacraft init.sql")
-            merged.append(localSqlSrc.readText().trimEnd()).append("\n")
+            merged.append(localSqlSrc.readText(Charsets.UTF_8).trimEnd()).append("\n")
         }
 
         outputFile.parentFile.mkdirs()
-        outputFile.writeText(merged.toString())
+        outputFile.writeText(merged.toString(), Charsets.UTF_8)
     }
 }
 
 tasks {
     processResources {
-        val props = mapOf("version" to project.version)
+        val props = mapOf("version" to buildVersion)
         inputs.properties(props)
         filteringCharset = "UTF-8"
-        filesMatching(listOf("paper-plugin.yml", "config.yml")) {
+        filesMatching(listOf("paper-plugin.yml")) {
             expand(props)
         }
     }
 
     named("shadowJar", com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar::class) {
-        dependsOn("deepMergeYamls")
+        dependsOn("mergeScriptsYaml")
         dependsOn("mergeInitSql")
-        archiveFileName.set("mkernel-miarmacraft-${project.version}.jar")
+        archiveFileName.set("mkernel-$buildVersion.jar")
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         mergeServiceFiles()
     }

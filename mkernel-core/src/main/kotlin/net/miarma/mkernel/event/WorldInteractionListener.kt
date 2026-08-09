@@ -7,9 +7,11 @@ import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.dao.WorldDao
 import net.miarma.mkernel.common.integration.impl.GriefPreventionHook
 import net.miarma.mkernel.common.integration.impl.MinepacksHook
+import net.miarma.mkernel.common.integration.impl.WorldGuardHook
 import net.miarma.mkernel.common.service.impl.*
+import net.miarma.mkernel.common.task.impl.LocationTrackerTask
 import net.miarma.mkernel.event.helper.BlockEventHelper
-import net.miarma.mkernel.task.LocationTrackerTask
+import net.miarma.mkernel.event.helper.HarvestableCrop
 import net.miarma.mkernel.util.delayTicks
 import org.bukkit.EntityEffect
 import org.bukkit.Material
@@ -44,19 +46,18 @@ class WorldInteractionListener @Inject constructor(
     @EventHandler
     fun onRightClick(event: PlayerInteractEvent) {
         if (!configService.isModuleEnabled(ConfigKeys.Modules.World.HARVEST_RIGHT_CLICK) || event.action != Action.RIGHT_CLICK_BLOCK) return
-        val hasAccess = hookService.getHook(GriefPreventionHook::class.java).map { it.hasAccess(event.player, event.player.location) }.orElse(true)
+        val hasAccess = (hookService.getHook(GriefPreventionHook::class.java)
+            .map { it.hasAccess(event.player, event.player.location) }
+            .orElse(true) == true) ||
+                (hookService.getHook(WorldGuardHook::class.java)
+                    .map { it.canRightClickHarvest(event.player, event.player.location) }
+                    .orElse(true) == true)
+
         if (hasAccess) {
             event.clickedBlock?.let { block ->
-                val helper = BlockEventHelper.of(event.player, block)
-                when (block.type) {
-                    Material.WHEAT -> helper.handleWheat()
-                    Material.POTATOES -> helper.handlePotatoes()
-                    Material.CARROTS -> helper.handleCarrots()
-                    Material.BEETROOTS -> helper.handleBeetroots()
-                    Material.COCOA -> helper.handleCocoa()
-                    Material.TORCHFLOWER_CROP -> helper.handleTorchflower()
-                    Material.PITCHER_CROP -> helper.handlePitcher()
-                    else -> {}
+                val crop = HarvestableCrop.from(block.type)
+                if (crop != null) {
+                    BlockEventHelper.of(event.player, block).handleCrop(crop)
                 }
             }
         }
@@ -151,7 +152,7 @@ class WorldInteractionListener @Inject constructor(
         if (configService.isModuleEnabled(ConfigKeys.Modules.World.NO_NETHER_PORTALS)) {
             event.isCancelled = true
             (event.entity as? Player)?.let {
-                messageService.builder(configService.getString(ConfigKeys.Messages.Misc.ILLEGAL_PORTAL)).withPrefix().send(it)
+                messageService.builder(configService.getString(ConfigKeys.Messages.World.ILLEGAL_PORTAL)).withPrefix().send(it)
             }
         }
     }

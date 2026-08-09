@@ -20,6 +20,7 @@ general:
     invalidArgument: "<red>Argumento no válido</red>"
     temporarilyDisabled: "<red>Este comando está temporalmente desactivado</red>"
     notANumber: "<red>Eso no es un número válido</red>"
+    notEnoughLevels: "<red>No tienes suficientes niveles. Necesitas <green><required></green></red>"
 
 inventories:
   globalChestTitle: "Cofre global"
@@ -51,15 +52,29 @@ inventories:
     backName: "<italic:false><yellow>« Volver"
 
 modules:
+  core:
+    _meta:
+      name: "Core"
+      icon: "ENDER_CHEST"
+
   connection:
+    _meta:
+      name: "Conexión"
+      icon: "END_ROD"
     joinMessage: "<yellow><player> se ha unido a la partida"
     leaveMessage: "<yellow><player> ha abandonado la partida"
 
   chat:
+    _meta:
+      name: "Chat"
+      icon: "WRITABLE_BOOK"
     mentionFormat: "<color:#d30000><bold>@<player></bold></color>"
     youWereMentioned: "<yellow><player></yellow> <gray>te ha mencionado!</gray>"
 
   shops:
+    _meta:
+      name: "Tiendas"
+      icon: "EMERALD"
     hologram:
       title: "<red><bold>TIENDA</bold></red>"
       price: "<white>Precio:</white> <yellow><price></yellow> <green>♦"
@@ -91,15 +106,9 @@ modules:
       cantBuyOwn: "<red>No puedes comprar de tu propia tienda</red>"
 
   teleport:
-    chat:
-      accepted: "<gray>Has aceptado la petición de teletransporte</gray>"
-      acceptedToTarget: "<gray>El jugador <green><sender></green> ha aceptado tu petición de teletransporte</gray>"
-      denied: "<gray>Has rechazado la petición de teletransporte</gray>"
-      deniedToTarget: "<gray>El jugador <green><sender></green> ha rechazado tu petición de teletransporte</gray>"
-      tpaHereToTarget: "<gray>El jugador <green><sender></green> te ha enviado una petición de teletransporte <red>[Tú -> <sender>]</red></gray> <dark_gray>» </dark_gray><click:run_command:'/tpaccept <sender>'><hover:show_text:'<green>Aceptar petición</green>'><bold><green>[ACEPTAR]</green></bold></hover></click>  <click:run_command:'/tpdeny <sender>'><hover:show_text:'<red>Rechazar petición</red>'><bold><red>[RECHAZAR]</red></bold></hover></click>"
-      tpaHereToSender: "<gray>Has enviado una petición de teletransporte a <green><target></green> <red>[<target> -> Tú]</red></gray>"
-      tpaToTarget: "<gray>El jugador <green><sender></green> te ha enviado una petición de teletransporte <red>[<sender> -> Tú]</red></gray> <dark_gray>» </dark_gray><click:run_command:'/tpaccept <sender>'><hover:show_text:'<green>Aceptar petición</green>'><bold><green>[ACEPTAR]</green></bold></hover></click>  <click:run_command:'/tpdeny <sender>'><hover:show_text:'<red>Rechazar petición</red>'><bold><red>[RECHAZAR]</red></bold></hover></click>"
-      tpaToSender: "<gray>Has enviado una petición de teletransporte a <green><target></green> <red>[Tú -> <target>]</red></gray>"
+    _meta:
+      name: "TP"
+      icon: "ENDER_PEARL"
     errors:
       cantTeleportToYourself: "<red>No puedes teletransportarte a ti mismo</red>"
       requestAlreadySent: "<red>Ya has enviado una petición de teletransporte a este jugador</red>"
@@ -110,23 +119,39 @@ modules:
       noLastPosition: "<red>No tienes una última posición a la que volver</red>"
 
   death:
+    _meta:
+      name: "Muerte"
+      icon: "SKELETON_SKULL"
     chat:
       lostLevelsItems: "<gray>Has perdido <green>tus items</green> y <green><levels> niveles de XP</green> al morir. Puedes recuperarlas con </gray><click:suggest_command:'/recinv'><hover:show_text:'<green>Haz click para escribir /recinv</green>'><green><u>/recinv</u></green></hover></click>"
       itemsNotRecovered: "<gray>Tus items no se han recuperado porque has muerto muy cerca del spawn/point o había jugadores cerca tuya. Los puedes recuperar en: <green><x> <y> <z></green></gray>"
     errors:
-      notEnoughLevels: "<red>No tienes suficientes niveles. Necesitas <green><required></green></red>"
       noItemsToRecover: "<red>No hay items que recuperar</red>"
 
   admin:
+    _meta:
+      name: "Admin"
+      icon: "NETHERITE_SWORD"
     spyMessage: "<gray><i>[Spy] <click:run_command:'/tp <player>'><hover:show_text:'<red>Jugador:</red> <white><player></white>\n<yellow>Haz click para hacer TP</yellow>'><red><player></red></hover></click>: <message></i></gray>"
     whileFrozen: "<red>No puedes hacer esto mientras estás congelado</red>"
     errors:
       cannotFreezeSelf: "<red>No te puedes congelar a ti mismo</red>"
       worldIsBlocked: "<gray>El mundo <green><world></green> está bloqueado</gray>"
 
+  player:
+    _meta:
+      name: "Jugador"
+      icon: "PLAYER_HEAD"
+
   misc:
-    illegalPortal: "<red>No puedes crear portales, deberás usar el portal comunitario. Este intento ha sido registrado por el Ministerio de Portales.</red>"
     errors:
       itemNotFound: "<red>No se ha encontrado el item</red>"
+      nickBlacklisted: "<red>Este nickname está prohibido</red>"
 
-file-version: 2
+  world:
+    _meta:
+      name: "Mundo"
+      icon: "GRASS_BLOCK"
+    illegalPortal: "<red>No puedes crear portales, deberás usar el portal comunitario. Este intento ha sido registrado por el Ministerio de Portales.</red>"
+
+file-version: 1

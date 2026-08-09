@@ -35,7 +35,6 @@ modules:
     enabled: true
     format: true
     mentions: true
-    adminChat: true
     roleplay: true
     endermanAnger: true
 
@@ -104,6 +103,11 @@ settings:
         z: 0.5
         yaw: 180.0
         pitch: 0.0
+
+  startupCommands:
+    onServerLoad: []
+    onWorldLoad: []
+    onWorldUnload: []
 
   sequentialCommands:
     _example:

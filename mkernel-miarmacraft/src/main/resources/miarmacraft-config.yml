@@ -1,0 +1,34 @@
+# -----------------------------------------------------------
+#  MKernel - Miarmacraft Configuration
+# -----------------------------------------------------------
+
+modules:
+  blindGod:
+    enabled: true
+
+  lawEnforcement:
+    enabled: true
+
+  shit:
+    enabled: true
+
+settings:
+  permissions:
+
+  blindGod:
+    yThreshold: -20
+    first: 50
+    second: 100
+    third: 150
+
+  lawEnforcement:
+    region: "hispania"
+    immunityPermission: "mkernel.lawEnforcement.bypass"
+    aggroTimeSeconds: 30
+    despawnTimeSeconds: 45
+    spawnDelaySeconds: 3
+    maxGolems: 6
+    golemBaseLevel: 20
+    golemLevelMultiplier: 1.12
+
+file-version: 2

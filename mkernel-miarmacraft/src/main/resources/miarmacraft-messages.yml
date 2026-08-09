@@ -1,0 +1,51 @@
+# -----------------------------------------------------------
+#  MKernel - Miarmacraft Language & Texts
+# -----------------------------------------------------------
+
+general:
+
+inventories:
+
+modules:
+  blindGod:
+    _meta:
+      name: "Dios Ciego"
+      icon: "SCULK_SHRIEKER"
+    first: "<dark_aqua><i>Sientes que algo te observa desde la oscuridad...</i></dark_aqua>"
+    second: "<dark_aqua><bold>El suelo tiembla bajo tus pies...</bold></dark_aqua>"
+    third: "<dark_red><bold>El Dios ciego ha despertado</bold></dark_red>"
+
+  lawEnforcement:
+    _meta:
+      name: "Legislación"
+      icon: "IRON_GOLEM_SPAWN_EGG"
+    warning: "<red><bold>ALTO AHÍ!</bold> Se te acusa de: <yellow><crime></yellow>. La Guardia Civil va a por ti!</red>"
+    golemName: "<gradient:#7fd81e:#888f21:#7fd81e><bold>Guardia Civil</bold></gradient>"
+    categories:
+      addSuccess: "<green>Categoría '<yellow><name></yellow>' añadida con éxito.</green>"
+      removeSuccess: "<green>Categoría '<yellow><name></yellow>' eliminada con éxito.</green>"
+      removeFail: "<red>No se pudo eliminar la categoría '<yellow><name></yellow>'.</red>"
+      notFound: "<red>No se encontró ninguna categoría con la ID <yellow><id></yellow>.</red>"
+      listHeader: "<gold>--- Lista de Categorías ---</gold>"
+      listItem: "<gray> - </gray><yellow><name></yellow> <gray>(ID: <id>)</gray>"
+      listEmpty: "<gray>No hay categorías registradas.</gray>"
+    articles:
+      addSuccess: "<green>Artículo '<yellow><name></yellow>' añadido con éxito.</green>"
+      removeSuccess: "<green>Artículo '<yellow><name></yellow>' eliminado con éxito.</green>"
+      removeFail: "<red>No se pudo eliminar el artículo '<yellow><name></yellow>'.</red>"
+      notFound: "<red>No se encontró ningún artículo con la ID <yellow><id></yellow>.</red>"
+      listHeader: "<gold>--- Lista de Artículos ---</gold>"
+      listItem: "<gray> - </gray><yellow><name></yellow> <gray>(ID: <id>)</gray> - <white><description></white>"
+      listEmpty: "<gray>No hay artículos registrados.</gray>"
+    record:
+      addSuccess: "<green>Se ha añadido un antecedente a <yellow><player></yellow> por el artículo '<yellow><article></yellow>'.</green>"
+      setStatusSuccess: "<green>El estado de los antecedentes de <yellow><player></yellow> se ha cambiado a <yellow><status></yellow>.</green>"
+      invalidArgument: "<red>El argumento '<yellow><argument></yellow>' no es válido.</red>"
+      header: "\n<color:#d30000><bold>=== REGISTRO DE ANTECEDENTES PENALES ===</bold></color>\n<gray>Sujeto investigado:</gray> <yellow><player></yellow>\n"
+      itemPending: "<dark_gray>»</dark_gray> <click:run_command:'/record setstatus <player> <id> PAID'><hover:show_text:'<green>Click para marcar como PAGADO</green>'><red>#<id></red></hover></click> <white>[<date>]</white> <gold><article></gold> <dark_gray>(<red>PENDIENTE</red>)</dark_gray>"
+      itemPaid: "<dark_gray>»</dark_gray> <click:run_command:'/record setstatus <player> <id> PENDING'><hover:show_text:'<yellow>Click para devolver a PENDIENTE</yellow>'><green>#<id></green></hover></click> <white>[<date>]</white> <st><gray><article></gray></st> <dark_gray>(<green>PAGADO</green>)</dark_gray>"
+      itemForgiven: "<dark_gray>»</dark_gray> <click:run_command:'/record setstatus <player> <id> PENDING'><hover:show_text:'<yellow>Click para devolver a PENDIENTE</yellow>'><yellow>#<id></yellow></hover></click> <white>[<date>]</white> <st><gray><article></gray></st> <dark_gray>(<yellow>INDULTADO</yellow>)</dark_gray>"
+      footer: "\n<gray>Total de delitos registrados:</gray> <red><bold><total></bold></red>\n<color:#d30000><bold>=========================================</bold></color>\n"
+      empty: "<green>El ciudadano <yellow><player></yellow> no tiene antecedentes penales registrados. Expediente limpio.</green>"
+
+file-version: 1

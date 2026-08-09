@@ -140,7 +140,7 @@ class ShopListener @Inject constructor(
             val shopId = shopService.generateShopId(loc)
 
             val chest = block.state as? Chest
-            val firstItem = chest?.blockInventory?.contents?.firstOrNull { it != null && !it.type.isAir }?.clone()?.apply { amount = 1 } ?: ItemStack(Material.DIAMOND) // O un fallback seguro
+            val firstItem = chest?.blockInventory?.contents?.firstOrNull { it != null && !it.type.isAir }?.clone()?.apply { amount = 1 } ?: ItemStack(Material.AIR)
             val totalStock = chest?.blockInventory?.contents?.filterNotNull()?.sumOf { if (it.isSimilar(firstItem)) it.amount else 0 } ?: 0
 
             val shop = Shop(

@@ -14,7 +14,7 @@ import net.miarma.mkernel.common.dao.WorldDao
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.MessageService
-import net.miarma.mkernel.task.LocationTrackerTask
+import net.miarma.mkernel.common.task.impl.LocationTrackerTask
 import net.miarma.mkernel.util.CommandUtil.checkModule
 import org.bukkit.Bukkit
 

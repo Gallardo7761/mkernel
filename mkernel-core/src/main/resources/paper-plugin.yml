@@ -196,6 +196,7 @@ permissions:
             mkernel.command.sequence: true
             mkernel.command.nick.others: true
             mkernel.events.adminchat: true
+            mkernel.shop.admin: true
             mkernel.player: true
 
     mkernel.player:

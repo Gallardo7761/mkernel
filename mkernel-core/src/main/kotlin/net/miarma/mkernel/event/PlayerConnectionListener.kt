@@ -4,10 +4,8 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.kyori.adventure.title.Title
 import net.miarma.mkernel.common.config.ConfigKeys
-import net.miarma.mkernel.common.dao.UserDao
 import net.miarma.mkernel.common.inventory.ShopBuyInventory
 import net.miarma.mkernel.common.service.impl.ConfigService
-import net.miarma.mkernel.common.service.impl.DatabaseService
 import net.miarma.mkernel.common.service.impl.LastPositionService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.PlayerService
@@ -30,6 +28,18 @@ class PlayerConnectionListener @Inject constructor(
     @EventHandler
     fun onPlayerJoin(event: PlayerJoinEvent) {
         val player = event.player
+
+        val joinedNick = "@${player.getNickName(playerService)}"
+
+        Bukkit.getOnlinePlayers().forEach { onlinePlayer ->
+            onlinePlayer.addCustomChatCompletions(listOf(joinedNick))
+        }
+
+        val allNicks = Bukkit.getOnlinePlayers().map { target ->
+            "@${target.getNickName(playerService)}"
+        }
+
+        player.addCustomChatCompletions(allNicks)
 
         player.playerListName(messageService.builder(player.getNickName(playerService)).build())
 
@@ -66,6 +76,11 @@ class PlayerConnectionListener @Inject constructor(
     @EventHandler
     fun onPlayerLeave(event: PlayerQuitEvent) {
         val player = event.player
+        val quitNick = "@${player.getNickName(playerService)}"
+
+        Bukkit.getOnlinePlayers().forEach { onlinePlayer ->
+            onlinePlayer.removeCustomChatCompletions(listOf(quitNick))
+        }
 
         val customLeaveMessage = messageService.builder(configService.getString(ConfigKeys.Messages.Connection.LEAVE))
             .tag("player", player.getNickName(playerService))

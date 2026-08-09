@@ -7,6 +7,26 @@ import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
+enum class HarvestableCrop(
+    val blockMaterial: Material,
+    val maxAge: Int,
+    val resetData: String?,
+    val dropMaterial: Material,
+    val multiplier: Double?
+) {
+    WHEAT(Material.WHEAT, 7, "minecraft:wheat[age=0]", Material.WHEAT, 2.25),
+    POTATOES(Material.POTATOES, 7, "minecraft:potatoes[age=0]", Material.POTATO, 2.25),
+    CARROTS(Material.CARROTS, 7, "minecraft:carrots[age=0]", Material.CARROT, 2.25),
+    BEETROOTS(Material.BEETROOTS, 3, "minecraft:beetroots[age=0]", Material.BEETROOT, 2.75),
+    COCOA(Material.COCOA, 2, "minecraft:cocoa[age=0]", Material.COCOA_BEANS, 2.25),
+    TORCHFLOWER(Material.TORCHFLOWER_CROP, 1, null, Material.TORCHFLOWER, null),
+    PITCHER(Material.PITCHER_CROP, 4, null, Material.PITCHER_PLANT, null);
+
+    companion object {
+        fun from(material: Material) = entries.find { it.blockMaterial == material }
+    }
+}
+
 class BlockEventHelper private constructor(
     private val player: Player,
     private val block: Block
@@ -15,63 +35,19 @@ class BlockEventHelper private constructor(
         fun of(player: Player, block: Block) = BlockEventHelper(player, block)
     }
 
-    fun handleWheat() {
-        if (block.blockData.getAsString().contains("age=7")) {
-            val n = ((Math.random() + 1) * 2.25).toInt()
-            block.blockData = Bukkit.createBlockData("minecraft:wheat[age=0]")
-            player.world.dropItemNaturally(block.location, ItemStack(Material.WHEAT, n))
-            player.playSound(block.location, Sound.BLOCK_GRASS_BREAK, 1f, 1f)
-        }
-    }
+    fun handleCrop(crop: HarvestableCrop) {
+        if (block.blockData.asString.contains("age=${crop.maxAge}")) {
+            val amount = if (crop.multiplier != null) {
+                ((Math.random() + 1) * crop.multiplier).toInt()
+            } else 1
 
-    fun handlePotatoes() {
-        if (block.blockData.getAsString().contains("age=7")) {
-            val n = ((Math.random() + 1) * 2.25).toInt()
-            block.blockData = Bukkit.createBlockData("minecraft:potatoes[age=0]")
-            player.world.dropItemNaturally(block.location, ItemStack(Material.POTATO, n))
-            player.playSound(block.location, Sound.BLOCK_GRASS_BREAK, 1f, 1f)
-        }
-    }
+            if (crop.resetData != null) {
+                block.blockData = Bukkit.createBlockData(crop.resetData)
+            } else {
+                block.type = Material.AIR
+            }
 
-    fun handleCarrots() {
-        if (block.blockData.getAsString().contains("age=7")) {
-            val n = ((Math.random() + 1) * 2.25).toInt()
-            block.blockData = Bukkit.createBlockData("minecraft:carrots[age=0]")
-            player.world.dropItemNaturally(block.location, ItemStack(Material.CARROT, n))
-            player.playSound(block.location, Sound.BLOCK_GRASS_BREAK, 1f, 1f)
-        }
-    }
-
-    fun handleBeetroots() {
-        if (block.blockData.getAsString().contains("age=3")) {
-            val n = ((Math.random() + 1) * 2.75).toInt()
-            block.blockData = Bukkit.createBlockData("minecraft:beetroots[age=0]")
-            player.world.dropItemNaturally(block.location, ItemStack(Material.BEETROOT, n))
-            player.playSound(block.location, Sound.BLOCK_GRASS_BREAK, 1f, 1f)
-        }
-    }
-
-    fun handleCocoa() {
-        if (block.blockData.getAsString().contains("age=2")) {
-            val n = ((Math.random() + 1) * 2.25).toInt()
-            block.blockData = Bukkit.createBlockData("minecraft:cocoa[age=0]")
-            player.world.dropItemNaturally(block.location, ItemStack(Material.COCOA_BEANS, n))
-            player.playSound(block.location, Sound.BLOCK_GRASS_BREAK, 1f, 1f)
-        }
-    }
-
-    fun handleTorchflower() {
-        if (block.blockData.getAsString().contains("age=1")) {
-            block.type = Material.AIR
-            player.world.dropItemNaturally(block.location, ItemStack(Material.TORCHFLOWER, 1))
-            player.playSound(block.location, Sound.BLOCK_GRASS_BREAK, 1f, 1f)
-        }
-    }
-
-    fun handlePitcher() {
-        if (block.blockData.getAsString().contains("age=4")) {
-            block.type = Material.AIR
-            player.world.dropItemNaturally(block.location, ItemStack(Material.PITCHER_PLANT, 1))
+            player.world.dropItemNaturally(block.location, ItemStack(crop.dropMaterial, amount))
             player.playSound(block.location, Sound.BLOCK_GRASS_BREAK, 1f, 1f)
         }
     }

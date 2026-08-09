@@ -2,6 +2,7 @@ package net.miarma.mkernel.common.inventory
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import net.miarma.mkernel.api.model.ModuleDef
 import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.service.impl.ConfigService
@@ -27,72 +28,9 @@ import kotlin.math.max
 class ConfigInventory @Inject constructor(
     private val configService: ConfigService,
     private val messageService: MessageService,
-    private val moduleLoader: ModuleLoader
+    private val moduleLoader: ModuleLoader,
+    private val moduleDefs: Set<ModuleDef>
 ) {
-
-    private data class ModuleDef(val id: String, val icon: Material, val features: List<String>)
-
-    private val moduleDefs = listOf(
-        ModuleDef(
-            "core", Material.ENDER_CHEST, listOf(
-                ConfigKeys.Modules.Core.Commands.DISPOSAL,
-                ConfigKeys.Modules.Core.Commands.GLOBAL_CHEST,
-                ConfigKeys.Modules.Core.Commands.PAY_XP,
-                ConfigKeys.Modules.Core.Commands.SEND_COORDS,
-                ConfigKeys.Modules.Core.Commands.NICK
-            )
-        ),
-        ModuleDef(
-            "admin", Material.NETHERITE_SWORD, listOf(
-                ConfigKeys.Modules.Admin.CHAT,
-                ConfigKeys.Modules.Admin.Commands.SPECIAL_ITEM,
-                ConfigKeys.Modules.Admin.Commands.INVSEE,
-                ConfigKeys.Modules.Admin.Commands.GMA,
-                ConfigKeys.Modules.Admin.Commands.GMSP,
-                ConfigKeys.Modules.Admin.Commands.GMC,
-                ConfigKeys.Modules.Admin.Commands.GMS,
-                ConfigKeys.Modules.Admin.Commands.HEAL,
-                ConfigKeys.Modules.Admin.Commands.OPME,
-                ConfigKeys.Modules.Admin.Commands.DEOPME,
-                ConfigKeys.Modules.Admin.Commands.SPY,
-                ConfigKeys.Modules.Admin.Commands.VANISH,
-                ConfigKeys.Modules.Admin.Commands.SEQUENCE,
-                ConfigKeys.Modules.Admin.Commands.FLYSPEED,
-                ConfigKeys.Modules.Admin.Commands.FREEZE
-            )
-        ),
-        ModuleDef(
-            "chat", Material.WRITABLE_BOOK, listOf(
-                ConfigKeys.Modules.Chat.FORMAT,
-                ConfigKeys.Modules.Chat.MENTIONS,
-                ConfigKeys.Modules.Chat.ROLEPLAY,
-                ConfigKeys.Modules.Chat.ENDERMAN_ANGER
-            )
-        ),
-        ModuleDef("shop", Material.EMERALD, emptyList()),
-        ModuleDef(
-            "teleport", Material.ENDER_PEARL, listOf(
-                ConfigKeys.Modules.Teleport.SPAWN_AT_LOBBY
-            )
-        ),
-        ModuleDef(
-            "player", Material.PLAYER_HEAD, listOf(
-                ConfigKeys.Modules.Player.JOIN_TITLE,
-                ConfigKeys.Modules.Player.LEAVE_TITLE,
-                ConfigKeys.Modules.Player.DEATH_TITLE,
-                ConfigKeys.Modules.Player.RECOVER_INVENTORY
-            )
-        ),
-        ModuleDef(
-            "world", Material.GRASS_BLOCK, listOf(
-                ConfigKeys.Modules.World.HARVEST_RIGHT_CLICK,
-                ConfigKeys.Modules.World.AUTO_ITEM_REFILL,
-                ConfigKeys.Modules.World.NO_NETHER_PORTALS,
-                ConfigKeys.Modules.World.TIME_WEATHER_CONTROL
-            )
-        )
-    )
-
     fun open(player: Player) {
         val moduleItems = moduleDefs.map { def -> getModuleItem(def) }
         val rows = max(1, ceil(moduleItems.size / 9.0).toInt())
@@ -119,6 +57,10 @@ class ConfigInventory @Inject constructor(
             override fun getItemProvider(player: Player): ItemProvider {
                 val enabled = moduleLoader.isModuleEnabled(def.id)
 
+                val localizedName = configService.getString(def.namePath, def.id.replaceFirstChar { it.uppercase() })
+                val iconString = configService.getString(def.iconPath, "BEDROCK")
+                val iconMaterial = Material.matchMaterial(iconString) ?: Material.BEDROCK
+
                 val stateColor = configService.getString(
                     if (enabled) ConfigKeys.Messages.Inventories.CONFIG_STATE_ENABLED_COLOR
                     else ConfigKeys.Messages.Inventories.CONFIG_STATE_DISABLED_COLOR
@@ -129,7 +71,7 @@ class ConfigInventory @Inject constructor(
                 )
 
                 val displayName = messageService.builder(configService.getString(ConfigKeys.Messages.Inventories.CONFIG_MODULE_NAME))
-                    .tag("module", def.id.replaceFirstChar { it.uppercase() })
+                    .tag("module", localizedName)
                     .tag("state_color", stateColor)
                     .build()
 
@@ -139,7 +81,7 @@ class ConfigInventory @Inject constructor(
 
                 val hintLine = messageService.builder(configService.getString(ConfigKeys.Messages.Inventories.CONFIG_MODULE_LORE_HINT)).build()
 
-                val itemStack = ItemStack(def.icon)
+                val itemStack = ItemStack(iconMaterial)
                 val meta = itemStack.itemMeta
                 if (meta != null) {
                     meta.displayName(displayName)
@@ -171,8 +113,9 @@ class ConfigInventory @Inject constructor(
             .setContent(featureItems)
             .build()
 
+        val moduleName = configService.getString("modules.${def.id}._meta.name")
         val title = messageService.builder(configService.getString(ConfigKeys.Messages.Inventories.CONFIG_SUBTITLE))
-            .tag("module", def.id.replaceFirstChar { it.uppercase() })
+            .tag("module", moduleName)
             .build()
 
         Window.builder()

@@ -27,20 +27,22 @@ class ConfigService @Inject constructor(private val plugin: MKernel) : IService,
     private val cache = ConcurrentHashMap<String, Any?>()
 
     override fun onEnable() {
-        loadConfigFile("config.yml")
-        loadConfigFile("commands.yml")
-        loadConfigFile("messages.yml")
+        loadConfigFile("config.yml", "config.yml")
+        loadConfigFile("commands.yml", "commands.yml")
+        loadConfigFile("messages.yml", "messages.yml")
+        loadConfigFile("miarmacraft-config.yml", "modules/miarmacraft/config.yml")
+        loadConfigFile("miarmacraft-commands.yml", "modules/miarmacraft/commands.yml")
+        loadConfigFile("miarmacraft-messages.yml", "modules/miarmacraft/messages.yml")
     }
 
     fun getConfig(name: String): YamlDocument? {
         return configs[name]
     }
 
-    private fun loadConfigFile(fileName: String) {
+    private fun loadConfigFile(resourceName: String, diskPath: String) {
         try {
-            val file = File(plugin.dataFolder, fileName)
-            val resource = plugin.getResource(fileName) ?: run {
-                plugin.logger.severe("Error finding internal resource: $fileName")
+            val file = File(plugin.dataFolder, diskPath)
+            val resource = plugin.getResource(resourceName) ?: run {
                 return
             }
 
@@ -55,10 +57,10 @@ class ConfigService @Inject constructor(private val plugin: MKernel) : IService,
                     .setKeepAll(true)
                     .build()
             )
-            configs[fileName] = document
-            plugin.logger.info("Configuration loaded/updated: $fileName")
+            configs[resourceName] = document
+            plugin.logger.info("Configuration loaded/updated: $diskPath")
         } catch (e: IOException) {
-            plugin.logger.severe("Error reloading file: $fileName")
+            plugin.logger.severe("Error loading file: $diskPath")
             e.printStackTrace()
         }
     }
