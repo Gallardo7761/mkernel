@@ -43,7 +43,7 @@ class MKernel : JavaPlugin(), CoroutineScope {
                 .setNamespace("mkernel")
         )
 
-        WorldGuardHook.registerFlag()
+        WorldGuardHook.registerFlags()
     }
 
     override fun onEnable() {
