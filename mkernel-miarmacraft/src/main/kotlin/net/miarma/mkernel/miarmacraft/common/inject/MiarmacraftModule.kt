@@ -29,6 +29,15 @@ class MiarmacraftModule : AbstractModule() {
 
         moduleBinder.addBinding().toInstance(
             ModuleDef(
+                "shit",
+                ConfigKeys.Messages.Shit._Meta.NAME,
+                ConfigKeys.Messages.Shit._Meta.ICON,
+                emptyList()
+            )
+        )
+
+        moduleBinder.addBinding().toInstance(
+            ModuleDef(
                 "paysheet",
                 ConfigKeys.Messages.Paysheet._Meta.NAME,
                 ConfigKeys.Messages.Paysheet._Meta.ICON,

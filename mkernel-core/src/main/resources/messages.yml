@@ -21,6 +21,7 @@ general:
     temporarilyDisabled: "<red>Este comando está temporalmente desactivado</red>"
     notANumber: "<red>Eso no es un número válido</red>"
     notEnoughLevels: "<red>No tienes suficientes niveles. Necesitas <green><required></green></red>"
+    zeroLevels: "<red>No tienes niveles que enviar.</red>"
 
 inventories:
   globalChestTitle: "Cofre global"
@@ -154,4 +155,4 @@ modules:
       icon: "GRASS_BLOCK"
     illegalPortal: "<red>No puedes crear portales, deberás usar el portal comunitario. Este intento ha sido registrado por el Ministerio de Portales.</red>"
 
-file-version: 1
+file-version: 2

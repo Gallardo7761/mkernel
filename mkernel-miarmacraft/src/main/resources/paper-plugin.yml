@@ -235,6 +235,7 @@ permissions:
             mkernel.miarmacraft.command.record.setstatus: true
             mkernel.miarmacraft.command.articles: true
             mkernel.miarmacraft.command.articles.list: true
+            mkernel.miarmacraft.command.articles.categories: true
             mkernel.miarmacraft.command.articles.categories.list: true
 
     mkernel.admin:

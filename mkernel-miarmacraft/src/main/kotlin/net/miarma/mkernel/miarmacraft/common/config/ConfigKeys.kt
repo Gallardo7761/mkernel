@@ -219,6 +219,13 @@ object ConfigKeys {
             const val GOLEM_NAME = "modules.lawEnforcement.golemName"
         }
 
+        object Shit {
+            object _Meta {
+                const val NAME = "modules.shit._meta.name"
+                const val ICON = "modules.shit._meta.icon"
+            }
+        }
+
         object Paysheet {
             object _Meta {
                 const val NAME = "modules.paysheet._meta.name"

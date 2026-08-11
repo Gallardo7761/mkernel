@@ -153,6 +153,7 @@ object ConfigKeys {
                 const val TEMPORARILY_DISABLED = "general.errors.temporarilyDisabled"
                 const val NOT_A_NUMBER = "general.errors.notANumber"
                 const val NOT_ENOUGH_LEVELS = "general.errors.notEnoughLevels"
+                const val ZERO_LEVELS = "general.errors.zeroLevels"
             }
         }
 
