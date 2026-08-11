@@ -32,6 +32,10 @@ object ConfigKeys {
             const val GOLEM_BASE_LEVEL = "settings.lawEnforcement.golemBaseLevel"
             const val GOLEM_LEVEL_MULTIPLIER = "settings.lawEnforcement.golemLevelMultiplier"
         }
+
+        object Paysheet {
+            const val TCP_PERCENT = "settings.paysheet.tcpPercent"
+        }
     }
 
     object Commands {
@@ -43,6 +47,7 @@ object ConfigKeys {
             const val DESC = "arguments.description"
             const val FINE = "arguments.fine"
             const val STATUS = "arguments.status"
+            const val QUANTITY = "arguments.quantity"
         }
 
         object Articles {
@@ -125,6 +130,33 @@ object ConfigKeys {
             }
         }
 
+        object Paysheet {
+            const val NAME = "commands.paysheet.name"
+            const val DESC = "commands.paysheet.description"
+            const val PERM = "commands.paysheet.permission"
+            const val USAGE = "commands.paysheet.usage"
+            const val MSG_HAS_MONEY = "commands.paysheet.messages.hasMoney"
+
+            object Retain {
+                const val NAME = "commands.paysheet.subcommands.retain.name"
+                const val DESC = "commands.paysheet.subcommands.retain.description"
+                const val PERM = "commands.paysheet.subcommands.retain.permission"
+                const val USAGE = "commands.paysheet.subcommands.retain.usage"
+            }
+
+            object Receive {
+                const val NAME = "commands.paysheet.subcommands.receive.name"
+                const val DESC = "commands.paysheet.subcommands.receive.description"
+                const val PERM = "commands.paysheet.subcommands.receive.permission"
+                const val USAGE = "commands.paysheet.subcommands.receive.usage"
+
+                const val MSG_BANCO_ERROR = "commands.paysheet.subcommands.receive.messages.bancoError"
+                const val MSG_NO_PAYSHEET = "commands.paysheet.subcommands.receive.messages.noPaysheet"
+                const val MSG_SUCCESS = "commands.paysheet.subcommands.receive.messages.success"
+                const val MSG_NO_MONEY_IN_SERVER_ACCOUNT = "commands.paysheet.subcommands.receive.messages.noMoneyInServerAccount"
+            }
+        }
+
         object SixSeven {
             const val NAME = "commands.sixseven.name"
             const val DESC = "commands.sixseven.description"
@@ -185,6 +217,13 @@ object ConfigKeys {
             }
 
             const val GOLEM_NAME = "modules.lawEnforcement.golemName"
+        }
+
+        object Paysheet {
+            object _Meta {
+                const val NAME = "modules.paysheet._meta.name"
+                const val ICON = "modules.paysheet._meta.icon"
+            }
         }
     }
 }

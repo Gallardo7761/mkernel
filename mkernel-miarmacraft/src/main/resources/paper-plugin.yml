@@ -160,6 +160,8 @@ permissions:
         description: Cambia el usuario a otro jugador
         default: op
 
+
+
     mkernel.events.chatformat:
         description: Permite al usuario usar formatos y colores en los mensajes de chat
         default: true
@@ -170,44 +172,74 @@ permissions:
         description: Permite al usuario usar menciones
         default: true
 
+
+
     mkernel.shop.admin:
         description: Permiso de administrador para el sistema de tiendas
         default: op
 
-    mkernel.lawEnforcement.bypass:
-        description: Otorga inmunidad a la ley
-        default: op
 
-    mkernel.commands.record:
+
+    mkernel.miarmacraft.commands.record:
         description: Comando principal de antecedentes
         default: op
-
-    mkernel.commands.record.add:
-      description: Añade un antecedente a un jugador
-      default: op
-
-    mkernel.commands.record.clear:
-        description: Limpia un antecedente de un jugador por ID
+    mkernel.miarmacraft.commands.record.add:
+        description: Añade un antecedente a un jugador
         default: op
-
-    mkernel.commands.record.clearall:
-        description: Limpia todos los antecedentes de un jugador
+    mkernel.miarmacraft.commands.record.setstatus:
+        description: Cambia el estado de un antecedente de un jugador
         default: op
-
-    mkernel.commands.record.pending:
-      description: Pone un antecedente como pendiente de un jugador por ID
-      default: op
+    mkernel.miarmacraft.commands.articles:
+        description: Comando principal de artículos
+        default: op
+    mkernel.miarmacraft.commands.articles.add:
+        description: Añade un artículo a una categoría del C.P.
+        default: op
+    mkernel.miarmacraft.commands.articles.remove:
+        description: Elimina un artículo del C.P.
+        default: op
+    mkernel.miarmacraft.commands.articles.list:
+        description: Lista todos los artículos del C.P.
+        default: op
+    mkernel.miarmacraft.commands.articles.categories:
+        description: Comando principal de categorías del C.P.
+        default: op
+    mkernel.miarmacraft.commands.articles.categories.add:
+        description: Añade una categoría al C.P.
+        default: op
+    mkernel.miarmacraft.commands.articles.categories.remove:
+        description: Elimina una categoría del C.P.
+        default: op
+    mkernel.miarmacraft.commands.articles.categories.list:
+        description: Lista todas las categorías del C.P.
+        default: op
+    mkernel.miarmacraft.commands.paysheet.base:
+        description: Permite ver tus nóminas
+        default: true
+    mkernel.miarmacraft.commands.paysheet.admin:
+        description: Permite gestionar dinero retenido
+        default: op
+    mkernel.miarmacraft.commands.paysheet.receive:
+        description: Permite cobrar tus nóminas
+        default: op
+    mkernel.miarmacraft.commands.sixseven:
+        description: '67'
+        default: true
 
     mkernel.police:
         description: Permite al usuario ejecutar comandos de policía
         default: op
         children:
-            mkernel.lawEnforcement.bypass: true
-            mkernel.commands.record.add: true
             mkernel.commands.record: true
-            mkernel.commands.record.clear: true
-            mkernel.commands.record.clearall: true
-            mkernel.commands.record.pending: true
+            mkernel.commands.record.add: true
+            mkernel.commands.record.setstatus: true
+            mkernel.miarmacraft.commands.articles: true
+            mkernel.commands.articles.add: true
+            mkernel.commands.articles.remove: true
+            mkernel.commands.articles.list: true
+            mkernel.commands.articles.categories.add: true
+            mkernel.commands.articles.categories.remove: true
+            mkernel.commands.articles.categories.list: true
 
     mkernel.admin:
         description: Permite al usuario ejecutar comandos de administrador
@@ -237,6 +269,7 @@ permissions:
             mkernel.command.sequence: true
             mkernel.command.nick.others: true
             mkernel.events.adminchat: true
+            mkernel.miarmacraft.commands.paysheet.admin: true
             mkernel.player: true
             mkernel.police: true
 
@@ -266,6 +299,8 @@ permissions:
             mkernel.command.payxp: true
             mkernel.command.back: true
             mkernel.command.nick: true
+            mkernel.miarmacraft.commands.paysheet.base: true
+            mkernel.miarmacraft.commands.sixseven: true
 
     mkernel.*:
         description: Permite al usuario ejecutar todos los comandos de MKernel
@@ -273,3 +308,4 @@ permissions:
         children:
             mkernel.admin: true
             mkernel.player: true
+            mkernel.police: true

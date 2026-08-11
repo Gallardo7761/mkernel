@@ -48,4 +48,9 @@ modules:
       footer: "\n<gray>Total de delitos registrados:</gray> <red><bold><total></bold></red>\n<color:#d30000><bold>=========================================</bold></color>\n"
       empty: "<green>El ciudadano <yellow><player></yellow> no tiene antecedentes penales registrados. Expediente limpio.</green>"
 
-file-version: 1
+  payhseet:
+    _meta:
+      name: "Nóminas"
+      icon: "MAP"
+
+file-version: 2

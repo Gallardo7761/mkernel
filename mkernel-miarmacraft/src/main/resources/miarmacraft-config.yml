@@ -23,7 +23,6 @@ settings:
 
   lawEnforcement:
     region: "hispania"
-    immunityPermission: "mkernel.lawEnforcement.bypass"
     aggroTimeSeconds: 30
     despawnTimeSeconds: 45
     spawnDelaySeconds: 3
@@ -31,4 +30,7 @@ settings:
     golemBaseLevel: 20
     golemLevelMultiplier: 1.12
 
-file-version: 2
+  paysheet:
+    tcpPercent: 15.0
+
+file-version: 3

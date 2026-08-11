@@ -24,3 +24,9 @@ CREATE TABLE IF NOT EXISTS CrimeHistory (
     FOREIGN KEY (crime_id) REFERENCES Crime(id),
     FOREIGN KEY (officer_uuid) REFERENCES User(uuid)
 );
+
+CREATE TABLE IF NOT EXISTS RetainedMoney (
+    user_uuid TEXT PRIMARY KEY,
+    amount DOUBLE NOT NULL DEFAULT 0.0,
+    FOREIGN KEY (user_uuid) REFERENCES User(uuid)
+);

@@ -26,5 +26,14 @@ class MiarmacraftModule : AbstractModule() {
                 emptyList()
             )
         )
+
+        moduleBinder.addBinding().toInstance(
+            ModuleDef(
+                "paysheet",
+                ConfigKeys.Messages.Paysheet._Meta.NAME,
+                ConfigKeys.Messages.Paysheet._Meta.ICON,
+                emptyList()
+            )
+        )
     }
 }

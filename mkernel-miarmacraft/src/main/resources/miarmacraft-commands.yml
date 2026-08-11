@@ -10,76 +10,101 @@ arguments:
   description: "descripción"
   fine: "multa"
   status: "estado"
+  quantity: "cantidad"
 
 commands:
   articles:
     name: "articles"
     aliases: [ "art" ]
     description: "Gestiona los artículos del código penal"
-    permission: "mkernel.miarmacraft.law.articles"
+    permission: "mkernel.miarmacraft.commands.articles"
     usage: "/articles <add|remove|list|categories>"
     subcommands:
       add:
         name: "add"
         description: "Añade un nuevo artículo."
-        permission: "mkernel.miarmacraft.law.articles.add"
+        permission: "mkernel.miarmacraft.commands.articles.add"
         usage: "/articles add <id_categoria> <nombre> <descripción> [multa]"
       remove:
         name: "remove"
         description: "Elimina un artículo existente."
-        permission: "mkernel.miarmacraft.law.articles.remove"
+        permission: "mkernel.miarmacraft.commands.articles.remove"
         usage: "/articles remove <id>"
       list:
         name: "list"
         description: "Muestra la lista de artículos."
-        permission: "mkernel.miarmacraft.law.articles.list"
+        permission: "mkernel.miarmacraft.commands.articles.list"
         usage: "/articles list"
       categories:
         name: "categories"
         aliases: [ "cat" ]
         description: "Gestiona las categorías del código penal"
-        permission: "mkernel.miarmacraft.law.categories"
+        permission: "mkernel.miarmacraft.commands.articles.categories"
         usage: "/articles categories <add|remove|list>"
         subcommands:
           add:
             name: "add"
             description: "Añade una nueva categoría."
-            permission: "mkernel.miarmacraft.law.categories.add"
+            permission: "mkernel.miarmacraft.commands.articles.categories.add"
             usage: "/articles categories add <nombre>"
           remove:
             name: "remove"
             description: "Elimina una categoría existente."
-            permission: "mkernel.miarmacraft.law.categories.remove"
+            permission: "mkernel.miarmacraft.commands.articles.categories.remove"
             usage: "/articles categories remove <id>"
           list:
             name: "list"
             description: "Muestra la lista de categorías."
-            permission: "mkernel.miarmacraft.law.categories.list"
+            permission: "mkernel.miarmacraft.commands.articles.categories.list"
             usage: "/articles categories list"
 
   record:
     name: "record"
     aliases: ["rec"]
     description: "Mira los antecedentes de un jugador"
-    permission: "mkernel.commands.record"
+    permission: "mkernel.miarmacraft.commands.record"
     usage: "/record <jugador>"
     subcommands:
       add:
         name: "add"
         description: "Añade un antecedente a un jugador."
-        permission: "mkernel.miarmacraft.law.record.add"
+        permission: "mkernel.miarmacraft.commands.record.add"
         usage: "/record add <jugador> <id_articulo>"
       setstatus:
         name: "setstatus"
         description: "Cambia el estado de uno o más antecedentes."
-        permission: "mkernel.miarmacraft.law.record.setstatus"
+        permission: "mkernel.miarmacraft.commands.record.setstatus"
         usage: "/record setstatus <jugador> <id_articulo|all> <status>"
+
+  paysheet:
+    name: "nomina"
+    description: "Gestiona las nóminas y retenciones de Hacienda"
+    permission: "mkernel.miarmacraft.commands.paysheet.base"
+    usage: "/nomina"
+    messages:
+      hasMoney: "<gray>Tienes <green><amount></green> retenidos en tu nómina. Ve al <yellow>Ayuntamiento</yellow> para cobrarlos.</gray>"
+    subcommands:
+      retain:
+        name: "retener"
+        description: "Retiene dinero de un jugador a su nómina en Hacienda"
+        permission: "mkernel.miarmacraft.commands.paysheet.admin"
+        usage: "/nomina retener <jugador> <cantidad>"
+      receive:
+        name: "cobrar"
+        description: "Cobra tu nómina"
+        permission: "mkernel.miarmacraft.commands.paysheet.receive"
+        usage: "/nomina cobrar"
+        messages:
+          bancoError: "<red>El sistema bancario está caído. Disculpen las molestias.</red>"
+          noPaysheet: "<red>No tienes nómina pendiente de cobrar. A currar!</red>"
+          success: "<gray>Has cobrado tu nómina: <green><neto></green> <dark_gray>[Bruto: <bruto> | <hover:show_text:'<red><bold>Tasa de Contribución Patria (<percent>%)</bold></red>\n<gray>Decreto Ley de la RDH.\nImpuesto obligatorio sobre el rendimiento del trabajo para la financiación del Régimen.</gray>'><underlined>TCP</underlined></hover>: <red>-<impuesto></red>]</dark_gray></gray>"
+          noMoneyInServerAccount: "<red>Hacienda está en bancarrota. Qué ruina.</red>"
 
   sixseven:
     name: "67"
     description: "Six seveeeeen"
-    permission: "mkernel.commands.sixseven"
+    permission: "mkernel.miarmacraft.commands.sixseven"
     usage: "/67"
     message: "<light_purple><bold>SIX SEVEEEEEEEEN!!!!</bold></light_purple>"
 
-file-version: 2
+file-version: 3
