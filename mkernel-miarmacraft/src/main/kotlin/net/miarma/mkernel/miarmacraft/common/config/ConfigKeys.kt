@@ -13,6 +13,10 @@ object ConfigKeys {
         object Shit {
             const val MAIN = "modules.shit"
         }
+
+        object PiglinCartel {
+            const val MAIN = "modules.piglinCartel"
+        }
     }
 
     object Settings {
@@ -35,6 +39,11 @@ object ConfigKeys {
 
         object Paysheet {
             const val TCP_PERCENT = "settings.paysheet.tcpPercent"
+        }
+
+        object PiglinCartel {
+            const val TAX_AMOUNT = "settings.piglinCartel.taxAmount"
+            const val CURRENCY = "settings.piglinCartel.currency"
         }
     }
 
@@ -231,6 +240,16 @@ object ConfigKeys {
                 const val NAME = "modules.paysheet._meta.name"
                 const val ICON = "modules.paysheet._meta.icon"
             }
+        }
+
+        object PiglinCartel {
+            object _Meta {
+                const val NAME = "modules.piglinCartel._meta.name"
+                const val ICON = "modules.piglinCartel._meta.icon"
+            }
+
+            const val MSG_PAID = "modules.piglinCartel.paid"
+            const val MSG_NOT_ENOUGH_TRIBUTE = "modules.piglinCartel.notEnoughTribute"
         }
     }
 }

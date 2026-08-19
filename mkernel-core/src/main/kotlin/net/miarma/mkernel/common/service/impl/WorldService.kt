@@ -18,6 +18,7 @@ class WorldService @Inject constructor(
     override fun onEnable() {
         plugin.launchAsync {
             Bukkit.getWorlds().forEach { worldDao.createWorld(it) }
+            worldDao.loadBlockedWorldsCache()
         }
     }
 }

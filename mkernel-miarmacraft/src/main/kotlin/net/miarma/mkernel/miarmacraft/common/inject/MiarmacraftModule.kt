@@ -44,5 +44,14 @@ class MiarmacraftModule : AbstractModule() {
                 emptyList()
             )
         )
+
+        moduleBinder.addBinding().toInstance(
+            ModuleDef(
+                "piglinCartel",
+                ConfigKeys.Messages.PiglinCartel._Meta.NAME,
+                ConfigKeys.Messages.PiglinCartel._Meta.ICON,
+                emptyList()
+            )
+        )
     }
 }

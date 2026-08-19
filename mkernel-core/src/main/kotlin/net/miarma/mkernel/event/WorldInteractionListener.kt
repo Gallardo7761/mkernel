@@ -83,31 +83,25 @@ class WorldInteractionListener @Inject constructor(
         }
     }
 
-    @EventHandler
+    @EventHandler(ignoreCancelled = true)
     fun onPortalEnter(event: PlayerPortalEvent) {
         val toWorld = event.to.world ?: return
         val player = event.player
-        val fromLoc = locationTrackerTask.getPlayerRealTimeLocation(player) ?: player.location
+
+        if (!worldDao.isWorldBlockedCached(toWorld.name)) {
+            val fromLoc = locationTrackerTask.getPlayerRealTimeLocation(player) ?: player.location
+            lastPositionService.setLastPosition(player, fromLoc)
+            return
+        }
 
         event.isCancelled = true
-
-        plugin.launchSync {
-            val blockedWorlds = worldDao.getBlockedWorlds()
-
-            if (!player.isOnline) return@launchSync
-
-            if (blockedWorlds.contains(toWorld.name)) {
-                val pushBackLoc = fromLoc.clone().subtract(2.0, 0.0, 2.0)
-                player.teleportAsync(pushBackLoc)
-                messageService.builder(configService.getString(ConfigKeys.Messages.Admin.Errors.WORLD_BLOCKED))
-                    .withPrefix()
-                    .tag("world", toWorld.name)
-                    .send(player)
-            } else {
-                lastPositionService.setLastPosition(player, fromLoc)
-                player.teleportAsync(event.to)
-            }
-        }
+        val fromLoc = locationTrackerTask.getPlayerRealTimeLocation(player) ?: player.location
+        val pushBackLoc = fromLoc.clone().subtract(2.0, 0.0, 2.0)
+        player.teleportAsync(pushBackLoc)
+        messageService.builder(configService.getString(ConfigKeys.Messages.Admin.Errors.WORLD_BLOCKED))
+            .withPrefix()
+            .tag("world", toWorld.name)
+            .send(player)
     }
 
     @EventHandler

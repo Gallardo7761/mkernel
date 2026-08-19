@@ -12,6 +12,9 @@ modules:
   shit:
     enabled: true
 
+  piglinCartel:
+    enabled: true
+
 settings:
   permissions:
 
@@ -33,4 +36,8 @@ settings:
   paysheet:
     tcpPercent: 15.0
 
-file-version: 3
+  piglinCartel:
+    taxAmount: 5
+    currency: GOLD_INGOT
+
+file-version: 4

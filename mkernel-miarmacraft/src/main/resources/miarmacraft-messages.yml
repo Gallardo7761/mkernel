@@ -58,4 +58,11 @@ modules:
       name: "Nóminas"
       icon: "EMERALD"
 
-file-version: 3
+  piglinCartel:
+    _meta:
+      name: "Cártel Piglin"
+      icon: "PIGLIN_HEAD"
+    paid: "<gray>Has pagado <b><gold><tax> de oro</gold></b> al Cártel Piglin para pasar...</gray>"
+    notEnoughTribute: "<red>El Cártel Piglin exige su tributo: necesitas <b><gold><tax> de oro</gold></b> para cruzar el portal."
+
+file-version: 4
