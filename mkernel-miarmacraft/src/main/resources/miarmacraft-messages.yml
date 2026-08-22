@@ -47,11 +47,18 @@ modules:
       itemForgiven: "<dark_gray>»</dark_gray> <click:run_command:'/record setstatus <player> <id> PENDING'><hover:show_text:'<yellow>Click para devolver a PENDIENTE</yellow>'><yellow>#<id></yellow></hover></click> <white>[<date>]</white> <st><gray><article></gray></st> <dark_gray>(<yellow>INDULTADO</yellow>)</dark_gray>"
       footer: "\n<gray>Total de delitos registrados:</gray> <red><bold><total></bold></red>\n<color:#d30000><bold>=========================================</bold></color>\n"
       empty: "<green>El ciudadano <yellow><player></yellow> no tiene antecedentes penales registrados. Expediente limpio.</green>"
+    townProtection:
+      firstPunishment: "<gray>No tienes licencia del <green>Ayuntamiento</green> para <green><action></green> aquí.</gray>"
+      secondPunishment: "<red><bold>ADVERTENCIA</bold></red> <gray>Si sigues intentando <green><action></green>, la Guardia Civil intervendrá.</gray>"
+      thirdPunishment: "<red><bold>¡ALERTA!</bold> La Guardia Civil va a por ti.</red>"
+      tempBan: "Exceso de vandalismo en el pueblo"
+      cannotDoWhileChased: "<red>No puedes hacer esto mientras la Guardia Civil te persigue. Corre o pelea!</red>"
+      fleeBanReason: "Fuga de la Guardia Civil durante una persecución activa"
 
   shit:
     _meta:
       name: "Mierda varia"
-      icon: "PIGLIN_HEAD"
+      icon: "BROWN_WOOL"
 
   payhseet:
     _meta:
@@ -65,4 +72,4 @@ modules:
     paid: "<gray>Has pagado <b><gold><tax> de oro</gold></b> al Cártel Piglin para pasar...</gray>"
     notEnoughTribute: "<red>El Cártel Piglin exige su tributo: necesitas <b><gold><tax> de oro</gold></b> para cruzar el portal."
 
-file-version: 4
+file-version: 5

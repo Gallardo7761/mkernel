@@ -8,6 +8,10 @@ object ConfigKeys {
 
         object LawEnforcement {
             const val MAIN = "modules.lawEnforcement"
+
+            object TownProtection {
+                const val EXPLOSIONS = "modules.lawEnforcement.townProtection.explosions"
+            }
         }
 
         object Shit {
@@ -35,6 +39,11 @@ object ConfigKeys {
             const val MAX_GOLEMS = "settings.lawEnforcement.maxGolems"
             const val GOLEM_BASE_LEVEL = "settings.lawEnforcement.golemBaseLevel"
             const val GOLEM_LEVEL_MULTIPLIER = "settings.lawEnforcement.golemLevelMultiplier"
+            const val BUILD_PERM = "settings.lawEnforcement.buildPerm"
+            const val USE_PERM = "settings.lawEnforcement.usePerm"
+            const val HARM_PERM = "settings.lawEnforcement.harmAnimalsPerm"
+            const val EXPLOSIONS_ENABLED = "settings.lawEnforcement.explosionsEnabled"
+            const val TEMP_BAN_DURATION = "settings.lawEnforcement.tempBanDuration"
         }
 
         object Paysheet {
@@ -226,6 +235,13 @@ object ConfigKeys {
             }
 
             const val GOLEM_NAME = "modules.lawEnforcement.golemName"
+
+            const val MSG_FIRST_PUNISHMENT = "modules.lawEnforcement.townProtection.firstPunishment"
+            const val MSG_SECOND_PUNISHMENT = "modules.lawEnforcement.townProtection.secondPunishment"
+            const val MSG_THIRD_PUNISHMENT = "modules.lawEnforcement.townProtection.thirdPunishment"
+            const val MSG_TEMP_BAN = "modules.lawEnforcement.townProtection.tempBan"
+            const val MSG_CANNOT_DO_WHILE_CHASED = "modules.lawEnforcement.townProtection.cannotDoWhileChased"
+            const val MSG_FLEE_BAN_REASON = "modules.lawEnforcement.townProtection.fleeBanReason"
         }
 
         object Shit {

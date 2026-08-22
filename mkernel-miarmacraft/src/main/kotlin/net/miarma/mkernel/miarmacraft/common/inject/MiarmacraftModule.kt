@@ -50,7 +50,9 @@ class MiarmacraftModule : AbstractModule() {
                 "piglinCartel",
                 ConfigKeys.Messages.PiglinCartel._Meta.NAME,
                 ConfigKeys.Messages.PiglinCartel._Meta.ICON,
-                emptyList()
+                listOf(
+                    ConfigKeys.Modules.LawEnforcement.TownProtection.EXPLOSIONS
+                )
             )
         )
     }

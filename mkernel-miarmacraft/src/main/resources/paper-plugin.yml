@@ -226,6 +226,24 @@ permissions:
         description: '67'
         default: true
 
+    mkernel.miarmacraft.town.build:
+        description: Permite construir en el pueblo
+        default: op
+    mkernel.miarmacraft.town.use:
+        description: Permite interactuar en el pueblo
+        default: op
+    mkernel.miarmacraft.town.harm:
+        description: Permite dañar aldeanos y animales en el pueblo
+        default: op
+
+    mkernel.safeconduct:
+        description: Autoriza al ciudadano a realizar ciertas acciones en el pueblo
+        default: op
+        children:
+            mkernel.miarmacraft.town.build: true
+            mkernel.miarmacraft.town.use: true
+            mkernel.miarmacraft.town.harm: true
+
     mkernel.police:
         description: Permite al usuario ejecutar comandos de policía
         default: op
@@ -237,6 +255,8 @@ permissions:
             mkernel.miarmacraft.command.articles.list: true
             mkernel.miarmacraft.command.articles.categories: true
             mkernel.miarmacraft.command.articles.categories.list: true
+            mkernel.safeconduct: true
+            mkernel.player: true
 
     mkernel.admin:
         description: Permite al usuario ejecutar comandos de administrador
@@ -273,6 +293,7 @@ permissions:
             mkernel.miarmacraft.command.articles.categories.remove: true
             mkernel.player: true
             mkernel.police: true
+            mkernel.safeconduct: true
 
     mkernel.player:
         description: Permite al usuario ejecutar comandos de jugador
@@ -304,9 +325,10 @@ permissions:
             mkernel.miarmacraft.command.sixseven: true
 
     mkernel.*:
-        description: Permite al usuario ejecutar todos los comandos de MKernel
+        description: Otorga todos los permisos (peligroso)
         default: op
         children:
             mkernel.admin: true
             mkernel.player: true
             mkernel.police: true
+            mkernel.safeconduct: true

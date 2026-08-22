@@ -12,6 +12,8 @@ import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.miarmacraft.common.config.ConfigKeys
 import net.miarma.mkernel.miarmacraft.common.dao.CrimeDao
 import net.miarma.mkernel.miarmacraft.common.integration.impl.LevelledMobsHook
+import net.miarma.mkernel.util.delayTicks
+import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.NamespacedKey
 import org.bukkit.Particle
@@ -26,6 +28,9 @@ import org.bukkit.potion.PotionEffectType
 import org.bukkit.scheduler.BukkitRunnable
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.cos
+import kotlin.math.sin
 
 @Singleton
 class LawEnforcementService @Inject constructor(
@@ -38,6 +43,8 @@ class LawEnforcementService @Inject constructor(
 
     private val policeKey = NamespacedKey(plugin, "is_police")
     private lateinit var policeCooldowns: ConcurrentHashMap<UUID, Long>
+    private val banningInProgress = ConcurrentHashMap.newKeySet<UUID>()
+    private val chasedPlayers = ConcurrentHashMap<UUID, AtomicInteger>()
 
     override fun onEnable() {
         policeCooldowns = ConcurrentHashMap<UUID, Long>()
@@ -99,7 +106,14 @@ class LawEnforcementService @Inject constructor(
                     val lmHook = hookService.getHook(LevelledMobsHook::class.java).orElse(null)
 
                     repeat(toSpawn) {
-                        val golemLoc = player.location.clone().add((Math.random() * 8) - 2, 1.0, (Math.random() * 8) - 2)
+                        val angle = Math.random() * 2 * Math.PI
+                        val distance = 6.0 + Math.random() * 4.0
+                        val golemLoc = player.location.clone().add(
+                            cos(angle) * distance,
+                            1.0,
+                            sin(angle) * distance
+                        )
+
                         val golem = player.world.spawnEntity(golemLoc, EntityType.IRON_GOLEM) as IronGolem
 
                         golem.persistentDataContainer.set(policeKey, PersistentDataType.BYTE, 1.toByte())
@@ -112,6 +126,8 @@ class LawEnforcementService @Inject constructor(
                             golem.addPotionEffect(PotionEffect(PotionEffectType.SPEED, 9999, 1))
                             golem.addPotionEffect(PotionEffect(PotionEffectType.STRENGTH, 9999, 3))
                         }
+
+                        markChased(player.uniqueId)
 
                         golem.damage(0.0, player)
 
@@ -131,6 +147,7 @@ class LawEnforcementService @Inject constructor(
 
                         object : BukkitRunnable() {
                             override fun run() {
+                                unmarkChased(player.uniqueId)
                                 if (!golem.isDead) {
                                     golem.world.spawnParticle(Particle.CLOUD, golem.location.clone().add(0.0, 1.0, 0.0), 30, 0.5, 0.5, 0.5, 0.1)
                                     golem.remove()
@@ -141,5 +158,37 @@ class LawEnforcementService @Inject constructor(
                 }
             }
         }.runTaskLater(plugin, (spawnDelay * 20L))
+    }
+
+    fun tempBanIfNotAlready(playerName: String, uuid: UUID, duration: String, reason: String) {
+        if (!banningInProgress.add(uuid)) return
+
+        plugin.launchSync {
+            try {
+                Bukkit.dispatchCommand(Bukkit.getConsoleSender(), "litebans:tempban $playerName $duration $reason")
+            } finally {
+                plugin.launchAsync {
+                    delayTicks(plugin, 40L) // 2s
+                    banningInProgress.remove(uuid)
+                }
+            }
+        }
+    }
+
+    fun isChased(uuid: UUID): Boolean = chasedPlayers.containsKey(uuid)
+
+    fun clearChased(uuid: UUID) {
+        chasedPlayers.remove(uuid)
+    }
+
+    private fun markChased(uuid: UUID) {
+        chasedPlayers.computeIfAbsent(uuid) { AtomicInteger(0) }.incrementAndGet()
+    }
+
+    private fun unmarkChased(uuid: UUID) {
+        val counter = chasedPlayers[uuid] ?: return
+        if (counter.decrementAndGet() <= 0) {
+            chasedPlayers.remove(uuid)
+        }
     }
 }

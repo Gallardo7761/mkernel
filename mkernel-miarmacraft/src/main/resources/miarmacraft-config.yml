@@ -8,6 +8,8 @@ modules:
 
   lawEnforcement:
     enabled: true
+    townProtection:
+      explosions: false
 
   shit:
     enabled: true
@@ -32,6 +34,11 @@ settings:
     maxGolems: 6
     golemBaseLevel: 20
     golemLevelMultiplier: 1.12
+    buildPerm: "mkernel.miarmacraft.town.build"
+    usePerm: "mkernel.miarmacraft.town.use"
+    harmAnimalsPerm: "mkernel.miarmacraft.town.harm"
+    tempBanDuration: "48h"
+    explosionsEnabled: false
 
   paysheet:
     tcpPercent: 15.0
