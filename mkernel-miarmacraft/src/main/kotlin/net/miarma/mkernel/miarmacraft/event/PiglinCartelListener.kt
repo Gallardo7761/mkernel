@@ -33,7 +33,7 @@ class PiglinCartelListener @Inject constructor(
         if (event.cause != PlayerTeleportEvent.TeleportCause.NETHER_PORTAL) return
 
         val fromWorld = event.from.world ?: return
-        val toWorld = event.to?.world ?: return
+        val toWorld = event.to.world ?: return
 
         val isGoingToNether = fromWorld.environment == World.Environment.NORMAL && toWorld.environment == World.Environment.NETHER
         val isLeavingNether = fromWorld.environment == World.Environment.NETHER && toWorld.environment == World.Environment.NORMAL
