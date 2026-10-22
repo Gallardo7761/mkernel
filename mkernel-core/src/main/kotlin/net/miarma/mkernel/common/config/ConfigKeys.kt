@@ -67,6 +67,11 @@ object ConfigKeys {
             const val NO_NETHER_PORTALS = "modules.world.noNetherPortals"
             const val TIME_WEATHER_CONTROL = "modules.world.timeWeatherControl"
         }
+
+        object Environment {
+            const val MAIN = "modules.environment"
+            const val TEMPERATURE_EFFECTS = "modules.environment.temperatureEffects"
+        }
     }
 
     object Settings {
@@ -114,6 +119,39 @@ object ConfigKeys {
             const val LOBBY_Z = "settings.worlds.lobby.coords.z"
             const val LOBBY_YAW = "settings.worlds.lobby.coords.yaw"
             const val LOBBY_PITCH = "settings.worlds.lobby.coords.pitch"
+        }
+
+        object Environment {
+            const val PERIOD_TICKS = "settings.environment.periodTicks"
+            const val INERTIA = "settings.environment.inertia"
+            const val MONTHLY_BASE = "settings.environment.monthlyBase"
+            const val BIOME_NEUTRAL = "settings.environment.biome.neutral"
+            const val BIOME_FACTOR = "settings.environment.biome.factor"
+            const val BIOME_OVERRIDES = "settings.environment.biome.overrides"
+            const val ALTITUDE_SEA_LEVEL = "settings.environment.altitude.seaLevel"
+            const val ALTITUDE_BLOCKS_PER_DEGREE = "settings.environment.altitude.blocksPerDegree"
+            const val NIGHT = "settings.environment.night"
+            const val RAIN = "settings.environment.rain"
+            const val SNOW = "settings.environment.snow"
+            const val WATER = "settings.environment.water"
+            const val BLOCK_LIGHT_FACTOR = "settings.environment.blockLightFactor"
+            const val NETHER_BASE = "settings.environment.netherBase"
+            const val END_BASE = "settings.environment.endBase"
+            const val LEATHER_PER_PIECE = "settings.environment.insulation.leatherPerPiece"
+            const val METAL_HEAT_PER_PIECE = "settings.environment.insulation.metalHeatPerPiece"
+
+            object Thresholds {
+                const val FREEZING = "settings.environment.thresholds.freezing"
+                const val COLD = "settings.environment.thresholds.cold"
+                const val HOT = "settings.environment.thresholds.hot"
+                const val SCORCHING = "settings.environment.thresholds.scorching"
+            }
+
+            object Effects {
+                const val FREEZE_GAIN = "settings.environment.effects.freezeGainPerCycle"
+                const val HOT_EXHAUSTION = "settings.environment.effects.hotExhaustion"
+                const val SCORCHING_EXHAUSTION = "settings.environment.effects.scorchingExhaustion"
+            }
         }
 
         const val SEQUENCES = "settings.sequentialCommands"
@@ -306,6 +344,15 @@ object ConfigKeys {
                 const val ICON = "modules.world._meta.icon"
             }
             const val ILLEGAL_PORTAL = "modules.world.illegalPortal"
+        }
+
+        object Environment {
+            object _Meta {
+                const val NAME = "modules.environment._meta.name"
+                const val ICON = "modules.environment._meta.icon"
+            }
+            const val SEASONS = "modules.environment.seasons"
+            const val TEMPERATURE_LEVELS = "modules.environment.temperature"
         }
     }
 

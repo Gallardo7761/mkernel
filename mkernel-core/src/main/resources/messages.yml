@@ -155,4 +155,20 @@ modules:
       icon: "GRASS_BLOCK"
     illegalPortal: "<red>No puedes crear portales, deberás usar el portal comunitario. Este intento ha sido registrado por el Ministerio de Portales.</red>"
 
-file-version: 2
+  environment:
+    _meta:
+      name: "Entorno"
+      icon: "SUNFLOWER"
+    seasons:
+      winter: "<dark_aqua>❄ Invierno"
+      spring: "<light_purple>🌺 Primavera"
+      summer: "<yellow>☀ Verano"
+      autumn: "<gold>🍁 Otoño"
+    temperature:
+      freezing: "<aqua><temp>°C"
+      cold: "<dark_aqua><temp>°C"
+      mild: "<green><temp>°C"
+      hot: "<yellow><temp>°C"
+      scorching: "<red><temp>°C"
+
+file-version: 3

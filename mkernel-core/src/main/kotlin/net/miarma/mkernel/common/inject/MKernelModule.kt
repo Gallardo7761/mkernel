@@ -127,5 +127,16 @@ class MKernelModule(
                 )
             )
         )
+
+        moduleBinder.addBinding().toInstance(
+            ModuleDef(
+                "environment",
+                ConfigKeys.Messages.Environment._Meta.NAME,
+                ConfigKeys.Messages.Environment._Meta.ICON,
+                listOf(
+                    ConfigKeys.Modules.Environment.TEMPERATURE_EFFECTS
+                )
+            )
+        )
     }
 }

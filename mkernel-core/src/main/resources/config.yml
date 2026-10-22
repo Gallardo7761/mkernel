@@ -59,6 +59,10 @@ modules:
     noNetherPortals: true
     timeWeatherControl: true
 
+  environment:
+    enabled: true
+    temperatureEffects: true
+
 settings:
   permissions:
     chatFormat: "mkernel.events.chatformat"
@@ -104,6 +108,60 @@ settings:
         yaw: 180.0
         pitch: 0.0
 
+  environment:
+    # Cada cuántos ticks se recalcula la temperatura corporal (20 ticks = 1 s)
+    periodTicks: 40
+    # Qué fracción de la diferencia con el entorno recupera el cuerpo en cada ciclo (0-1)
+    inertia: 0.15
+    # Temperatura base (°C) en el overworld según el mes real
+    monthlyBase:
+      january: 4.0
+      february: 4.0
+      march: 18.0
+      april: 18.0
+      may: 18.0
+      june: 26.0
+      july: 34.0
+      august: 34.0
+      september: 26.0
+      october: 18.0
+      november: 18.0
+      december: 4.0
+    biome:
+      # Modificador = (temperatura vanilla del bioma - neutral) * factor
+      neutral: 0.8
+      factor: 10.0
+      # Sustituye el modificador calculado para un bioma concreto (°C)
+      overrides:
+        desert: 12.0
+        snowy_plains: -10.0
+    altitude:
+      seaLevel: 64
+      blocksPerDegree: 15.0
+    # Modificadores aplicados según lo expuesto al cielo que esté el jugador
+    night: -6.0
+    rain: -4.0
+    snow: -6.0
+    water: -8.0
+    # °C extra por cada nivel de luz emitida por bloques (fuego, lava, antorchas...)
+    blockLightFactor: 0.5
+    netherBase: 45.0
+    endBase: -15.0
+    insulation:
+      # °C que abriga cada pieza de cuero con frío
+      leatherPerPiece: 2.5
+      # °C que añade cada pieza metálica con calor
+      metalHeatPerPiece: 1.0
+    thresholds:
+      freezing: -2.0
+      cold: 5.0
+      hot: 35.0
+      scorching: 42.0
+    effects:
+      freezeGainPerCycle: 20
+      hotExhaustion: 0.5
+      scorchingExhaustion: 1.5
+
   sequentialCommands:
     _example:
       - command: "say example"
@@ -117,4 +175,4 @@ blacklist:
     - /minecraft:me
   recipes: []
 
-file-version: 2
+file-version: 3

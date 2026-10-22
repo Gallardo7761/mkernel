@@ -4,24 +4,33 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import me.clip.placeholderapi.PlaceholderAPI
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer
 import net.miarma.mkernel.api.common.IHook
+import net.miarma.mkernel.common.config.ConfigKeys
+import net.miarma.mkernel.common.service.impl.ConfigService
+import net.miarma.mkernel.common.service.impl.EnvironmentService
 import net.miarma.mkernel.common.service.impl.LastPositionService
+import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.PlayerService
 import net.miarma.mkernel.util.PlayerUtil.getNickName
 import org.bukkit.OfflinePlayer
 import org.bukkit.entity.Player
+import kotlin.math.roundToInt
 
 @Singleton
 class PlaceholderAPIHook @Inject constructor(
     private val playerService: PlayerService,
-    private val lastPositionService: LastPositionService
+    private val lastPositionService: LastPositionService,
+    private val environmentService: EnvironmentService,
+    private val configService: ConfigService,
+    private val messageService: MessageService
 ) : IHook {
 
     override val pluginName = "PlaceholderAPI"
     private var expansion: MKernelExpansion? = null
 
     override fun register() {
-        expansion = MKernelExpansion(playerService, lastPositionService).apply { register() }
+        expansion = MKernelExpansion(playerService, lastPositionService, environmentService, configService, messageService).apply { register() }
     }
 
     override fun unregister() {
@@ -34,7 +43,10 @@ class PlaceholderAPIHook @Inject constructor(
 
     private class MKernelExpansion(
         private val playerService: PlayerService,
-        private val lastPositionService: LastPositionService
+        private val lastPositionService: LastPositionService,
+        private val environmentService: EnvironmentService,
+        private val configService: ConfigService,
+        private val messageService: MessageService
     ) : PlaceholderExpansion() {
 
         override fun getIdentifier() = "mkernel"
@@ -54,8 +66,26 @@ class PlaceholderAPIHook @Inject constructor(
                     last?.let { "${it.blockX}, ${it.blockY}, ${it.blockZ}" } ?: "N/A"
                 }
                 "nick" -> onlinePlayer.getNickName(playerService)
+                "biome" -> environmentService.getBiomeKey(onlinePlayer)
+                "season" -> formatSeason()
+                "temperature" -> formatTemperature(onlinePlayer)
                 else -> null
             }
         }
+
+        private fun formatSeason(): String {
+            val season = environmentService.getSeason().name.lowercase()
+            return toLegacy(configService.getString("${ConfigKeys.Messages.Environment.SEASONS}.$season", season))
+        }
+
+        private fun formatTemperature(player: Player): String {
+            val temp = environmentService.getTemperature(player)
+            val level = environmentService.getLevel(temp).name.lowercase()
+            val format = configService.getString("${ConfigKeys.Messages.Environment.TEMPERATURE_LEVELS}.$level", "<temp>°C")
+            return toLegacy(format, temp.roundToInt().toString())
+        }
+
+        private fun toLegacy(text: String, temp: String = ""): String =
+            LegacyComponentSerializer.legacyAmpersand().serialize(messageService.builder(text).tag("temp", temp).build())
     }
 }
