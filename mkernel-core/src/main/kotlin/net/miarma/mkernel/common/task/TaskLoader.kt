@@ -4,19 +4,25 @@ import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
 import net.miarma.mkernel.MKernel
+import net.miarma.mkernel.api.annotation.RequiresModule
 import net.miarma.mkernel.api.common.ITask
+import net.miarma.mkernel.common.module.ModuleLoader
+import net.miarma.mkernel.common.service.impl.ConfigService
 import org.reflections.Reflections
 import java.lang.reflect.Modifier
 
 @Singleton
 class TaskLoader @Inject constructor(
     private val plugin: MKernel,
-    private val injector: Injector
+    private val injector: Injector,
+    private val reflections: Reflections,
+    private val moduleLoader: ModuleLoader,
+    private val configService: ConfigService
 ) {
     private val tasks = mutableListOf<ITask>()
+    private val running = mutableSetOf<ITask>()
 
     fun loadAll() {
-        val reflections = Reflections("net.miarma.mkernel")
         val taskClasses = reflections.getSubTypesOf(ITask::class.java)
 
         var loadedCount = 0
@@ -36,11 +42,42 @@ class TaskLoader @Inject constructor(
     }
 
     fun startAll() {
-        tasks.forEach { it.start() }
+        tasks.filter { canRun(it) }.forEach { start(it) }
     }
 
     fun stopAll() {
-        tasks.reversed().forEach { runCatching { it.stop() } }
+        running.reversed().forEach { stop(it) }
         tasks.clear()
+    }
+
+    fun onModuleToggled(moduleId: String) {
+        tasks.filter { requiredModuleId(it) == moduleId }.forEach { task ->
+            if (canRun(task)) start(task) else stop(task)
+        }
+    }
+
+    private fun start(task: ITask) {
+        if (!running.add(task)) return
+        runCatching { task.start() }.onFailure { e ->
+            running.remove(task)
+            plugin.logger.severe("Error starting task ${task.javaClass.simpleName}: ${e.message}")
+            e.printStackTrace()
+        }
+    }
+
+    private fun stop(task: ITask) {
+        if (!running.remove(task)) return
+        runCatching { task.stop() }.onFailure { e ->
+            plugin.logger.severe("Error stopping task ${task.javaClass.simpleName}: ${e.message}")
+        }
+    }
+
+    private fun requiredModuleId(task: ITask): String? =
+        task.javaClass.getAnnotation(RequiresModule::class.java)?.module?.removePrefix("modules.")
+
+    private fun canRun(task: ITask): Boolean {
+        val annotation = task.javaClass.getAnnotation(RequiresModule::class.java) ?: return true
+        if (!moduleLoader.isModuleEnabled(annotation.module.removePrefix("modules."))) return false
+        return annotation.feature.isEmpty() || configService.getBoolean(annotation.feature, true)
     }
 }
