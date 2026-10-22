@@ -17,9 +17,10 @@ import net.miarma.mkernel.common.module.ModuleLoader
 import net.miarma.mkernel.common.recipe.RecipeLoader
 import net.miarma.mkernel.common.service.ServiceLoader
 import net.miarma.mkernel.common.task.TaskLoader
-import net.miarma.mkernel.common.task.impl.LocationTrackerTask
 import net.miarma.mkernel.util.BukkitDispatcher
 import org.bukkit.plugin.java.JavaPlugin
+import org.reflections.Reflections
+import org.reflections.scanners.Scanners
 import kotlin.coroutines.CoroutineContext
 
 @Singleton
@@ -71,9 +72,9 @@ class MKernel : JavaPlugin(), CoroutineScope {
     }
 
     private fun initInjector(): Injector {
-        val modules = mutableListOf<Module>(MKernelModule(this))
+        val reflections = Reflections("net.miarma.mkernel", Scanners.SubTypes.filterResultsBy { true })
+        val modules = mutableListOf<Module>(MKernelModule(this, reflections))
 
-        val reflections = org.reflections.Reflections("net.miarma.mkernel")
         val subModuleClasses = reflections.getSubTypesOf(AbstractModule::class.java)
 
         for (clazz in subModuleClasses) {

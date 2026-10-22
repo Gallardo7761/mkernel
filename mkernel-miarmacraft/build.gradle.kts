@@ -30,14 +30,22 @@ dependencies {
     implementation(project(":mkernel-core"))
 
     compileOnly("com.google.inject:guice:7.0.0:classes")
-    compileOnly("xyz.xenondevs.invui:invui:2.1.1")
-    compileOnly("io.papermc.paper:paper-api:[26.1.2.build.1, 26.1.2.build.9999)")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
-    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.8.0")
+    compileOnly("xyz.xenondevs.invui:invui:2.5.1")
+    compileOnly("io.papermc.paper:paper-api:[26.3.build.1, 26.3.build.9999)")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.11.0")
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.11.0")
     compileOnly("ovh.mythmc:banco-api:1.2.1")
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.17")
-    compileOnly("dev.jorel:commandapi-paper-shade:11.2.0")
-    compileOnly("dev.jorel:commandapi-kotlin-paper:11.2.0")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.19") {
+        // WorldGuard pins Guava/Gson strictly; Paper provides them at runtime
+        exclude(group = "com.google.guava", module = "guava")
+        exclude(group = "com.google.code.gson", module = "gson")
+    }
+    compileOnly("dev.jorel:commandapi-paper-shade:12.1.0") {
+        isTransitive = false
+    }
+    compileOnly("dev.jorel:commandapi-kotlin-paper:12.1.0") {
+        exclude(group = "dev.jorel", module = "commandapi-paper-shade")
+    }
     compileOnly("io.github.arcaneplugins:levelledmobs-plugin:4.0.3.1")
     compileOnly("net.leonardo_dgs:InteractiveBooks:1.7.2")
 }

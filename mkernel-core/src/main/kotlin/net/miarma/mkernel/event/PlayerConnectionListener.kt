@@ -9,6 +9,7 @@ import net.miarma.mkernel.common.service.impl.ConfigService
 import net.miarma.mkernel.common.service.impl.LastPositionService
 import net.miarma.mkernel.common.service.impl.MessageService
 import net.miarma.mkernel.common.service.impl.PlayerService
+import net.miarma.mkernel.common.task.impl.LocationTrackerTask
 import net.miarma.mkernel.util.PlayerUtil.getNickName
 import org.bukkit.Bukkit
 import org.bukkit.event.EventHandler
@@ -22,7 +23,8 @@ class PlayerConnectionListener @Inject constructor(
     private val configService: ConfigService,
     private val messageService: MessageService,
     private val playerService: PlayerService,
-    private val lastPositionService: LastPositionService
+    private val lastPositionService: LastPositionService,
+    private val locationTrackerTask: LocationTrackerTask
 ) : Listener {
 
     @EventHandler
@@ -105,5 +107,6 @@ class PlayerConnectionListener @Inject constructor(
 
         ShopBuyInventory.clickCooldowns.remove(player.uniqueId)
         lastPositionService.setLastPosition(player, player.location)
+        locationTrackerTask.forget(player)
     }
 }

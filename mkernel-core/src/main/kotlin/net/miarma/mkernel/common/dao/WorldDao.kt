@@ -6,9 +6,21 @@ import net.miarma.mkernel.common.service.impl.DatabaseService
 import org.bukkit.Bukkit
 import org.bukkit.World
 import java.sql.Connection
+import java.util.concurrent.ConcurrentHashMap
 
 @Singleton
 class WorldDao @Inject constructor(private val dbService: DatabaseService) {
+    private val blockedWorldsCache = ConcurrentHashMap.newKeySet<String>()
+
+    fun isWorldBlockedCached(worldName: String): Boolean {
+        return blockedWorldsCache.contains(worldName)
+    }
+
+    suspend fun loadBlockedWorldsCache() {
+        val blocked = getBlockedWorlds()
+        blockedWorldsCache.clear()
+        blockedWorldsCache.addAll(blocked)
+    }
 
     suspend fun ensureWorldExists(conn: Connection, world: World) {
         dbService.withConnection {
@@ -49,5 +61,6 @@ class WorldDao @Inject constructor(private val dbService: DatabaseService) {
                 ps.executeUpdate()
             }
         }
+        if (blocked) blockedWorldsCache.add(worldName) else blockedWorldsCache.remove(worldName)
     }
 }

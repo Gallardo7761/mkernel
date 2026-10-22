@@ -8,10 +8,18 @@ object ConfigKeys {
 
         object LawEnforcement {
             const val MAIN = "modules.lawEnforcement"
+
+            object TownProtection {
+                const val EXPLOSIONS = "modules.lawEnforcement.townProtection.explosions"
+            }
         }
 
         object Shit {
             const val MAIN = "modules.shit"
+        }
+
+        object PiglinCartel {
+            const val MAIN = "modules.piglinCartel"
         }
     }
 
@@ -31,6 +39,20 @@ object ConfigKeys {
             const val MAX_GOLEMS = "settings.lawEnforcement.maxGolems"
             const val GOLEM_BASE_LEVEL = "settings.lawEnforcement.golemBaseLevel"
             const val GOLEM_LEVEL_MULTIPLIER = "settings.lawEnforcement.golemLevelMultiplier"
+            const val BUILD_PERM = "settings.lawEnforcement.buildPerm"
+            const val USE_PERM = "settings.lawEnforcement.usePerm"
+            const val HARM_PERM = "settings.lawEnforcement.harmAnimalsPerm"
+            const val EXPLOSIONS_ENABLED = "settings.lawEnforcement.explosionsEnabled"
+            const val TEMP_BAN_DURATION = "settings.lawEnforcement.tempBanDuration"
+        }
+
+        object Paysheet {
+            const val TCP_PERCENT = "settings.paysheet.tcpPercent"
+        }
+
+        object PiglinCartel {
+            const val TAX_AMOUNT = "settings.piglinCartel.taxAmount"
+            const val CURRENCY = "settings.piglinCartel.currency"
         }
     }
 
@@ -43,6 +65,7 @@ object ConfigKeys {
             const val DESC = "arguments.description"
             const val FINE = "arguments.fine"
             const val STATUS = "arguments.status"
+            const val QUANTITY = "arguments.quantity"
         }
 
         object Articles {
@@ -125,6 +148,33 @@ object ConfigKeys {
             }
         }
 
+        object Paysheet {
+            const val NAME = "commands.paysheet.name"
+            const val DESC = "commands.paysheet.description"
+            const val PERM = "commands.paysheet.permission"
+            const val USAGE = "commands.paysheet.usage"
+            const val MSG_HAS_MONEY = "commands.paysheet.messages.hasMoney"
+
+            object Retain {
+                const val NAME = "commands.paysheet.subcommands.retain.name"
+                const val DESC = "commands.paysheet.subcommands.retain.description"
+                const val PERM = "commands.paysheet.subcommands.retain.permission"
+                const val USAGE = "commands.paysheet.subcommands.retain.usage"
+            }
+
+            object Receive {
+                const val NAME = "commands.paysheet.subcommands.receive.name"
+                const val DESC = "commands.paysheet.subcommands.receive.description"
+                const val PERM = "commands.paysheet.subcommands.receive.permission"
+                const val USAGE = "commands.paysheet.subcommands.receive.usage"
+
+                const val MSG_BANCO_ERROR = "commands.paysheet.subcommands.receive.messages.bancoError"
+                const val MSG_NO_PAYSHEET = "commands.paysheet.subcommands.receive.messages.noPaysheet"
+                const val MSG_SUCCESS = "commands.paysheet.subcommands.receive.messages.success"
+                const val MSG_NO_MONEY_IN_SERVER_ACCOUNT = "commands.paysheet.subcommands.receive.messages.noMoneyInServerAccount"
+            }
+        }
+
         object SixSeven {
             const val NAME = "commands.sixseven.name"
             const val DESC = "commands.sixseven.description"
@@ -185,6 +235,37 @@ object ConfigKeys {
             }
 
             const val GOLEM_NAME = "modules.lawEnforcement.golemName"
+
+            const val MSG_FIRST_PUNISHMENT = "modules.lawEnforcement.townProtection.firstPunishment"
+            const val MSG_SECOND_PUNISHMENT = "modules.lawEnforcement.townProtection.secondPunishment"
+            const val MSG_THIRD_PUNISHMENT = "modules.lawEnforcement.townProtection.thirdPunishment"
+            const val MSG_TEMP_BAN = "modules.lawEnforcement.townProtection.tempBan"
+            const val MSG_CANNOT_DO_WHILE_CHASED = "modules.lawEnforcement.townProtection.cannotDoWhileChased"
+            const val MSG_FLEE_BAN_REASON = "modules.lawEnforcement.townProtection.fleeBanReason"
+        }
+
+        object Shit {
+            object _Meta {
+                const val NAME = "modules.shit._meta.name"
+                const val ICON = "modules.shit._meta.icon"
+            }
+        }
+
+        object Paysheet {
+            object _Meta {
+                const val NAME = "modules.paysheet._meta.name"
+                const val ICON = "modules.paysheet._meta.icon"
+            }
+        }
+
+        object PiglinCartel {
+            object _Meta {
+                const val NAME = "modules.piglinCartel._meta.name"
+                const val ICON = "modules.piglinCartel._meta.icon"
+            }
+
+            const val MSG_PAID = "modules.piglinCartel.paid"
+            const val MSG_NOT_ENOUGH_TRIBUTE = "modules.piglinCartel.notEnoughTribute"
         }
     }
 }

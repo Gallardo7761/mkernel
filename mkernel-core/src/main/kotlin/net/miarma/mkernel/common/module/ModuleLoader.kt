@@ -2,10 +2,12 @@ package net.miarma.mkernel.common.module
 
 import com.google.inject.Inject
 import com.google.inject.Injector
+import com.google.inject.Provider
 import com.google.inject.Singleton
 import net.miarma.mkernel.MKernel
 import net.miarma.mkernel.api.common.IModule
 import net.miarma.mkernel.common.service.impl.ConfigService
+import net.miarma.mkernel.common.task.TaskLoader
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 import org.bukkit.event.Listener
@@ -16,12 +18,13 @@ import java.lang.reflect.Modifier
 class ModuleLoader @Inject constructor(
     private val plugin: MKernel,
     private val injector: Injector,
-    private val configService: ConfigService
+    private val configService: ConfigService,
+    private val reflections: Reflections,
+    private val taskLoader: Provider<TaskLoader>
 ) {
     private val allModules = mutableMapOf<String, IModule>()
 
     fun loadAll() {
-        val reflections = Reflections("net.miarma.mkernel")
         val moduleClasses = reflections.getSubTypesOf(IModule::class.java)
 
         var loadedCount = 0
@@ -57,7 +60,7 @@ class ModuleLoader @Inject constructor(
         } else {
             disableModule(module)
         }
-        configService.set("modules.$id", enable)
+        configService.setModuleEnabled(id, enable)
     }
 
     private fun enableModule(module: IModule) {
@@ -69,6 +72,7 @@ class ModuleLoader @Inject constructor(
             if (module is Listener) {
                 Bukkit.getPluginManager().registerEvents(module, plugin)
             }
+            taskLoader.get().onModuleToggled(module.id)
             plugin.logger.info("Enabled module: ${module.id}")
         }.onFailure { e ->
             plugin.logger.severe("Error enabling module ${module.id}: ${e.message}")
@@ -84,6 +88,7 @@ class ModuleLoader @Inject constructor(
             if (module is Listener) {
                 HandlerList.unregisterAll(module)
             }
+            taskLoader.get().onModuleToggled(module.id)
             plugin.logger.info("Disabled module: ${module.id}")
         }.onFailure { e ->
             plugin.logger.severe("Error disabling module ${module.id}: ${e.message}")

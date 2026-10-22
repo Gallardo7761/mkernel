@@ -8,8 +8,13 @@ modules:
 
   lawEnforcement:
     enabled: true
+    townProtection:
+      explosions: false
 
   shit:
+    enabled: true
+
+  piglinCartel:
     enabled: true
 
 settings:
@@ -23,12 +28,23 @@ settings:
 
   lawEnforcement:
     region: "hispania"
-    immunityPermission: "mkernel.lawEnforcement.bypass"
     aggroTimeSeconds: 30
     despawnTimeSeconds: 45
     spawnDelaySeconds: 3
     maxGolems: 6
     golemBaseLevel: 20
     golemLevelMultiplier: 1.12
+    buildPerm: "mkernel.miarmacraft.town.build"
+    usePerm: "mkernel.miarmacraft.town.use"
+    harmAnimalsPerm: "mkernel.miarmacraft.town.harm"
+    tempBanDuration: "48h"
+    explosionsEnabled: false
 
-file-version: 2
+  paysheet:
+    tcpPercent: 15.0
+
+  piglinCartel:
+    taxAmount: 5
+    currency: GOLD_INGOT
+
+file-version: 4

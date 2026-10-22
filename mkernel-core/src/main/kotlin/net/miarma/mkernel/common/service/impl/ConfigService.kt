@@ -130,6 +130,19 @@ class ConfigService @Inject constructor(private val plugin: MKernel) : IService,
         cache.keys.removeIf { it.endsWith(":$path") }
     }
 
+    fun setModuleEnabled(id: String, enabled: Boolean) {
+        val modulePath = "modules.$id"
+        val target = configs.values.firstOrNull { it.contains(modulePath) } ?: configs["config.yml"] ?: return
+
+        // Older versions stored the toggle as "modules.<id>: <bool>", wiping the section; turn it back into one
+        if (target.contains(modulePath) && !target.isSection(modulePath)) {
+            target.remove(modulePath)
+        }
+        target.set("$modulePath.enabled", enabled)
+        target.save()
+        cache.keys.removeIf { it.endsWith(":$modulePath") || it.endsWith(":$modulePath.enabled") }
+    }
+
     fun isModuleEnabled(moduleName: String): Boolean {
         if (configs.values.any { it.contains(moduleName) && it.isBoolean(moduleName) }) {
             return getBoolean(moduleName, true)

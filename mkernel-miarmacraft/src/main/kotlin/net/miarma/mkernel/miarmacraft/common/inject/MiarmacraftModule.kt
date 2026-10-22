@@ -26,5 +26,34 @@ class MiarmacraftModule : AbstractModule() {
                 emptyList()
             )
         )
+
+        moduleBinder.addBinding().toInstance(
+            ModuleDef(
+                "shit",
+                ConfigKeys.Messages.Shit._Meta.NAME,
+                ConfigKeys.Messages.Shit._Meta.ICON,
+                emptyList()
+            )
+        )
+
+        moduleBinder.addBinding().toInstance(
+            ModuleDef(
+                "paysheet",
+                ConfigKeys.Messages.Paysheet._Meta.NAME,
+                ConfigKeys.Messages.Paysheet._Meta.ICON,
+                emptyList()
+            )
+        )
+
+        moduleBinder.addBinding().toInstance(
+            ModuleDef(
+                "piglinCartel",
+                ConfigKeys.Messages.PiglinCartel._Meta.NAME,
+                ConfigKeys.Messages.PiglinCartel._Meta.ICON,
+                listOf(
+                    ConfigKeys.Modules.LawEnforcement.TownProtection.EXPLOSIONS
+                )
+            )
+        )
     }
 }

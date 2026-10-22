@@ -6,11 +6,16 @@ import net.miarma.mkernel.MKernel
 import net.miarma.mkernel.api.model.ModuleDef
 import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.dao.*
+import org.reflections.Reflections
 
-class MKernelModule(private val plugin: MKernel) : AbstractModule() {
+class MKernelModule(
+    private val plugin: MKernel,
+    private val reflections: Reflections
+) : AbstractModule() {
 
     override fun configure() {
         bind(MKernel::class.java).toInstance(plugin)
+        bind(Reflections::class.java).toInstance(reflections)
         bind(UserDao::class.java)
         bind(WorldDao::class.java)
         bind(HomeDao::class.java)
@@ -119,6 +124,17 @@ class MKernelModule(private val plugin: MKernel) : AbstractModule() {
                     ConfigKeys.Modules.World.AUTO_ITEM_REFILL,
                     ConfigKeys.Modules.World.NO_NETHER_PORTALS,
                     ConfigKeys.Modules.World.TIME_WEATHER_CONTROL
+                )
+            )
+        )
+
+        moduleBinder.addBinding().toInstance(
+            ModuleDef(
+                "environment",
+                ConfigKeys.Messages.Environment._Meta.NAME,
+                ConfigKeys.Messages.Environment._Meta.ICON,
+                listOf(
+                    ConfigKeys.Modules.Environment.TEMPERATURE_EFFECTS
                 )
             )
         )

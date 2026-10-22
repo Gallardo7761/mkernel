@@ -8,16 +8,15 @@ import net.miarma.mkernel.api.annotation.RequiresModule
 import net.miarma.mkernel.api.common.ICommand
 import net.miarma.mkernel.common.service.impl.ConfigService
 import org.reflections.Reflections
-import org.reflections.scanners.Scanners
 import java.lang.reflect.Modifier
 
 @Singleton
 class CommandHandler @Inject constructor(
     private val plugin: MKernel,
-    private val injector: Injector
+    private val injector: Injector,
+    private val reflections: Reflections
 ) {
     fun registerCommands() {
-        val reflections = Reflections("net.miarma.mkernel", Scanners.SubTypes.filterResultsBy { true })
         val commandClasses = reflections.getSubTypesOf(ICommand::class.java)
         var commands = 0
 
