@@ -60,7 +60,7 @@ class ModuleLoader @Inject constructor(
         } else {
             disableModule(module)
         }
-        configService.set("modules.$id", enable)
+        configService.setModuleEnabled(id, enable)
     }
 
     private fun enableModule(module: IModule) {
