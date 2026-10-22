@@ -10,10 +10,10 @@ import org.reflections.Reflections
 @Singleton
 class HookLoader @Inject constructor(
     private val injector: Injector,
-    private val hookService: HookService
+    private val hookService: HookService,
+    private val reflections: Reflections
 ) {
     fun loadAll() {
-        val reflections = Reflections("net.miarma.mkernel")
         val hookClasses = reflections.getSubTypesOf(IHook::class.java)
 
         val hooks = hookClasses.mapNotNull { clazz ->

@@ -6,11 +6,16 @@ import net.miarma.mkernel.MKernel
 import net.miarma.mkernel.api.model.ModuleDef
 import net.miarma.mkernel.common.config.ConfigKeys
 import net.miarma.mkernel.common.dao.*
+import org.reflections.Reflections
 
-class MKernelModule(private val plugin: MKernel) : AbstractModule() {
+class MKernelModule(
+    private val plugin: MKernel,
+    private val reflections: Reflections
+) : AbstractModule() {
 
     override fun configure() {
         bind(MKernel::class.java).toInstance(plugin)
+        bind(Reflections::class.java).toInstance(reflections)
         bind(UserDao::class.java)
         bind(WorldDao::class.java)
         bind(HomeDao::class.java)

@@ -12,12 +12,12 @@ import java.lang.reflect.Modifier
 @Singleton
 class ServiceLoader @Inject constructor(
     private val plugin: MKernel,
-    private val injector: Injector
+    private val injector: Injector,
+    private val reflections: Reflections
 ) {
     private val services = mutableListOf<IService>()
 
     fun loadAll() {
-        val reflections = Reflections("net.miarma.mkernel")
         val serviceClasses = reflections.getSubTypesOf(IService::class.java)
 
         val instances = serviceClasses

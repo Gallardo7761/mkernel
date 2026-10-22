@@ -16,12 +16,12 @@ import java.lang.reflect.Modifier
 class ModuleLoader @Inject constructor(
     private val plugin: MKernel,
     private val injector: Injector,
-    private val configService: ConfigService
+    private val configService: ConfigService,
+    private val reflections: Reflections
 ) {
     private val allModules = mutableMapOf<String, IModule>()
 
     fun loadAll() {
-        val reflections = Reflections("net.miarma.mkernel")
         val moduleClasses = reflections.getSubTypesOf(IModule::class.java)
 
         var loadedCount = 0
