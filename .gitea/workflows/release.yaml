@@ -52,8 +52,8 @@ jobs:
         run: |
           PREVIOUS=$(git describe --tags --abbrev=0 2>/dev/null || true)
           RANGE=${PREVIOUS:+$PREVIOUS..}HEAD
-          git log "$RANGE" --no-merges --pretty='- %s' | grep -vE '\((priv)\)' > notes.md || true
-          [ -s notes.md ] || echo "- Sin cambios en el core" > notes.md
+          git log "$RANGE" --no-merges --pretty='- %s' | grep -vE '\((priv|private)\)' > notes.md || true
+          [ -s notes.md ] || echo "- Sin cambios en public" > notes.md
           cat notes.md
 
       - name: Gitea release
