@@ -23,7 +23,7 @@ dependencies {
         exclude(group = "com.google.code.gson", module = "gson")
     }
 
-    implementation("es.killobyte:nscript:26.7.1")
+    implementation("es.killobyte:nscript:26.10.1")
     implementation("org.reflections:reflections:0.10.2")
     implementation("org.javassist:javassist:3.33.0-GA")
     implementation("dev.jorel:commandapi-paper-shade:12.1.0") {
