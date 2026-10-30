@@ -1,0 +1,234 @@
+name: nucleo
+version: '${version}'
+main: es.killobyte.nucleo.NucleoPlugin
+api-version: '26.1.3'
+website: https://git.killobyte.es/Gallardo7761/nucleo
+authors: [Gallardo7761, elpapuu1333 (helper & tester)]
+dependencies:
+  server:
+    NBTAPI:
+      load: BEFORE
+      required: true
+      join-classpath: true
+    LuckPerms:
+      load: BEFORE
+      required: true
+      join-classpath: true
+    WorldGuard:
+      load: BEFORE
+      required: false
+    DecentHolograms:
+      load: BEFORE
+      required: false
+    banco:
+      load: BEFORE
+      required: false
+    PlaceholderAPI:
+      load: BEFORE
+      required: false
+    GriefPrevention:
+      load: BEFORE
+      required: false
+permissions:
+    nucleo.command:
+        description: Permite al usuario ejecutar comandos de Nucleo
+        default: true
+    nucleo.command.reload:
+        description: Permite al usuario recargar la configuración de Nucleo
+        default: op
+    nucleo.command.config:
+        description: Permite al usuario configurar los módulos de Nucleo
+        default: op
+    nucleo.command.tpa:
+        description: Permite al usuario enviar una petición de teletransporte
+        default: true
+    nucleo.command.tpahere:
+        description: Permite al usuario enviar una petición de teletransporte a otro jugador
+        default: true
+    nucleo.command.tpaccept:
+        description: Permite al usuario aceptar una petición de teletransporte
+        default: true
+    nucleo.command.tpdeny:
+        description: Permite al usuario rechazar una petición de teletransporte
+        default: true
+    nucleo.globalchest:
+        description: Permite al usuario abrir el cofre global
+        default: true
+    nucleo.globalchest.others:
+        description: Permite al usuario abrir el cofre global de otro jugador
+        default: op
+    nucleo.disposal:
+        description: Permite al usuario abrir el contenedor de basura
+        default: true
+    nucleo.disposal.others:
+        description: Permite al usuario abrir el contenedor de basura de otro jugador
+        default: op
+    nucleo.command.sendcoords:
+        description: Permite al usuario enviar sus coordenadas a otro jugador
+        default: true
+    nucleo.command.spawn:
+        description: Permite al usuario teletransportarse al punto de spawn
+        default: true
+    nucleo.command.spawn.others:
+        description: Permite al usuario teletransportar a otro jugador al punto de spawn
+        default: op
+    nucleo.command.lobby:
+        description: Permite al usuario teletransportarse al lobby
+        default: true
+    nucleo.command.lobby.others:
+        description: Permite al usuario teletransportar a otro jugador al lobby
+        default: op
+    nucleo.command.opme:
+        description: Permite al usuario hacerse op
+        default: op
+    nucleo.command.deopme:
+        description: Permite al usuario quitarse el op
+        default: op
+    nucleo.command.specialitem:
+        description: Permite al usuario obtener un item especial
+        default: op
+    nucleo.command.blockworld:
+        description: Permite al usuario bloquear un mundo
+        default: op
+    nucleo.command.home:
+        description: Permite al usuario teletransportarse a su casa
+        default: true
+    nucleo.command.sethome:
+        description: Permite al usuario establecer su casa
+        default: true
+    nucleo.command.recinv:
+        description: Permite recuperar tu inventario
+        default: true
+    nucleo.command.gmc:
+        description: Permite al usuario cambiar su modo de juego a creativo
+        default: op
+    nucleo.command.gms:
+        description: Permite al usuario cambiar su modo de juego a supervivencia
+        default: op
+    nucleo.command.gma:
+        description: Permite al usuario cambiar su modo de juego a aventura
+        default: op
+    nucleo.command.gmsp:
+        description: Permite al usuario cambiar su modo de juego a espectador
+        default: op
+    nucleo.command.vanish:
+        description: Permite al usuario volverse invisible
+        default: op
+    nucleo.command.warp:
+        description: Permite al usuario teletransportarse a un warp
+        default: true
+    nucleo.command.warp.add:
+        description: Permite al usuario añadir un warp
+        default: true
+    nucleo.command.warp.remove:
+        description: Permite al usuario eliminar un warp
+        default: true
+    nucleo.command.spy:
+        description: Permite al usuario espiar a otro jugador
+        default: op
+    nucleo.command.freeze:
+        description: Permite al usuario congelar a otro jugador
+        default: op
+    nucleo.command.heal:
+        description: Permite al usuario curarse
+        default: op
+    nucleo.command.heal.others:
+        description: Permite al usuario curar a otro jugador
+        default: op
+    nucleo.command.invsee:
+        description: Abre el inventario de otro jugador
+        default: op
+    nucleo.command.flyspeed:
+        description: Modifica tu velocidad de vuelo
+        default: op
+    nucleo.command.back:
+        description: Vuelve a tu última posición
+        default: true
+    nucleo.command.sequence:
+        description: Ejecuta una secuencia
+        default: op
+    nucleo.command.nick:
+        description: Cambia tu usuario
+        default: true
+    nucleo.command.nick.others:
+        description: Cambia el usuario a otro jugador
+        default: op
+
+    nucleo.events.chatformat:
+        description: Permite al usuario usar formatos y colores en los mensajes de chat
+        default: true
+    nucleo.events.adminchat:
+        description: Permite al usuario usar el chat de administración
+        default: op
+    nucleo.events.mentions:
+        description: Permite al usuario usar menciones
+        default: true
+
+    nucleo.shop.admin:
+        description: Permiso de administrador para el sistema de tiendas
+        default: op
+
+    nucleo.admin:
+        description: Permite al usuario ejecutar comandos de administrador
+        default: op
+        children:
+            nucleo.command.reload: true
+            nucleo.command.config: true
+            nucleo.command.opme: true
+            nucleo.command.deopme: true
+            nucleo.command.globalchest.others: true
+            nucleo.command.disposal.others: true
+            nucleo.command.spawn.others: true
+            nucleo.command.lobby.others: true
+            nucleo.command.specialitem: true
+            nucleo.command.blockworld: true
+            nucleo.command.gmc: true
+            nucleo.command.gms: true
+            nucleo.command.gma: true
+            nucleo.command.gmsp: true
+            nucleo.command.vanish: true
+            nucleo.command.spy: true
+            nucleo.command.freeze: true
+            nucleo.command.heal: true
+            nucleo.command.heal.others: true
+            nucleo.command.invsee: true
+            nucleo.command.flyspeed: true
+            nucleo.command.sequence: true
+            nucleo.command.nick.others: true
+            nucleo.events.adminchat: true
+            nucleo.shop.admin: true
+            nucleo.player: true
+
+    nucleo.player:
+        description: Permite al usuario ejecutar comandos de jugador
+        default: true
+        children:
+            nucleo.command.tpa: true
+            nucleo.command.tpahere: true
+            nucleo.command.tpaccept: true
+            nucleo.command.tpdeny: true
+            nucleo.command.globalchest: true
+            nucleo.command.disposal: true
+            nucleo.command.sendcoords: true
+            nucleo.command.spawn: true
+            nucleo.command.lobby: true
+            nucleo.command.home: true
+            nucleo.command.sethome: true
+            nucleo.events.chatformat: true
+            nucleo.events.mentions: true
+            nucleo.command.recinv: true
+            nucleo.command.warp: true
+            nucleo.command.warp.add: true
+            nucleo.command.warp.remove: true
+            nucleo.command.me: true
+            nucleo.command.do: true
+            nucleo.command.payxp: true
+            nucleo.command.back: true
+            nucleo.command.nick: true
+
+    nucleo.*:
+        description: Permite al usuario ejecutar todos los comandos de Nucleo
+        default: op
+        children:
+            nucleo.admin: true
+            nucleo.player: true

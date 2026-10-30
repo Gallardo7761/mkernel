@@ -44,7 +44,7 @@ jobs:
       - name: Build
         run: |
           chmod +x gradlew
-          ./gradlew :mkernel-core:shadowJar --no-daemon
+          ./gradlew :nucleo-public:shadowJar --no-daemon
 
       - name: Release notes
         env:
@@ -52,7 +52,7 @@ jobs:
         run: |
           PREVIOUS=$(git describe --tags --abbrev=0 2>/dev/null || true)
           RANGE=${PREVIOUS:+$PREVIOUS..}HEAD
-          git log "$RANGE" --no-merges --pretty='- %s' | grep -v '(miarmacraft)' > notes.md || true
+          git log "$RANGE" --no-merges --pretty='- %s' | grep -vE '\((private|miarmacraft)\)' > notes.md || true
           [ -s notes.md ] || echo "- Sin cambios en el core" > notes.md
           cat notes.md
 
@@ -63,7 +63,7 @@ jobs:
           API: ${{ github.server_url }}/api/v1/repos/${{ github.repository }}
         run: |
           set -eo pipefail
-          JAR="mkernel-core/build/libs/mkernel-$VERSION.jar"
+          JAR="nucleo-public/build/libs/nucleo-$VERSION.jar"
           [ -f "$JAR" ] || { echo "::error::No se ha generado $JAR"; exit 1; }
 
           api() { curl -fsS -H "Authorization: token $TOKEN" "$@"; }
@@ -77,14 +77,14 @@ jobs:
           RELEASE_ID=$(jq -n \
               --arg tag "v$VERSION" \
               --arg target "$GITHUB_SHA" \
-              --arg name "MKernel $VERSION" \
+              --arg name "Nucleo $VERSION" \
               --rawfile body notes.md \
               '{tag_name: $tag, target_commitish: $target, name: $name, body: $body, draft: true, prerelease: false}' \
             | api -X POST "$API/releases" -H "Content-Type: application/json" -d @- \
             | jq -r '.id')
           trap 'api -X DELETE "$API/releases/$RELEASE_ID" || true' ERR
 
-          api -X POST "$API/releases/$RELEASE_ID/assets?name=mkernel-$VERSION.jar" \
+          api -X POST "$API/releases/$RELEASE_ID/assets?name=nucleo-$VERSION.jar" \
             -F "attachment=@$JAR" > /dev/null
 
           api -X PATCH "$API/releases/$RELEASE_ID" \

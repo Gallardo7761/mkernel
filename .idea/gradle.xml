@@ -8,9 +8,9 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
-            <option value="$PROJECT_DIR$/mkernel-api" />
-            <option value="$PROJECT_DIR$/mkernel-core" />
-            <option value="$PROJECT_DIR$/mkernel-miarmacraft" />
+            <option value="$PROJECT_DIR$/nucleo-api" />
+            <option value="$PROJECT_DIR$/nucleo-private" />
+            <option value="$PROJECT_DIR$/nucleo-public" />
           </set>
         </option>
         <option name="myGradleHome" value="/usr/share/java/gradle" />

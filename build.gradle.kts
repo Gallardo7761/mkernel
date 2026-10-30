@@ -7,8 +7,8 @@ plugins {
 }
 
 allprojects {
-    group = "net.miarma"
-    version = "26.10.2"
+    group = "es.killobyte"
+    version = "26.10.3"
 
     repositories {
         mavenCentral()
