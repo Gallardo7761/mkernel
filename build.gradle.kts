@@ -17,7 +17,7 @@ allprojects {
         maven("https://repo.pcgamingfreaks.at/repository/maven-everything")
         maven("https://jitpack.io")
         maven("https://repo.xenondevs.xyz/releases")
-        maven("https://git.miarma.net/api/packages/Gallardo7761/maven")
+        maven("https://git.killobyte.es/api/packages/Gallardo7761/maven")
         maven("https://raw.githubusercontent.com/JorelAli/1.13-Command-API/mvn-repo/1.13CommandAPI/")
         maven("https://repo.mythmc.ovh/releases")
         maven("https://maven.enginehub.org/repo/")

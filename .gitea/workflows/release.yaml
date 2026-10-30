@@ -13,7 +13,7 @@ jobs:
       run:
         shell: bash
     env:
-      GITEA_URL: ${{ vars.GITEA_URL || 'https://git.miarma.net' }}
+      GITEA_URL: ${{ vars.GITEA_URL || 'https://git.killobyte.es' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
