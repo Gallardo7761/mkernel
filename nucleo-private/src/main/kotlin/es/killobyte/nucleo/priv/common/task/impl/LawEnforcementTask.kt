@@ -1,12 +1,12 @@
-package es.killobyte.nucleo.private.common.task.impl
+package es.killobyte.nucleo.priv.common.task.impl
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import es.killobyte.nucleo.NucleoPlugin
 import es.killobyte.nucleo.api.common.ITask
-import es.killobyte.nucleo.private.common.dao.CrimeDao
-import es.killobyte.nucleo.private.common.model.CrimeHistory
-import es.killobyte.nucleo.private.common.service.impl.LawEnforcementService
+import es.killobyte.nucleo.priv.common.dao.CrimeDao
+import es.killobyte.nucleo.priv.common.model.CrimeHistory
+import es.killobyte.nucleo.priv.common.service.impl.LawEnforcementService
 import org.bukkit.Bukkit
 import org.bukkit.scheduler.BukkitRunnable
 import org.bukkit.scheduler.BukkitTask

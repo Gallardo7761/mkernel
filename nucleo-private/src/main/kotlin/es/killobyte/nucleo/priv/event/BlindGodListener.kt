@@ -1,11 +1,11 @@
-package es.killobyte.nucleo.private.event
+package es.killobyte.nucleo.priv.event
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import es.killobyte.nucleo.NucleoPlugin
 import es.killobyte.nucleo.common.service.impl.ConfigService
 import es.killobyte.nucleo.common.service.impl.MessageService
-import es.killobyte.nucleo.private.common.config.ConfigKeys
+import es.killobyte.nucleo.priv.common.config.ConfigKeys
 import es.killobyte.nucleo.util.delayTicks
 import org.bukkit.Particle
 import org.bukkit.Sound

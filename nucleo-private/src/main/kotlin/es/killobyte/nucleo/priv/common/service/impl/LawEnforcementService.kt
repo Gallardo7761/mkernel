@@ -1,4 +1,4 @@
-package es.killobyte.nucleo.private.common.service.impl
+package es.killobyte.nucleo.priv.common.service.impl
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -9,9 +9,9 @@ import es.killobyte.nucleo.api.common.IService
 import es.killobyte.nucleo.common.service.impl.ConfigService
 import es.killobyte.nucleo.common.service.impl.HookService
 import es.killobyte.nucleo.common.service.impl.MessageService
-import es.killobyte.nucleo.private.common.config.ConfigKeys
-import es.killobyte.nucleo.private.common.dao.CrimeDao
-import es.killobyte.nucleo.private.common.integration.impl.LevelledMobsHook
+import es.killobyte.nucleo.priv.common.config.ConfigKeys
+import es.killobyte.nucleo.priv.common.dao.CrimeDao
+import es.killobyte.nucleo.priv.common.integration.impl.LevelledMobsHook
 import es.killobyte.nucleo.util.delayTicks
 import org.bukkit.Bukkit
 import org.bukkit.Location

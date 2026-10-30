@@ -1,4 +1,4 @@
-package es.killobyte.nucleo.private.common.dao
+package es.killobyte.nucleo.priv.common.dao
 
 import com.google.inject.Inject
 import com.google.inject.Singleton

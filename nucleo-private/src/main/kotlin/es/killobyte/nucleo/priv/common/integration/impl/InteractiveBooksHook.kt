@@ -1,4 +1,4 @@
-package es.killobyte.nucleo.private.common.integration.impl
+package es.killobyte.nucleo.priv.common.integration.impl
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -6,7 +6,7 @@ import net.leonardo_dgs.interactivebooks.IBook
 import net.leonardo_dgs.interactivebooks.InteractiveBooks
 import es.killobyte.nucleo.NucleoPlugin
 import es.killobyte.nucleo.api.common.IHook
-import es.killobyte.nucleo.private.common.dao.CrimeDao
+import es.killobyte.nucleo.priv.common.dao.CrimeDao
 import java.io.File
 
 @Singleton

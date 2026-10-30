@@ -1,11 +1,11 @@
-package es.killobyte.nucleo.private.common.inject
+package es.killobyte.nucleo.priv.common.inject
 
 import com.google.inject.AbstractModule
 import com.google.inject.multibindings.Multibinder
 import es.killobyte.nucleo.api.model.ModuleDef
-import es.killobyte.nucleo.private.common.config.ConfigKeys
+import es.killobyte.nucleo.priv.common.config.ConfigKeys
 
-class MiarmacraftModule : AbstractModule() {
+class PrivateModule : AbstractModule() {
     override fun configure() {
         val moduleBinder = Multibinder.newSetBinder(binder(), ModuleDef::class.java)
 

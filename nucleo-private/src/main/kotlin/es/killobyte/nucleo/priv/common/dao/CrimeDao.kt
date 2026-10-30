@@ -1,12 +1,12 @@
-package es.killobyte.nucleo.private.common.dao
+package es.killobyte.nucleo.priv.common.dao
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import es.killobyte.nucleo.common.dao.UserDao
 import es.killobyte.nucleo.common.service.impl.DatabaseService
-import es.killobyte.nucleo.private.common.model.Crime
-import es.killobyte.nucleo.private.common.model.CrimeCategory
-import es.killobyte.nucleo.private.common.model.CrimeHistory
+import es.killobyte.nucleo.priv.common.model.Crime
+import es.killobyte.nucleo.priv.common.model.CrimeCategory
+import es.killobyte.nucleo.priv.common.model.CrimeHistory
 import org.bukkit.entity.Player
 import java.util.*
 

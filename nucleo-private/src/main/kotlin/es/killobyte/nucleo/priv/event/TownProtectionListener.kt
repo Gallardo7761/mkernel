@@ -1,12 +1,12 @@
-package es.killobyte.nucleo.private.event
+package es.killobyte.nucleo.priv.event
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import es.killobyte.nucleo.NucleoPlugin
 import es.killobyte.nucleo.common.service.impl.ConfigService
 import es.killobyte.nucleo.common.service.impl.MessageService
-import es.killobyte.nucleo.private.common.config.ConfigKeys
-import es.killobyte.nucleo.private.common.service.impl.LawEnforcementService
+import es.killobyte.nucleo.priv.common.config.ConfigKeys
+import es.killobyte.nucleo.priv.common.service.impl.LawEnforcementService
 import org.bukkit.Material
 import org.bukkit.entity.Animals
 import org.bukkit.entity.Player

@@ -1,3 +1,3 @@
-package es.killobyte.nucleo.private.common.model
+package es.killobyte.nucleo.priv.common.model
 
 data class CrimeCatalogEntry(val categoryName: String, val crimeName: String)

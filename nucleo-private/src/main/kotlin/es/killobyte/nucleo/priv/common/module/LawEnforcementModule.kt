@@ -1,11 +1,11 @@
-package es.killobyte.nucleo.private.common.module
+package es.killobyte.nucleo.priv.common.module
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import es.killobyte.nucleo.NucleoPlugin
 import es.killobyte.nucleo.api.common.IModule
-import es.killobyte.nucleo.private.event.PoliceChaseListener
-import es.killobyte.nucleo.private.event.TownProtectionListener
+import es.killobyte.nucleo.priv.event.PoliceChaseListener
+import es.killobyte.nucleo.priv.event.TownProtectionListener
 import org.bukkit.Bukkit
 import org.bukkit.event.HandlerList
 

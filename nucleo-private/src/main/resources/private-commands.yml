@@ -1,5 +1,5 @@
 # -----------------------------------------------------------
-#  Nucleo - Miarmacraft Commands
+#  Nucleo - Private Commands
 # -----------------------------------------------------------
 
 arguments:
@@ -17,69 +17,69 @@ commands:
     name: "articles"
     aliases: [ "art" ]
     description: "Gestiona los artículos del código penal"
-    permission: "nucleo.miarmacraft.command.articles"
+    permission: "nucleo.private.command.articles"
     usage: "/articles <add|remove|list|categories>"
     subcommands:
       add:
         name: "add"
         description: "Añade un nuevo artículo."
-        permission: "nucleo.miarmacraft.command.articles.add"
+        permission: "nucleo.private.command.articles.add"
         usage: "/articles add <id_categoria> <nombre> <descripción> [multa]"
       remove:
         name: "remove"
         description: "Elimina un artículo existente."
-        permission: "nucleo.miarmacraft.command.articles.remove"
+        permission: "nucleo.private.command.articles.remove"
         usage: "/articles remove <id>"
       list:
         name: "list"
         description: "Muestra la lista de artículos."
-        permission: "nucleo.miarmacraft.command.articles.list"
+        permission: "nucleo.private.command.articles.list"
         usage: "/articles list"
       categories:
         name: "categories"
         aliases: [ "cat" ]
         description: "Gestiona las categorías del código penal"
-        permission: "nucleo.miarmacraft.command.articles.categories"
+        permission: "nucleo.private.command.articles.categories"
         usage: "/articles categories <add|remove|list>"
         subcommands:
           add:
             name: "add"
             description: "Añade una nueva categoría."
-            permission: "nucleo.miarmacraft.command.articles.categories.add"
+            permission: "nucleo.private.command.articles.categories.add"
             usage: "/articles categories add <nombre>"
           remove:
             name: "remove"
             description: "Elimina una categoría existente."
-            permission: "nucleo.miarmacraft.command.articles.categories.remove"
+            permission: "nucleo.private.command.articles.categories.remove"
             usage: "/articles categories remove <id>"
           list:
             name: "list"
             description: "Muestra la lista de categorías."
-            permission: "nucleo.miarmacraft.command.articles.categories.list"
+            permission: "nucleo.private.command.articles.categories.list"
             usage: "/articles categories list"
 
   record:
     name: "record"
     aliases: ["rec"]
     description: "Mira los antecedentes de un jugador"
-    permission: "nucleo.miarmacraft.command.record"
+    permission: "nucleo.private.command.record"
     usage: "/record <jugador>"
     subcommands:
       add:
         name: "add"
         description: "Añade un antecedente a un jugador."
-        permission: "nucleo.miarmacraft.command.record.add"
+        permission: "nucleo.private.command.record.add"
         usage: "/record add <jugador> <id_articulo>"
       setstatus:
         name: "setstatus"
         description: "Cambia el estado de uno o más antecedentes."
-        permission: "nucleo.miarmacraft.command.record.setstatus"
+        permission: "nucleo.private.command.record.setstatus"
         usage: "/record setstatus <jugador> <id_articulo|all> <status>"
 
   paysheet:
     name: "nomina"
     description: "Gestiona las nóminas y retenciones de Hacienda"
-    permission: "nucleo.miarmacraft.command.paysheet.base"
+    permission: "nucleo.private.command.paysheet.base"
     usage: "/nomina"
     messages:
       hasMoney: "<gray>Tienes <green><amount></green> retenidos en tu nómina. Ve al <yellow>Ayuntamiento</yellow> para cobrarlos.</gray>"
@@ -87,12 +87,12 @@ commands:
       retain:
         name: "retener"
         description: "Retiene dinero de un jugador a su nómina en Hacienda"
-        permission: "nucleo.miarmacraft.command.paysheet.admin"
+        permission: "nucleo.private.command.paysheet.admin"
         usage: "/nomina retener <jugador> <cantidad>"
       receive:
         name: "cobrar"
         description: "Cobra tu nómina"
-        permission: "nucleo.miarmacraft.command.paysheet.receive"
+        permission: "nucleo.private.command.paysheet.receive"
         usage: "/nomina cobrar"
         messages:
           bancoError: "<red>El sistema bancario está caído. Disculpen las molestias.</red>"
@@ -103,7 +103,7 @@ commands:
   sixseven:
     name: "67"
     description: "Six seveeeeen"
-    permission: "nucleo.miarmacraft.command.sixseven"
+    permission: "nucleo.private.command.sixseven"
     usage: "/67"
     message: "<light_purple><bold>SIX SEVEEEEEEEEN!!!!</bold></light_purple>"
 

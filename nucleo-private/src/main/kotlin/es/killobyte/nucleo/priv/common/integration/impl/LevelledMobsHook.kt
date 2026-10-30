@@ -1,4 +1,4 @@
-package es.killobyte.nucleo.private.common.integration.impl
+package es.killobyte.nucleo.priv.common.integration.impl
 
 import io.github.arcaneplugins.levelledmobs.LevelledMobs
 import io.github.arcaneplugins.levelledmobs.wrappers.LivingEntityWrapper

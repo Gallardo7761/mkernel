@@ -1,4 +1,4 @@
-package es.killobyte.nucleo.private.command.impl.jobs
+package es.killobyte.nucleo.priv.command.impl.jobs
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -10,13 +10,13 @@ import dev.jorel.commandapi.kotlindsl.playerExecutor
 import dev.jorel.commandapi.kotlindsl.subcommand
 import es.killobyte.nucleo.NucleoPlugin
 import es.killobyte.nucleo.api.common.ICommand
-import es.killobyte.nucleo.private.common.config.ConfigKeys
+import es.killobyte.nucleo.priv.common.config.ConfigKeys
 import es.killobyte.nucleo.common.config.ConfigKeys as CoreKeys
 import es.killobyte.nucleo.common.integration.impl.BancoHook
 import es.killobyte.nucleo.common.service.impl.ConfigService
 import es.killobyte.nucleo.common.service.impl.HookService
 import es.killobyte.nucleo.common.service.impl.MessageService
-import es.killobyte.nucleo.private.common.dao.PaysheetDao
+import es.killobyte.nucleo.priv.common.dao.PaysheetDao
 import es.killobyte.nucleo.util.PlayerUtil
 import kotlin.math.ceil
 

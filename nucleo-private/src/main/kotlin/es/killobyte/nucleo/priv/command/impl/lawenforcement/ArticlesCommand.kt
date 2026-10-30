@@ -1,4 +1,4 @@
-package es.killobyte.nucleo.private.command.impl.lawenforcement
+package es.killobyte.nucleo.priv.command.impl.lawenforcement
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -17,9 +17,9 @@ import es.killobyte.nucleo.common.module.ModuleLoader
 import es.killobyte.nucleo.common.service.impl.ConfigService
 import es.killobyte.nucleo.common.service.impl.HookService
 import es.killobyte.nucleo.common.service.impl.MessageService
-import es.killobyte.nucleo.private.common.config.ConfigKeys
-import es.killobyte.nucleo.private.common.dao.CrimeDao
-import es.killobyte.nucleo.private.common.integration.impl.InteractiveBooksHook
+import es.killobyte.nucleo.priv.common.config.ConfigKeys
+import es.killobyte.nucleo.priv.common.dao.CrimeDao
+import es.killobyte.nucleo.priv.common.integration.impl.InteractiveBooksHook
 import es.killobyte.nucleo.util.CommandUtil.checkModule
 
 @Singleton

@@ -1,4 +1,4 @@
-package es.killobyte.nucleo.private.common.model
+package es.killobyte.nucleo.priv.common.model
 
 import java.sql.Timestamp
 

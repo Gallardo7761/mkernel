@@ -1,4 +1,4 @@
-package es.killobyte.nucleo.private.common.config
+package es.killobyte.nucleo.priv.common.config
 
 object ConfigKeys {
     object Modules {

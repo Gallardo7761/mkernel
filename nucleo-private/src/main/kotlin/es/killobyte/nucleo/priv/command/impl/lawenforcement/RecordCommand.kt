@@ -1,4 +1,4 @@
-package es.killobyte.nucleo.private.command.impl.lawenforcement
+package es.killobyte.nucleo.priv.command.impl.lawenforcement
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -15,9 +15,9 @@ import es.killobyte.nucleo.api.common.ICommand
 import es.killobyte.nucleo.common.module.ModuleLoader
 import es.killobyte.nucleo.common.service.impl.ConfigService
 import es.killobyte.nucleo.common.service.impl.MessageService
-import es.killobyte.nucleo.private.common.config.ConfigKeys
-import es.killobyte.nucleo.private.common.dao.CrimeDao
-import es.killobyte.nucleo.private.common.model.CrimeHistory
+import es.killobyte.nucleo.priv.common.config.ConfigKeys
+import es.killobyte.nucleo.priv.common.dao.CrimeDao
+import es.killobyte.nucleo.priv.common.model.CrimeHistory
 import es.killobyte.nucleo.util.CommandUtil.checkModule
 import es.killobyte.nucleo.util.PlayerUtil
 import java.text.SimpleDateFormat

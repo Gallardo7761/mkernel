@@ -1,4 +1,4 @@
-package es.killobyte.nucleo.private.common.module
+package es.killobyte.nucleo.priv.common.module
 
 import com.google.inject.Inject
 import com.google.inject.Singleton

@@ -1,10 +1,10 @@
-package es.killobyte.nucleo.private.common.module
+package es.killobyte.nucleo.priv.common.module
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import es.killobyte.nucleo.NucleoPlugin
 import es.killobyte.nucleo.api.common.IModule
-import es.killobyte.nucleo.private.event.BlindGodListener
+import es.killobyte.nucleo.priv.event.BlindGodListener
 import org.bukkit.Bukkit
 
 @Singleton

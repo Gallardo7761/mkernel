@@ -180,59 +180,59 @@ permissions:
 
 
 
-    nucleo.miarmacraft.command.record:
+    nucleo.private.command.record:
         description: Comando principal de antecedentes
         default: op
-    nucleo.miarmacraft.command.record.add:
+    nucleo.private.command.record.add:
         description: Añade un antecedente a un jugador
         default: op
-    nucleo.miarmacraft.command.record.setstatus:
+    nucleo.private.command.record.setstatus:
         description: Cambia el estado de un antecedente de un jugador
         default: op
-    nucleo.miarmacraft.command.articles:
+    nucleo.private.command.articles:
         description: Comando principal de artículos
         default: op
-    nucleo.miarmacraft.command.articles.add:
+    nucleo.private.command.articles.add:
         description: Añade un artículo a una categoría del C.P.
         default: op
-    nucleo.miarmacraft.command.articles.remove:
+    nucleo.private.command.articles.remove:
         description: Elimina un artículo del C.P.
         default: op
-    nucleo.miarmacraft.command.articles.list:
+    nucleo.private.command.articles.list:
         description: Lista todos los artículos del C.P.
         default: op
-    nucleo.miarmacraft.command.articles.categories:
+    nucleo.private.command.articles.categories:
         description: Comando principal de categorías del C.P.
         default: op
-    nucleo.miarmacraft.command.articles.categories.add:
+    nucleo.private.command.articles.categories.add:
         description: Añade una categoría al C.P.
         default: op
-    nucleo.miarmacraft.command.articles.categories.remove:
+    nucleo.private.command.articles.categories.remove:
         description: Elimina una categoría del C.P.
         default: op
-    nucleo.miarmacraft.command.articles.categories.list:
+    nucleo.private.command.articles.categories.list:
         description: Lista todas las categorías del C.P.
         default: op
-    nucleo.miarmacraft.command.paysheet.base:
+    nucleo.private.command.paysheet.base:
         description: Permite ver tus nóminas
         default: true
-    nucleo.miarmacraft.command.paysheet.admin:
+    nucleo.private.command.paysheet.admin:
         description: Permite gestionar dinero retenido
         default: op
-    nucleo.miarmacraft.command.paysheet.receive:
+    nucleo.private.command.paysheet.receive:
         description: Permite cobrar tus nóminas
         default: op
-    nucleo.miarmacraft.command.sixseven:
+    nucleo.private.command.sixseven:
         description: '67'
         default: true
 
-    nucleo.miarmacraft.town.build:
+    nucleo.private.town.build:
         description: Permite construir en el pueblo
         default: op
-    nucleo.miarmacraft.town.use:
+    nucleo.private.town.use:
         description: Permite interactuar en el pueblo
         default: op
-    nucleo.miarmacraft.town.harm:
+    nucleo.private.town.harm:
         description: Permite dañar aldeanos y animales en el pueblo
         default: op
 
@@ -240,21 +240,21 @@ permissions:
         description: Autoriza al ciudadano a realizar ciertas acciones en el pueblo
         default: op
         children:
-            nucleo.miarmacraft.town.build: true
-            nucleo.miarmacraft.town.use: true
-            nucleo.miarmacraft.town.harm: true
+            nucleo.private.town.build: true
+            nucleo.private.town.use: true
+            nucleo.private.town.harm: true
 
     nucleo.police:
         description: Permite al usuario ejecutar comandos de policía
         default: op
         children:
-            nucleo.miarmacraft.command.record: true
-            nucleo.miarmacraft.command.record.add: true
-            nucleo.miarmacraft.command.record.setstatus: true
-            nucleo.miarmacraft.command.articles: true
-            nucleo.miarmacraft.command.articles.list: true
-            nucleo.miarmacraft.command.articles.categories: true
-            nucleo.miarmacraft.command.articles.categories.list: true
+            nucleo.private.command.record: true
+            nucleo.private.command.record.add: true
+            nucleo.private.command.record.setstatus: true
+            nucleo.private.command.articles: true
+            nucleo.private.command.articles.list: true
+            nucleo.private.command.articles.categories: true
+            nucleo.private.command.articles.categories.list: true
             nucleo.safeconduct: true
             nucleo.player: true
 
@@ -286,11 +286,11 @@ permissions:
             nucleo.command.sequence: true
             nucleo.command.nick.others: true
             nucleo.events.adminchat: true
-            nucleo.miarmacraft.command.paysheet.admin: true
-            nucleo.miarmacraft.command.articles.add: true
-            nucleo.miarmacraft.command.articles.remove: true
-            nucleo.miarmacraft.command.articles.categories.add: true
-            nucleo.miarmacraft.command.articles.categories.remove: true
+            nucleo.private.command.paysheet.admin: true
+            nucleo.private.command.articles.add: true
+            nucleo.private.command.articles.remove: true
+            nucleo.private.command.articles.categories.add: true
+            nucleo.private.command.articles.categories.remove: true
             nucleo.player: true
             nucleo.police: true
             nucleo.safeconduct: true
@@ -321,8 +321,8 @@ permissions:
             nucleo.command.payxp: true
             nucleo.command.back: true
             nucleo.command.nick: true
-            nucleo.miarmacraft.command.paysheet.base: true
-            nucleo.miarmacraft.command.sixseven: true
+            nucleo.private.command.paysheet.base: true
+            nucleo.private.command.sixseven: true
 
     nucleo.*:
         description: Otorga todos los permisos (peligroso)

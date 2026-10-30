@@ -1,5 +1,5 @@
 # -----------------------------------------------------------
-#  Nucleo - Miarmacraft Configuration
+#  Nucleo - Private Configuration
 # -----------------------------------------------------------
 
 modules:
@@ -34,9 +34,9 @@ settings:
     maxGolems: 6
     golemBaseLevel: 20
     golemLevelMultiplier: 1.12
-    buildPerm: "nucleo.miarmacraft.town.build"
-    usePerm: "nucleo.miarmacraft.town.use"
-    harmAnimalsPerm: "nucleo.miarmacraft.town.harm"
+    buildPerm: "nucleo.private.town.build"
+    usePerm: "nucleo.private.town.use"
+    harmAnimalsPerm: "nucleo.private.town.harm"
     tempBanDuration: "48h"
     explosionsEnabled: false
 

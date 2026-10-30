@@ -71,7 +71,7 @@ tasks.register("mergeScriptsYaml") {
         val outFile = File(outDir, "scripts.yml")
 
         if (coreFile.exists() && localFile.exists()) {
-            println("MiarmaCraft -> SnakeYAML Merge: scripts.yml")
+            println("Private -> SnakeYAML Merge: scripts.yml")
 
             val coreData: MutableMap<String, Any> = yaml.load(coreFile.readText(Charsets.UTF_8)) ?: mutableMapOf()
             val localData: Map<String, Any>? = yaml.load(localFile.readText(Charsets.UTF_8))
@@ -89,7 +89,7 @@ tasks.register("mergeScriptsYaml") {
 
             outFile.parentFile.mkdirs()
             outFile.writeText(yaml.dump(coreData), Charsets.UTF_8)
-            println("MiarmaCraft -> scripts.yml merged successfully!")
+            println("Private -> scripts.yml merged successfully!")
 
         } else if (coreFile.exists()) {
             coreFile.copyTo(outFile, overwrite = true)
@@ -113,11 +113,11 @@ tasks.register("mergeInitSql") {
 
         val merged = StringBuilder()
         if (coreSql.exists()) {
-            println("MiarmaCraft -> Merge SQL: core init.sql")
+            println("Private -> Merge SQL: core init.sql")
             merged.append(coreSql.readText(Charsets.UTF_8).trimEnd()).append("\n\n")
         }
         if (localSqlSrc.exists()) {
-            println("MiarmaCraft -> Merge SQL: miarmacraft init.sql")
+            println("Private -> Merge SQL: private init.sql")
             merged.append(localSqlSrc.readText(Charsets.UTF_8).trimEnd()).append("\n")
         }
 
