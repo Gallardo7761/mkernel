@@ -3,6 +3,14 @@ name: Release
 on:
   push:
     branches: [main]
+    paths:
+      - 'nucleo-api/**'
+      - 'nucleo-public/**'
+      - 'build.gradle.kts'
+      - 'settings.gradle.kts'
+      - 'gradle.properties'
+      - 'gradle/**'
+      - '.gitea/workflows/release.yaml'
 
 jobs:
   release:
